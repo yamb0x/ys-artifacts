@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YS Studio Artifacts - Creative Tools Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --secondary: #f093fb;
+            --accent: #4facfe;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tool-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-bottom: 1px solid #eee;
+        }
+
+        .tool-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .tool-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .tool-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .tool-description {
+            color: #666;
+            line-height: 1.6;
+            flex: 1;
+            padding: 0 30px 20px;
+        }
+
+        .tool-features {
+            padding: 20px 30px;
+            background: var(--light);
+            border-top: 1px solid #eee;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .feature-item {
+            padding: 5px 12px;
+            background: white;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #555;
+            border: 1px solid #e0e0e0;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-live {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-beta {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .status-coming {
+            background: #6c757d;
+            color: white;
+        }
+
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .coming-soon:hover {
+            transform: none;
+            box-shadow: var(--shadow);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            margin-top: 60px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🛠️</div>
+            </div>
+            <h1>YS Studio Artifacts</h1>
+            <p class="subtitle">A collection of creative tools and utilities for modern web development</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Active Tools</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">5+</div>
+                <div class="stat-label">Coming Soon</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Possibilities</div>
+            </div>
+        </div>
+
+        <div class="tools-grid">
+            <!-- ASCII Art Creator -->
+            <a href="tools/ascii-creator/" class="tool-card">
+                <div class="tool-header" style="position: relative;">
+                    <span class="status-badge status-live">Live</span>
+                    <div class="tool-icon">🎨</div>
+                    <h2 class="tool-title">ASCII Art Creator</h2>
+                    <span class="tool-category">Image Processing</span>
+                </div>
+                <p class="tool-description">
+                    Transform images into stunning ASCII art with advanced character mapping,
+                    alpha channel support, and multiple artistic styles. Perfect for creating
+                    unique text-based representations of your visuals.
+                </p>
+                <div class="tool-features">
+                    <ul class="feature-list">
+                        <li class="feature-item">6 Character Sets</li>
+                        <li class="feature-item">Alpha Support</li>
+                        <li class="feature-item">Color Modes</li>
+                        <li class="feature-item">Real-time Preview</li>
+                    </ul>
+                </div>
+            </a>
+
+            <!-- Color Palette Generator -->
+            <div class="tool-card coming-soon">
+                <div class="tool-header" style="position: relative;">
+                    <span class="status-badge status-coming">Coming</span>
+                    <div class="tool-icon">🎨</div>
+                    <h2 class="tool-title">Color Palette Generator</h2>
+                    <span class="tool-category">Design Tools</span>
+                </div>
+                <p class="tool-description">
+                    Extract beautiful color palettes from images or generate harmonious color
+                    schemes. Export to various formats including CSS, JSON, and design tokens.
+                </p>
+                <div class="tool-features">
+                    <ul class="feature-list">
+                        <li class="feature-item">AI Extraction</li>
+                        <li class="feature-item">Harmony Rules</li>
+                        <li class="feature-item">Export Formats</li>
+                        <li class="feature-item">Accessibility</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SVG Pattern Maker -->
+            <div class="tool-card coming-soon">
+                <div class="tool-header" style="position: relative;">
+                    <span class="status-badge status-coming">Coming</span>
+                    <div class="tool-icon">🔷</div>
+                    <h2 class="tool-title">SVG Pattern Maker</h2>
+                    <span class="tool-category">Graphics</span>
+                </div>
+                <p class="tool-description">
+                    Create seamless SVG patterns and backgrounds with an intuitive visual editor.
+                    Perfect for web backgrounds, textures, and decorative elements.
+                </p>
+                <div class="tool-features">
+                    <ul class="feature-list">
+                        <li class="feature-item">Visual Editor</li>
+                        <li class="feature-item">Seamless Tiling</li>
+                        <li class="feature-item">Animation</li>
+                        <li class="feature-item">Code Export</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CSS Animation Studio -->
+            <div class="tool-card coming-soon">
+                <div class="tool-header" style="position: relative;">
+                    <span class="status-badge status-coming">Coming</span>
+                    <div class="tool-icon">✨</div>
+                    <h2 class="tool-title">CSS Animation Studio</h2>
+                    <span class="tool-category">Animation</span>
+                </div>
+                <p class="tool-description">
+                    Design and preview CSS animations with a timeline-based editor.
+                    Generate optimized keyframes and export production-ready code.
+                </p>
+                <div class="tool-features">
+                    <ul class="feature-list">
+                        <li class="feature-item">Timeline Editor</li>
+                        <li class="feature-item">Easing Curves</li>
+                        <li class="feature-item">Live Preview</li>
+                        <li class="feature-item">Code Generation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Base64 Encoder/Decoder -->
+            <div class="tool-card coming-soon">
+                <div class="tool-header" style="position: relative;">
+                    <span class="status-badge status-coming">Coming</span>
+                    <div class="tool-icon">🔐</div>
+                    <h2 class="tool-title">Base64 Studio</h2>
+                    <span class="tool-category">Utilities</span>
+                </div>
+                <p class="tool-description">
+                    Encode and decode Base64 data with support for images, text, and files.
+                    Features data URI generation and batch processing capabilities.
+                </p>
+                <div class="tool-features">
+                    <ul class="feature-list">
+                        <li class="feature-item">Image Preview</li>
+                        <li class="feature-item">Data URIs</li>
+                        <li class="feature-item">Batch Process</li>
+                        <li class="feature-item">File Support</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- JSON Formatter -->
+            <div class="tool-card coming-soon">
+                <div class="tool-header" style="position: relative;">
+                    <span class="status-badge status-coming">Coming</span>
+                    <div class="tool-icon">📊</div>
+                    <h2 class="tool-title">JSON Studio</h2>
+                    <span class="tool-category">Development</span>
+                </div>
+                <p class="tool-description">
+                    Format, validate, and transform JSON data with a powerful editor.
+                    Features schema validation, diff comparison, and path extraction.
+                </p>
+                <div class="tool-features">
+                    <ul class="feature-list">
+                        <li class="feature-item">Syntax Highlight</li>
+                        <li class="feature-item">Schema Validation</li>
+                        <li class="feature-item">JSON Path</li>
+                        <li class="feature-item">Diff Tool</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 YS Studio Artifacts - Built with passion and creativity</p>
+            <div class="footer-links">
+                <a href="https://github.com/YS-studio-artifacts" class="footer-link">GitHub</a>
+                <a href="#" class="footer-link">Documentation</a>
+                <a href="#" class="footer-link">Contributing</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

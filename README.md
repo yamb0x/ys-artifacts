@@ -1,115 +1,168 @@
-# ASCII Art Creator
+# YS Studio Artifacts
 
-A powerful web-based ASCII art generator that transforms images into beautiful ASCII representations with alpha channel support.
+> A curated collection of powerful web-based studio tools and creative utilities for modern development workflows.
 
-## Features
+## 🚀 Overview
 
-### Core Functionality
-- **Image to ASCII Conversion**: Upload any image and convert it to ASCII art
-- **Multiple Character Sets**: Choose from 6 different character sets for varied artistic styles
-- **Alpha Channel Support**: Preserves transparency for layered compositions
-- **Color Modes**: Monochrome, grayscale, and full color HTML output
-- **Real-time Preview**: See changes instantly as you adjust settings
+YS Studio Artifacts is a growing collection of standalone HTML tools designed for both internal studio use and public deployment. Each tool is self-contained, dependency-free, and optimized for performance.
 
-### Character Sets Available
-1. **Standard**: `.·:;+=xX#%@█` - Classic ASCII gradient
-2. **Dense**: `.,-~:;=!*#$@` - More detailed representation
-3. **Blocks**: `░▒▓█` - Unicode block characters for smooth gradients
-4. **Artistic**: `·•◦○◉●◐◑◒◓` - Circular elements for artistic effect
-5. **Simple**: `.oO@` - Minimalist approach
-6. **Extended**: 70+ character gradient for maximum detail
+## 🛠️ Available Tools
 
-### Advanced Options
-- **Brightness Algorithms**:
-  - Luminance (ITU-R BT.709 standard)
-  - Perceived (Human eye weighted)
-  - Average (Simple RGB average)
-- **Adjustable Width**: Control output resolution (10-300 characters)
-- **Alpha Threshold**: Fine-tune transparency handling
-- **Invert Mode**: Reverse the brightness mapping
+### 1. [ASCII Art Creator](tools/ascii-creator/)
+Transform images into stunning ASCII art with advanced features:
+- 6 different character sets (standard, dense, blocks, artistic, simple, extended)
+- Alpha channel support with adjustable threshold
+- Multiple brightness algorithms
+- Color modes (monochrome, grayscale, full color)
+- Real-time preview and multiple export options
 
-## Usage
+**Status**: ✅ Live
 
-1. **Open the Application**: Simply open `ascii-creator.html` in your web browser
-2. **Upload an Image**: Click the upload area or drag & drop an image
-3. **Adjust Settings**: Customize character set, width, and algorithms
-4. **Convert**: The conversion happens automatically or click "Convert to ASCII"
-5. **Export**: Download as text file or HTML with styling
+## 🔮 Upcoming Tools
 
-## Supported Formats
-- JPG/JPEG
-- PNG (with alpha channel)
-- GIF
-- WebP
+### Color Palette Generator
+- Extract palettes from images
+- Generate harmonious color schemes
+- Export to CSS, JSON, design tokens
+- Accessibility checking
 
-## Export Options
-- **Plain Text**: ASCII art as .txt file
-- **HTML**: Styled HTML file with colors preserved
-- **Clipboard**: Copy directly to clipboard
+### SVG Pattern Maker
+- Visual pattern editor
+- Seamless tiling
+- Animation support
+- Code export
 
-## Claude Skills Integration
+### CSS Animation Studio
+- Timeline-based animation editor
+- Easing curve designer
+- Live preview
+- Optimized code generation
 
-This project includes custom Claude Skills for enhanced development:
+### Base64 Studio
+- Encode/decode Base64 data
+- Image preview
+- Data URI generation
+- Batch processing
 
-### ASCII Interpreter Skill
-Located in `.claude/skills/ascii-interpreter/`, this skill provides:
-- Character mapping rules and algorithms
-- Brightness calculation methods
-- Alpha channel processing logic
-- Performance optimization techniques
+### JSON Studio
+- Format and validate JSON
+- Schema validation
+- Diff comparison
+- Path extraction
 
-### Additional Skills
-- **webapp-testing**: Automated testing capabilities
-- **git-commit-helper**: Smart git commit generation
-- **artifacts-builder**: HTML artifact creation tools
+## 🎯 Features
 
-## Performance
+### All Tools Share:
+- **Zero Dependencies**: Pure HTML/CSS/JavaScript
+- **Offline Capable**: Works without internet connection
+- **Responsive Design**: Mobile and desktop optimized
+- **Fast Performance**: Optimized algorithms
+- **Privacy First**: All processing happens client-side
+- **Export Options**: Multiple output formats
 
-- Processes 1920x1080 images in < 2 seconds
-- Real-time preview updates
-- Optimized character mapping algorithms
-- Efficient memory management
+## 🏗️ Project Structure
 
-## Browser Compatibility
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Opera 76+
-
-## Development
-
-### Project Structure
 ```
-ascii-creator/
-├── ascii-creator.html      # Main application
-├── .claude/                # Claude Skills and configuration
+YS-studio-artifacts/
+├── index.html                 # Main portal page
+├── tools/                     # Individual tools
+│   ├── ascii-creator/        # ASCII art generator
+│   │   └── index.html
+│   ├── color-palette/        # (Coming soon)
+│   ├── svg-patterns/         # (Coming soon)
+│   ├── css-animations/       # (Coming soon)
+│   ├── base64-studio/        # (Coming soon)
+│   └── json-studio/          # (Coming soon)
+├── .claude/                   # Claude Skills and configuration
 │   └── skills/
-│       ├── ascii-interpreter/
-│       ├── webapp-testing/
-│       ├── git-commit-helper/
-│       └── artifacts-builder/
-└── README.md
+│       ├── ascii-interpreter/ # ASCII conversion logic
+│       ├── webapp-testing/    # Testing capabilities
+│       ├── git-commit-helper/ # Smart commits
+│       └── artifacts-builder/ # HTML artifact tools
+└── shared/                    # (Future) Shared resources
+    ├── styles/               # Common styles
+    └── scripts/              # Shared utilities
 ```
 
-### Running Locally
-No build process required! Simply open `ascii-creator.html` in your browser.
+## 💻 Usage
 
-### Testing
-The webapp-testing skill provides automated testing capabilities. Use the testing skill to validate functionality.
+### Quick Start
+1. Clone the repository
+2. Open `index.html` in your browser
+3. Choose a tool from the gallery
+4. No build process or installation required!
 
-## Future Enhancements
-- Video/GIF animation support
-- Custom character set editor
-- Batch processing for multiple images
-- API endpoint for programmatic access
-- WebAssembly optimization for larger images
+### Direct Tool Access
+Each tool can be accessed directly:
+- ASCII Creator: `/tools/ascii-creator/index.html`
+- More tools coming soon!
 
-## License
-MIT License - Feel free to use and modify for your projects
+## 🤖 Claude Skills Integration
 
-## Credits
+This project leverages Claude Skills for enhanced development:
+
+### Custom Skills
+- **ascii-interpreter**: Character mapping algorithms and brightness calculations
+- **webapp-testing**: Automated testing framework
+- **git-commit-helper**: Intelligent commit message generation
+- **artifacts-builder**: HTML artifact creation utilities
+
+### Planned Skills
+- **vercel-deployer**: One-click Vercel deployment
+- **design-system**: Consistent design tokens and components
+- **performance-monitor**: Real-time performance analytics
+
+## 🚀 Deployment
+
+### GitHub Pages
+The entire collection can be deployed to GitHub Pages:
+```bash
+git push origin main
+# Enable GitHub Pages in repository settings
+```
+
+### Vercel (Coming Soon)
+One-click deployment with Vercel skill integration.
+
+### Self-Hosting
+Simply serve the files with any static file server:
+```bash
+python -m http.server 8000
+# or
+npx serve
+```
+
+## 🎨 Design Philosophy
+
+1. **Simplicity First**: Clean, intuitive interfaces
+2. **Power When Needed**: Advanced features don't clutter the basics
+3. **Visual Feedback**: Real-time previews and clear status indicators
+4. **Consistent Experience**: Unified design language across all tools
+5. **Performance Matters**: Optimized for speed and efficiency
+
+## 🤝 Contributing
+
+We welcome contributions! Each tool should:
+- Be self-contained in its own directory
+- Include no external dependencies
+- Follow the established design patterns
+- Include comprehensive documentation
+- Be thoroughly tested
+
+## 📄 License
+
+MIT License - Use these tools freely in your projects!
+
+## 🔗 Links
+
+- **Live Demo**: [Coming Soon]
+- **GitHub**: [YS-studio-artifacts](https://github.com/YS-studio-artifacts)
+- **Documentation**: [In Progress]
+
+## 🙏 Credits
+
 Built with Claude Skills framework for enhanced development capabilities.
 
 ---
 
-**Live Demo**: Open `ascii-creator.html` in your browser to start creating ASCII art!
+**Note**: This is an actively growing collection. Star the repo to stay updated with new tools!
