@@ -25,6 +25,10 @@ build/
 # Environment files
 .env
 .env.local
+.env*.local
+
+# Vercel
+.vercel
 
 # Test coverage
 coverage/

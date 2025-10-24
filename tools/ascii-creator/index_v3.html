@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Interpreter - YS Studio Artifacts</title>
+    <style>
+        /* Import Courier Prime */
+        @font-face {
+            font-family: 'Courier Prime';
+            src: url('../fonts/Courier_Prime/CourierPrime-Regular.ttf') format('truetype');
+            font-weight: 400;
+        }
+
+        @font-face {
+            font-family: 'Courier Prime';
+            src: url('../fonts/Courier_Prime/CourierPrime-Bold.ttf') format('truetype');
+            font-weight: 700;
+        }
+
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-blue: #0066FF;
+            --ys-green: #00FF00;
+
+            /* Fonts */
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+            --font-mono: 'Courier Prime', 'Courier New', monospace;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 80px;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+        }
+
+        .studio-name {
+            font-weight: 300;
+        }
+
+        .project-type {
+            font-style: italic;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        /* Cross Elements */
+        .cross-small {
+            width: 12px;
+            height: 12px;
+            position: relative;
+            color: var(--ys-black);
+            display: inline-block;
+        }
+
+        .cross-small::before,
+        .cross-small::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-small::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-small::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cross-large {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            color: var(--ys-red);
+            display: inline-block;
+        }
+
+        .cross-large::before,
+        .cross-large::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-large::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-large::after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 80px 24px 24px;
+            min-height: 100vh;
+        }
+
+        /* Title Section */
+        .title-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .type-display-xl {
+            font-family: var(--font-sangbleu);
+            font-size: 120px;
+            line-height: 120px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        /* Cross Wrapper Component */
+        .ys-cross-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: var(--ys-white);
+            margin-bottom: 24px;
+        }
+
+        .cross-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 12px;
+            position: relative;
+        }
+
+        .wrapper-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .control-panel .wrapper-content {
+            padding: 12px;
+        }
+
+        /* Main Working Area - Side by Side */
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            align-items: start;
+        }
+
+        /* Left Panel - Controls */
+        .control-panel {
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom Scrollbar for Control Panel */
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: var(--ys-white);
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: var(--ys-black);
+            border-radius: 0;
+        }
+
+        /* Right Panel - ASCII Output */
+        .output-panel {
+            min-height: 400px;
+        }
+
+        /* Upload Area */
+        .upload-section {
+            margin-bottom: 16px;
+        }
+
+        .upload-area {
+            border: 1px solid var(--ys-black);
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background: var(--ys-white);
+        }
+
+        .upload-area:hover {
+            background: var(--ys-gray);
+        }
+
+        .upload-area.dragover {
+            background: var(--ys-gray);
+        }
+
+        .upload-area.has-image {
+            padding: 15px;
+            cursor: default;
+        }
+
+        .upload-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .preview-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .preview-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--ys-black);
+        }
+
+        .replace-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .replace-btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        /* Controls */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-item label {
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .control-item input,
+        .control-item select {
+            padding: 6px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            font-family: var(--font-suisse);
+            font-size: 12px;
+        }
+
+        .control-item input[type="color"] {
+            height: 32px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Custom Range Slider Styling */
+        .control-item input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 1px;
+            background: var(--ys-black);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-track {
+            width: 100%;
+            height: 1px;
+            cursor: pointer;
+            background: var(--ys-black);
+        }
+
+        .control-item input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 1px;
+            cursor: pointer;
+            background: var(--ys-black);
+        }
+
+        /* Color Presets */
+        .color-presets {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .preset-btn {
+            width: 100%;
+            height: 24px;
+            border: 1px solid var(--ys-black);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .preset-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .preset-btn.active {
+            border-width: 2px;
+        }
+
+        /* ASCII Output */
+        .ascii-output {
+            font-family: var(--font-mono);
+            white-space: pre;
+            overflow-x: auto;
+            padding: 24px;
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            font-size: 12px;
+            line-height: 1;
+            min-height: 200px;
+            font-weight: 400;
+        }
+
+        .ascii-output.bold {
+            font-weight: 700;
+        }
+
+        /* Export Section - Inline with Output */
+        .export-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .export-btn {
+            padding: 10px 16px;
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            font-family: var(--font-suisse);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .export-btn.red {
+            border-color: var(--ys-red);
+            color: var(--ys-red);
+        }
+
+        .export-btn.red:hover {
+            background: var(--ys-red);
+            color: var(--ys-white);
+        }
+
+        /* Hidden elements */
+        #fileInput {
+            display: none;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        /* Info Text */
+        .info-text {
+            font-size: 11px;
+            line-height: 14px;
+            color: var(--ys-black);
+            text-align: center;
+            margin: 2px 0;
+        }
+
+        /* Range Value Display */
+        .range-value {
+            font-size: 10px;
+            color: var(--ys-black);
+            margin-left: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                position: static;
+                max-height: none;
+            }
+
+            .type-display-xl {
+                font-size: 60px;
+                line-height: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .export-row {
+                grid-template-columns: 1fr;
+            }
+
+            .color-presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="ys-header">
+        <div class="header-left">
+            <span class="studio-name">Yambo Studio</span>
+            <span class="project-type">(Artifacts)</span>
+        </div>
+        <div class="header-center">
+            <span class="artifact-name">ARTIFACT_#001</span>
+        </div>
+        <div class="header-right">
+            <span class="date" id="currentDate"></span>
+            <span class="copyright">©2025 Yambo studio</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="ys-container">
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="type-display-xl">ascii interpreter</h1>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="main-workspace">
+            <!-- Left Panel - Controls -->
+            <div class="control-panel">
+                <!-- Upload Section -->
+                <div class="ys-cross-wrapper upload-section">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="upload-area" id="uploadArea">
+                            <span class="upload-icon">⊕</span>
+                            <p class="info-text">Drop image or click to select</p>
+                            <p class="info-text" style="font-size: 10px;">PNG, JPG, GIF, WebP</p>
+                        </div>
+                        <div class="preview-container" id="previewContainer" style="display: none;">
+                            <img id="previewImage" class="preview-img">
+                            <button class="replace-btn" onclick="replaceImage()">Replace</button>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*">
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <!-- Character Set -->
+                            <div class="control-item">
+                                <label>Character Set</label>
+                                <select id="charSet">
+                                    <option value="standard">Standard</option>
+                                    <option value="simple">Simple</option>
+                                    <option value="blocks">Blocks</option>
+                                    <option value="extended">Extended</option>
+                                    <option value="binary">Binary (0/1)</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Characters -->
+                            <div class="control-item">
+                                <label>Custom Characters</label>
+                                <input type="text" id="customChars" placeholder=" .:-=+*#%@" disabled>
+                            </div>
+
+                            <!-- Width Control -->
+                            <div class="control-item">
+                                <label>Width <span class="range-value" id="widthValue">100</span></label>
+                                <input type="range" id="width" value="100" min="40" max="200" step="10">
+                            </div>
+
+                            <!-- Font Size -->
+                            <div class="control-item">
+                                <label>Font Size <span class="range-value" id="fontSizeValue">12px</span></label>
+                                <input type="range" id="fontSize" value="12" min="8" max="20" step="1">
+                            </div>
+
+                            <!-- Letter Spacing -->
+                            <div class="control-item">
+                                <label>Letter Spacing <span class="range-value" id="letterSpacingValue">0px</span></label>
+                                <input type="range" id="letterSpacing" value="0" min="-2" max="8" step="0.5">
+                            </div>
+
+                            <!-- Line Height -->
+                            <div class="control-item">
+                                <label>Line Height <span class="range-value" id="lineHeightValue">1.0</span></label>
+                                <input type="range" id="lineHeight" value="1" min="0.5" max="2" step="0.1">
+                            </div>
+
+                            <!-- Font Weight -->
+                            <div class="control-item">
+                                <label>Font Weight</label>
+                                <select id="fontWeight">
+                                    <option value="normal">Normal</option>
+                                    <option value="bold">Bold</option>
+                                </select>
+                            </div>
+
+                            <!-- Algorithm -->
+                            <div class="control-item">
+                                <label>Algorithm</label>
+                                <select id="algorithm">
+                                    <option value="average">Average</option>
+                                    <option value="luminosity">Luminosity</option>
+                                    <option value="lightness">Lightness</option>
+                                    <option value="value">Value (HSV)</option>
+                                    <option value="luma">Luma (BT.709)</option>
+                                </select>
+                            </div>
+
+                            <!-- Invert -->
+                            <div class="control-item">
+                                <label>Invert</label>
+                                <select id="invert">
+                                    <option value="false">Normal</option>
+                                    <option value="true">Inverted</option>
+                                </select>
+                            </div>
+
+                            <!-- Color Mode -->
+                            <div class="control-item">
+                                <label>Color Mode</label>
+                                <select id="colorMode">
+                                    <option value="mono">Monochrome</option>
+                                    <option value="html">Original Colors</option>
+                                    <option value="duotone">Duotone</option>
+                                    <option value="gradient">Gradient Map</option>
+                                    <option value="matrix">Matrix Rain</option>
+                                    <option value="retro">Retro Terminal</option>
+                                    <option value="cyberpunk">Cyberpunk</option>
+                                </select>
+                            </div>
+
+                            <!-- Text Color -->
+                            <div class="control-item">
+                                <label>Text Color</label>
+                                <input type="color" id="textColor" value="#000000">
+                            </div>
+
+                            <!-- Background Color -->
+                            <div class="control-item">
+                                <label>Background Color</label>
+                                <input type="color" id="bgColor" value="#FFFFFF">
+                            </div>
+
+                            <!-- Color Presets -->
+                            <div class="control-item">
+                                <label>Color Presets</label>
+                                <div class="color-presets">
+                                    <button class="preset-btn active" style="background: linear-gradient(45deg, #000 50%, #FFF 50%);"
+                                            onclick="applyPreset('#000000', '#FFFFFF', 'mono')" title="Classic"></button>
+                                    <button class="preset-btn" style="background: linear-gradient(45deg, #FFF 50%, #000 50%);"
+                                            onclick="applyPreset('#FFFFFF', '#000000', 'mono')" title="Inverted"></button>
+                                    <button class="preset-btn" style="background: linear-gradient(45deg, #FF006E 50%, #8338EC 50%);"
+                                            onclick="applyPreset('#FF006E', '#8338EC', 'duotone')" title="Vapor"></button>
+                                    <button class="preset-btn" style="background: linear-gradient(45deg, #00F5FF 50%, #FF00F5 50%);"
+                                            onclick="applyPreset('#00F5FF', '#FF00F5', 'gradient')" title="Neon"></button>
+                                    <button class="preset-btn" style="background: linear-gradient(45deg, #00FF41 50%, #000 50%);"
+                                            onclick="applyPreset('#00FF41', '#000000', 'matrix')" title="Matrix"></button>
+                                    <button class="preset-btn" style="background: linear-gradient(45deg, #FFB700 50%, #1A1A2E 50%);"
+                                            onclick="applyPreset('#FFB700', '#1A1A2E', 'retro')" title="Retro"></button>
+                                    <button class="preset-btn" style="background: linear-gradient(45deg, #F72585 50%, #7209B7 50%);"
+                                            onclick="applyPreset('#F72585', '#7209B7', 'cyberpunk')" title="Cyber"></button>
+                                    <button class="preset-btn custom-preset" id="customPresetBtn" style="background: linear-gradient(45deg, var(--custom-col1, #666) 50%, var(--custom-col2, #999) 50%);"
+                                            onclick="applyCustomPreset()" title="Custom">
+                                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: white; text-shadow: 0 0 2px black;">✎</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Custom Color Inputs (hidden by default) -->
+                            <div class="control-item" id="customColorInputs" style="display: none;">
+                                <label>Custom Preset Colors</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div>
+                                        <label style="font-size: 9px;">Color 1</label>
+                                        <input type="color" id="customColor1" value="#666666" onchange="updateCustomPreset()">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 9px;">Color 2</label>
+                                        <input type="color" id="customColor2" value="#999999" onchange="updateCustomPreset()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Output -->
+            <div class="output-panel">
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <pre id="asciiOutput" class="ascii-output">// ascii interpreter
+// waiting for image input...
+// drop or select an image to begin</pre>
+
+                        <!-- Export Buttons -->
+                        <div class="export-row">
+                            <button class="export-btn" onclick="exportText()">TXT</button>
+                            <button class="export-btn" onclick="exportHTML()">HTML</button>
+                            <button class="export-btn red" onclick="exportImage2K()">2K</button>
+                            <button class="export-btn red" onclick="exportImage4K()">4K</button>
+                            <button class="export-btn" onclick="exportImageAlpha2K()">2K+α</button>
+                            <button class="export-btn" onclick="exportImageAlpha4K()">4K+α</button>
+                            <button class="export-btn" onclick="copyToClipboard()">Copy</button>
+                            <button class="export-btn" onclick="resetAll()">Reset</button>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Canvas -->
+    <canvas id="canvas"></canvas>
+
+    <script>
+        // Update date
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
+        document.getElementById('currentDate').textContent = `${dateStr} (Creation Date: Today)`;
+
+        // Character sets
+        const charSets = {
+            standard: ' .:-=+*#%@',
+            simple: ' .oO0@',
+            blocks: ' ░▒▓█',
+            extended: ' .\':,;^`"~-_+=<>iv%xclrs{*}I?!][1)|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao#MW&8B@$',
+            binary: ' 01',
+            custom: ''
+        };
+
+        let currentImage = null;
+        let currentAsciiData = '';
+
+        // File input handling
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const asciiOutput = document.getElementById('asciiOutput');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImage(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImage(file);
+            }
+        });
+
+        // Replace image function
+        function replaceImage() {
+            fileInput.click();
+        }
+
+        // Range input value displays
+        document.getElementById('width').addEventListener('input', (e) => {
+            document.getElementById('widthValue').textContent = e.target.value;
+        });
+
+        document.getElementById('fontSize').addEventListener('input', (e) => {
+            document.getElementById('fontSizeValue').textContent = e.target.value + 'px';
+        });
+
+        document.getElementById('letterSpacing').addEventListener('input', (e) => {
+            document.getElementById('letterSpacingValue').textContent = e.target.value + 'px';
+        });
+
+        document.getElementById('lineHeight').addEventListener('input', (e) => {
+            document.getElementById('lineHeightValue').textContent = e.target.value;
+        });
+
+        // Control listeners
+        document.getElementById('charSet').addEventListener('change', () => {
+            const customInput = document.getElementById('customChars');
+            if (document.getElementById('charSet').value === 'custom') {
+                customInput.disabled = false;
+                customInput.focus();
+            } else {
+                customInput.disabled = true;
+            }
+            if (currentImage) processImage();
+        });
+
+        // Add listeners for all controls
+        ['width', 'algorithm', 'colorMode', 'textColor', 'bgColor', 'invert',
+         'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'customChars'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', () => {
+                    if (currentImage) processImage();
+                });
+                if (element.type === 'range') {
+                    element.addEventListener('input', () => {
+                        if (currentImage) processImage();
+                    });
+                }
+            }
+        });
+
+        function handleImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImage = new Image();
+                currentImage.onload = () => {
+                    previewImage.src = currentImage.src;
+                    uploadArea.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                    processImage();
+                };
+                currentImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function processImage() {
+            if (!currentImage) return;
+
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const width = parseInt(document.getElementById('width').value);
+            const charSetType = document.getElementById('charSet').value;
+            const chars = charSetType === 'custom' ?
+                document.getElementById('customChars').value || charSets.standard :
+                charSets[charSetType];
+
+            const algorithm = document.getElementById('algorithm').value;
+            const colorMode = document.getElementById('colorMode').value;
+            const invert = document.getElementById('invert').value === 'true';
+
+            // Calculate dimensions
+            const charAspectRatio = 0.5;
+            const scaleFactor = width / currentImage.width;
+            const height = Math.floor(currentImage.height * scaleFactor * charAspectRatio);
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(currentImage, 0, 0, width, height);
+
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const pixels = imageData.data;
+
+            let ascii = '';
+            let htmlAscii = '';
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const i = (y * width + x) * 4;
+                    const r = pixels[i];
+                    const g = pixels[i + 1];
+                    const b = pixels[i + 2];
+                    const a = pixels[i + 3];
+
+                    let brightness = getBrightness(r, g, b, algorithm);
+                    if (invert) brightness = 255 - brightness;
+
+                    const charIndex = Math.floor((brightness / 255) * (chars.length - 1));
+                    const char = chars[charIndex] || chars[0];
+
+                    // Apply different color modes
+                    let color;
+                    switch(colorMode) {
+                        case 'html':
+                            color = `rgb(${r},${g},${b})`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'duotone':
+                            const mix = brightness / 255;
+                            const textCol = hexToRgb(document.getElementById('textColor').value);
+                            const bgCol = hexToRgb(document.getElementById('bgColor').value);
+                            const mixedR = Math.floor(textCol.r * (1 - mix) + bgCol.r * mix);
+                            const mixedG = Math.floor(textCol.g * (1 - mix) + bgCol.g * mix);
+                            const mixedB = Math.floor(textCol.b * (1 - mix) + bgCol.b * mix);
+                            color = `rgb(${mixedR},${mixedG},${mixedB})`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'gradient':
+                            const gradPos = brightness / 255;
+                            const col1 = hexToRgb(document.getElementById('textColor').value);
+                            const col2 = hexToRgb(document.getElementById('bgColor').value);
+                            const gradR = Math.floor(col1.r * (1 - gradPos) + col2.r * gradPos);
+                            const gradG = Math.floor(col1.g * (1 - gradPos) + col2.g * gradPos);
+                            const gradB = Math.floor(col1.b * (1 - gradPos) + col2.b * gradPos);
+                            color = `rgb(${gradR},${gradG},${gradB})`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'matrix':
+                            const greenShade = Math.floor(100 + brightness * 0.6);
+                            color = `rgb(0,${greenShade},0)`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'retro':
+                            const retroColors = ['#FFB700', '#FF6B6B', '#4ECDC4', '#95E77E'];
+                            const retroIndex = Math.floor((brightness / 255) * retroColors.length);
+                            color = retroColors[Math.min(retroIndex, retroColors.length - 1)];
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'cyberpunk':
+                            const cyberColors = ['#F72585', '#B5179E', '#7209B7', '#560BAD', '#480CA8'];
+                            const cyberIndex = Math.floor((brightness / 255) * cyberColors.length);
+                            color = cyberColors[Math.min(cyberIndex, cyberColors.length - 1)];
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        default: // mono
+                            ascii += char;
+                    }
+                }
+                ascii += '\n';
+                if (colorMode !== 'mono') htmlAscii += '<br>';
+            }
+
+            currentAsciiData = ascii;
+
+            // Update output
+            if (colorMode !== 'mono') {
+                asciiOutput.innerHTML = htmlAscii;
+            } else {
+                asciiOutput.textContent = ascii;
+            }
+
+            // Apply styling
+            const fontSize = document.getElementById('fontSize').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = document.getElementById('letterSpacing').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const textColor = document.getElementById('textColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+
+            asciiOutput.style.fontSize = fontSize + 'px';
+            asciiOutput.style.fontWeight = fontWeight === 'bold' ? '700' : '400';
+            asciiOutput.style.letterSpacing = letterSpacing + 'px';
+            asciiOutput.style.lineHeight = lineHeight;
+
+            if (colorMode === 'mono') {
+                asciiOutput.style.color = textColor;
+            }
+
+            // Set background based on mode
+            if (colorMode === 'matrix') {
+                asciiOutput.style.backgroundColor = '#0a0a0a';
+            } else if (colorMode === 'retro') {
+                asciiOutput.style.backgroundColor = '#1A1A2E';
+            } else if (colorMode === 'cyberpunk') {
+                asciiOutput.style.backgroundColor = '#0D0221';
+            } else {
+                asciiOutput.style.backgroundColor = bgColor;
+            }
+        }
+
+        function getBrightness(r, g, b, algorithm) {
+            switch (algorithm) {
+                case 'average':
+                    return (r + g + b) / 3;
+                case 'luminosity':
+                    return 0.21 * r + 0.72 * g + 0.07 * b;
+                case 'lightness':
+                    return (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
+                case 'value':
+                    return Math.max(r, g, b);
+                case 'luma':
+                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                default:
+                    return (r + g + b) / 3;
+            }
+        }
+
+        // Helper function to convert hex to RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        // Color Presets
+        function applyPreset(textColor, bgColor, mode) {
+            document.getElementById('textColor').value = textColor;
+            document.getElementById('bgColor').value = bgColor;
+            if (mode) {
+                document.getElementById('colorMode').value = mode;
+            }
+
+            // Update active preset
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Hide custom color inputs when selecting other presets
+            document.getElementById('customColorInputs').style.display = 'none';
+
+            if (currentImage) processImage();
+        }
+
+        // Custom Preset Functions
+        function applyCustomPreset() {
+            // Toggle custom color inputs
+            const customInputs = document.getElementById('customColorInputs');
+            customInputs.style.display = customInputs.style.display === 'none' ? 'block' : 'none';
+
+            // Apply custom colors
+            const color1 = document.getElementById('customColor1').value;
+            const color2 = document.getElementById('customColor2').value;
+
+            document.getElementById('textColor').value = color1;
+            document.getElementById('bgColor').value = color2;
+            document.getElementById('colorMode').value = 'gradient';
+
+            // Update active preset
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('customPresetBtn').classList.add('active');
+
+            if (currentImage) processImage();
+        }
+
+        function updateCustomPreset() {
+            const color1 = document.getElementById('customColor1').value;
+            const color2 = document.getElementById('customColor2').value;
+
+            // Update the custom preset button's gradient
+            const customBtn = document.getElementById('customPresetBtn');
+            customBtn.style.background = `linear-gradient(45deg, ${color1} 50%, ${color2} 50%)`;
+
+            // Apply colors if custom preset is active
+            if (customBtn.classList.contains('active')) {
+                document.getElementById('textColor').value = color1;
+                document.getElementById('bgColor').value = color2;
+                if (currentImage) processImage();
+            }
+        }
+
+        // Export functions
+        function exportText() {
+            const blob = new Blob([currentAsciiData], { type: 'text/plain' });
+            downloadFile(blob, 'ascii-art.txt');
+        }
+
+        function exportHTML() {
+            const asciiOutput = document.getElementById('asciiOutput');
+            const colorMode = document.getElementById('colorMode').value;
+            const fontSize = asciiOutput.style.fontSize;
+            const fontWeight = asciiOutput.style.fontWeight;
+            const letterSpacing = asciiOutput.style.letterSpacing;
+            const lineHeight = asciiOutput.style.lineHeight;
+            const textColor = document.getElementById('textColor').value;
+            let bgColor = document.getElementById('bgColor').value;
+
+            // Set background based on mode
+            if (colorMode === 'matrix') {
+                bgColor = '#0a0a0a';
+            } else if (colorMode === 'retro') {
+                bgColor = '#1A1A2E';
+            } else if (colorMode === 'cyberpunk') {
+                bgColor = '#0D0221';
+            }
+
+            const htmlContent = colorMode !== 'mono' ? asciiOutput.innerHTML : currentAsciiData.replace(/\n/g, '<br>');
+
+            const html = `<!DOCTYPE html>
+<html><head><title>ASCII Art - YS Studio ARTIFACT_#001</title>
+<meta charset="UTF-8">
+<style>
+@font-face {
+    font-family: 'Courier Prime';
+    src: local('Courier Prime'), local('Courier New'), monospace;
+}
+body {
+    background: ${bgColor};
+    color: ${textColor};
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    white-space: pre;
+    font-size: ${fontSize};
+    font-weight: ${fontWeight};
+    letter-spacing: ${letterSpacing};
+    line-height: ${lineHeight};
+    padding: 40px;
+    margin: 0;
+}
+span {
+    white-space: pre;
+}
+</style>
+</head><body>${htmlContent}</body></html>`;
+
+            const blob = new Blob([html], { type: 'text/html' });
+            downloadFile(blob, 'ascii-art.html');
+        }
+
+        function exportImage2K() {
+            exportImageWithResolution(1920, 1080, false);
+        }
+
+        function exportImage4K() {
+            exportImageWithResolution(3840, 2160, false);
+        }
+
+        function exportImageAlpha2K() {
+            exportImageWithResolution(1920, 1080, true);
+        }
+
+        function exportImageAlpha4K() {
+            exportImageWithResolution(3840, 2160, true);
+        }
+
+        function exportImageWithResolution(targetWidth, targetHeight, withAlpha) {
+            if (!currentAsciiData) {
+                alert('Please generate ASCII art first');
+                return;
+            }
+
+            const asciiOutput = document.getElementById('asciiOutput');
+            const colorMode = document.getElementById('colorMode').value;
+
+            // Create a temporary container to measure actual dimensions
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.visibility = 'hidden';
+            tempDiv.style.whiteSpace = 'pre';
+            tempDiv.style.fontFamily = asciiOutput.style.fontFamily;
+            tempDiv.style.fontSize = asciiOutput.style.fontSize;
+            tempDiv.style.fontWeight = asciiOutput.style.fontWeight;
+            tempDiv.style.letterSpacing = asciiOutput.style.letterSpacing;
+            tempDiv.style.lineHeight = asciiOutput.style.lineHeight;
+
+            if (colorMode !== 'mono') {
+                tempDiv.innerHTML = asciiOutput.innerHTML;
+            } else {
+                tempDiv.textContent = currentAsciiData;
+            }
+
+            document.body.appendChild(tempDiv);
+
+            // Get actual dimensions of ASCII art
+            const actualWidth = tempDiv.scrollWidth;
+            const actualHeight = tempDiv.scrollHeight;
+
+            document.body.removeChild(tempDiv);
+
+            // Calculate scale to fit target resolution while maintaining aspect ratio
+            const scaleX = targetWidth / actualWidth;
+            const scaleY = targetHeight / actualHeight;
+            const scale = Math.min(scaleX, scaleY) * 0.9; // 0.9 for some padding
+
+            // Calculate final canvas size
+            const canvasWidth = Math.floor(actualWidth * scale);
+            const canvasHeight = Math.floor(actualHeight * scale);
+
+            // Center the content
+            const offsetX = (targetWidth - canvasWidth) / 2;
+            const offsetY = (targetHeight - canvasHeight) / 2;
+
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = targetWidth;
+            exportCanvas.height = targetHeight;
+            const ctx = exportCanvas.getContext('2d');
+
+            // Set background
+            let bgColor = document.getElementById('bgColor').value;
+            if (colorMode === 'matrix') {
+                bgColor = '#0a0a0a';
+            } else if (colorMode === 'retro') {
+                bgColor = '#1A1A2E';
+            } else if (colorMode === 'cyberpunk') {
+                bgColor = '#0D0221';
+            }
+
+            if (!withAlpha) {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, targetWidth, targetHeight);
+            }
+
+            // Set text properties
+            const fontSize = parseFloat(asciiOutput.style.fontSize) * scale;
+            const fontWeight = asciiOutput.style.fontWeight;
+            const letterSpacing = parseFloat(asciiOutput.style.letterSpacing || 0) * scale;
+            const lineHeight = parseFloat(asciiOutput.style.lineHeight || 1);
+
+            ctx.font = `${fontWeight === '700' || fontWeight === 'bold' ? 'bold' : 'normal'} ${fontSize}px 'Courier New', monospace`;
+            ctx.textBaseline = 'top';
+
+            const lines = currentAsciiData.split('\n');
+            const actualLineHeight = fontSize * lineHeight;
+
+            // Handle different color modes
+            if (colorMode === 'mono') {
+                ctx.fillStyle = document.getElementById('textColor').value;
+                lines.forEach((line, y) => {
+                    let x = offsetX;
+                    for (let i = 0; i < line.length; i++) {
+                        ctx.fillText(line[i], x, offsetY + (y * actualLineHeight));
+                        x += fontSize * 0.6 + letterSpacing;
+                    }
+                });
+            } else {
+                // For colored modes, we need to extract colors from the HTML
+                const tempDiv2 = document.createElement('div');
+                tempDiv2.innerHTML = asciiOutput.innerHTML;
+                const spans = tempDiv2.querySelectorAll('span');
+                const brs = tempDiv2.querySelectorAll('br');
+
+                let lineY = 0;
+                let lineX = offsetX;
+                let charIndex = 0;
+
+                // Parse the HTML to get colors
+                const coloredChars = [];
+                let currentLine = [];
+
+                asciiOutput.childNodes.forEach(node => {
+                    if (node.nodeName === 'SPAN') {
+                        const color = node.style.color || document.getElementById('textColor').value;
+                        currentLine.push({ char: node.textContent, color: color });
+                    } else if (node.nodeName === 'BR') {
+                        coloredChars.push(currentLine);
+                        currentLine = [];
+                    } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                        currentLine.push({ char: node.textContent, color: document.getElementById('textColor').value });
+                    }
+                });
+                if (currentLine.length > 0) coloredChars.push(currentLine);
+
+                // Draw colored characters
+                coloredChars.forEach((line, y) => {
+                    let x = offsetX;
+                    line.forEach(charObj => {
+                        ctx.fillStyle = charObj.color;
+                        ctx.fillText(charObj.char, x, offsetY + (y * actualLineHeight));
+                        x += fontSize * 0.6 + letterSpacing;
+                    });
+                });
+            }
+
+            exportCanvas.toBlob((blob) => {
+                downloadFile(blob, `ascii-art-${targetWidth}x${targetHeight}${withAlpha ? '-alpha' : ''}.png`);
+            }, 'image/png');
+        }
+
+        function copyToClipboard() {
+            if (!currentAsciiData) {
+                alert('Please generate ASCII art first');
+                return;
+            }
+
+            navigator.clipboard.writeText(currentAsciiData).then(() => {
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#000';
+                btn.style.color = '#fff';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 1500);
+            });
+        }
+
+        function resetAll() {
+            currentImage = null;
+            currentAsciiData = '';
+            previewContainer.style.display = 'none';
+            uploadArea.style.display = 'block';
+            asciiOutput.innerHTML = '// ascii interpreter\n// waiting for image input...\n// drop or select an image to begin';
+            fileInput.value = '';
+
+            // Reset controls to defaults
+            document.getElementById('width').value = 100;
+            document.getElementById('widthValue').textContent = '100';
+            document.getElementById('charSet').value = 'standard';
+            document.getElementById('algorithm').value = 'average';
+            document.getElementById('colorMode').value = 'mono';
+            document.getElementById('textColor').value = '#000000';
+            document.getElementById('bgColor').value = '#FFFFFF';
+            document.getElementById('invert').value = 'false';
+            document.getElementById('fontSize').value = 12;
+            document.getElementById('fontSizeValue').textContent = '12px';
+            document.getElementById('fontWeight').value = 'normal';
+            document.getElementById('customChars').value = '';
+            document.getElementById('customChars').disabled = true;
+
+            // Reset preset selection
+            document.querySelectorAll('.preset-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index === 0);
+            });
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
