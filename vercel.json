@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "name": "ys-studio-artifacts",
   "buildCommand": "",
   "devCommand": "",
   "installCommand": "",
@@ -49,7 +48,6 @@
       ]
     }
   ],
-  "functions": {},
   "cleanUrls": true,
   "trailingSlash": false
 }
