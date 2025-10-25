@@ -1,0 +1,341 @@
+/* YS Artifacts - Preset UI Styles - Precise Alignment */
+
+/* Preset Section Container */
+.preset-section {
+    margin-bottom: 12px;
+}
+
+/* ASCII Creator specific - match wrapper-content padding */
+.control-panel .preset-section {
+    padding: 0 12px;
+}
+
+/* Text Visualizer specific - already has padding from parent */
+.controls-panel .preset-section {
+    padding: 0;
+}
+
+/* Preset Controls Container */
+.preset-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Preset Row - Consistent Layout */
+.preset-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    width: 100%;
+}
+
+/* Select Row - Special Layout */
+.preset-select-row {
+    display: grid;
+    grid-template-columns: 1fr 32px;
+    gap: 4px;
+}
+
+/* Preset Select Dropdown */
+.preset-select {
+    width: 100%;
+    padding: 5px 8px;
+    font-size: 10px;
+    border: 1px solid var(--ys-black, #000);
+    background: var(--ys-white, #FFF);
+    cursor: pointer;
+    font-family: var(--font-mono, 'Courier New', monospace);
+    height: 26px;
+}
+
+.preset-select:focus {
+    outline: none;
+    background: #FAFAFA;
+}
+
+/* Icon Button - Square */
+.preset-btn-icon {
+    width: 32px;
+    height: 26px;
+    padding: 0;
+    background: var(--ys-white, #FFF);
+    color: var(--ys-black, #000);
+    border: 1px solid var(--ys-black, #000);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preset-btn-icon:hover {
+    background: var(--ys-black, #000);
+    color: var(--ys-white, #FFF);
+}
+
+/* Main Preset Buttons */
+.preset-btn {
+    width: 100%;
+    height: 26px;
+    padding: 0 10px;
+    background: var(--ys-white, #FFF);
+    color: var(--ys-black, #000);
+    border: 1px solid var(--ys-black, #000);
+    font-size: 9px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.preset-btn:hover {
+    background: var(--ys-black, #000);
+    color: var(--ys-white, #FFF);
+}
+
+.preset-btn:active {
+    transform: scale(0.98);
+}
+
+/* Secondary Buttons - Export/Import */
+.preset-btn-secondary {
+    width: 100%;
+    height: 22px;
+    padding: 0 8px;
+    background: var(--ys-white, #FFF);
+    color: #666;
+    border: 1px solid #CCC;
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+.preset-btn-secondary:hover {
+    color: var(--ys-black, #000);
+    border-color: var(--ys-black, #000);
+}
+
+/* Current Preset Display */
+.current-preset-display {
+    font-size: 9px;
+    color: #666;
+    margin-top: 4px;
+    padding-left: 8px;
+    border-left: 2px solid var(--ys-black, #000);
+    line-height: 1.2;
+}
+
+.current-preset-name {
+    font-weight: 500;
+    color: var(--ys-black, #000);
+}
+
+/* Legacy Support - Remove old classes */
+.preset-select-group,
+.preset-btn-group,
+.preset-io-group,
+.preset-io-btn,
+.preset-btn.load-btn,
+.preset-btn.save-btn,
+.preset-btn.delete-btn {
+    /* Deprecated - kept for backward compatibility */
+}
+
+/* Preset Modal - YS Design System */
+.preset-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.preset-modal.active {
+    display: flex;
+}
+
+.preset-modal-content {
+    background: var(--ys-white, #FFF);
+    border: 2px solid var(--ys-black, #000);
+    padding: 24px;
+    min-width: 360px;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.preset-modal-header {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.preset-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--ys-black, #000);
+    background: var(--ys-white, #FFF);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+.preset-modal-close:hover {
+    background: var(--ys-black, #000);
+    color: var(--ys-white, #FFF);
+}
+
+.preset-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.preset-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.preset-input-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+}
+
+.preset-input,
+.preset-textarea {
+    padding: 8px 10px;
+    font-size: 12px;
+    border: 1px solid var(--ys-black, #000);
+    background: var(--ys-white, #FFF);
+    font-family: var(--font-mono, 'Courier New', monospace);
+}
+
+.preset-input:focus,
+.preset-textarea:focus {
+    outline: none;
+    background: #FAFAFA;
+}
+
+.preset-input[type="password"] {
+    letter-spacing: 2px;
+}
+
+.preset-textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.preset-modal-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.preset-modal-btn {
+    flex: 1;
+    padding: 10px 20px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--ys-black, #000);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.preset-modal-btn.cancel {
+    background: var(--ys-white, #FFF);
+    color: var(--ys-black, #000);
+}
+
+.preset-modal-btn.cancel:hover {
+    background: #F5F5F5;
+}
+
+.preset-modal-btn.confirm {
+    background: var(--ys-black, #000);
+    color: var(--ys-white, #FFF);
+}
+
+.preset-modal-btn.confirm:hover {
+    background: #333;
+}
+
+/* Loading State */
+.preset-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.preset-loading::after {
+    content: 'Loading...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--ys-white, #FFF);
+    padding: 2px 6px;
+    border: 1px solid var(--ys-black, #000);
+}
+
+/* Preset Notification */
+#presetNotification {
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    padding: 8px 16px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Empty State */
+.preset-empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 10px;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .preset-modal-content {
+        min-width: 90%;
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .preset-row {
+        grid-template-columns: 1fr;
+    }
+
+    .preset-select-row {
+        grid-template-columns: 1fr 32px;
+    }
+}

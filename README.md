@@ -8,15 +8,25 @@ YS Studio Artifacts is a growing collection of standalone HTML tools designed fo
 
 ## 🛠️ Available Tools
 
-### 1. [ASCII Art Creator](tools/ascii-creator/)
+### 1. [ASCII Art Creator](tools/ascii-creator/index_v3.html)
 Transform images into stunning ASCII art with advanced features:
-- 6 different character sets (standard, dense, blocks, artistic, simple, extended)
-- Alpha channel support with adjustable threshold
-- Multiple brightness algorithms
-- Color modes (monochrome, grayscale, full color)
-- Real-time preview and multiple export options
+- 6 different character sets (standard, simple, blocks, extended, binary, custom)
+- Multiple brightness algorithms (average, luminosity, lightness, value, luma)
+- 7 color modes (mono, html, duotone, gradient, matrix, retro, cyberpunk)
+- Real-time preview with adjustable parameters
+- Export to TXT, HTML, PNG (2K/4K with alpha channel)
 
-**Status**: ✅ Live
+**Status**: ✅ Live | **Presets**: ✅ Integrated
+
+### 2. [Text Visualizer](tools/text-visualizer/)
+Create animated typographic patterns with real-time effects:
+- 6 pattern types (grid, circle, wave, spiral, random, orbital)
+- Multiple animation effects (oscillate, rotate, breathe, wave)
+- Advanced mode with repetitions, fragmentation, density control
+- Real-time canvas rendering at 60 FPS
+- Export frames as PNG images
+
+**Status**: ✅ Live | **Presets**: ✅ Integrated
 
 
 ## 🎯 Features
@@ -28,6 +38,17 @@ Transform images into stunning ASCII art with advanced features:
 - **Fast Performance**: Optimized algorithms
 - **Privacy First**: All processing happens client-side
 - **Export Options**: Multiple output formats
+
+### 🎨 Preset System
+All tools now include a sophisticated preset management system:
+- **Random Presets**: Automatic random preset loading on startup
+- **Cloud Storage**: Firebase Firestore backend for preset syncing
+- **Import/Export**: JSON file support for offline sharing
+- **Password Protected**: Secure saving with "yambostudio" password
+- **Local Fallback**: Works offline with localStorage caching
+- **Parameter Safety**: Old presets work with new tool versions
+
+For implementation details, see [Preset System Guide](docs/PRESET_SYSTEM_GUIDE.md)
 
 
 ## 🤖 Claude Skills Integration

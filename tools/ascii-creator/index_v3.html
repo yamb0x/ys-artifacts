@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASCII Interpreter - YS Studio Artifacts</title>
+    <link rel="stylesheet" href="../../shared/preset-ui.css">
     <style>
         /* Import Courier Prime */
         @font-face {
@@ -601,6 +602,9 @@
                         <span class="cross-small"></span>
                     </div>
                 </div>
+
+                <!-- Preset Section -->
+                <div id="presetContainer"></div>
 
                 <!-- Controls -->
                 <div class="ys-cross-wrapper">
@@ -1405,6 +1409,138 @@ span {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
+
+        // ASCII Creator Preset Integration
+        // Extract all current parameters
+        window.extractASCIIParams = function() {
+            return {
+                width: parseInt(document.getElementById('width').value),
+                charSet: document.getElementById('charSet').value,
+                customChars: document.getElementById('customChars').value,
+                algorithm: document.getElementById('algorithm').value,
+                colorMode: document.getElementById('colorMode').value,
+                invert: document.getElementById('invert').value === 'true',
+                fontSize: parseInt(document.getElementById('fontSize').value),
+                fontWeight: document.getElementById('fontWeight').value,
+                letterSpacing: parseFloat(document.getElementById('letterSpacing').value),
+                lineHeight: parseFloat(document.getElementById('lineHeight').value),
+                textColor: document.getElementById('textColor').value,
+                bgColor: document.getElementById('bgColor').value,
+                customColor1: document.getElementById('customColor1').value,
+                customColor2: document.getElementById('customColor2').value
+            };
+        }
+
+        // Apply preset parameters
+        window.applyASCIIPreset = function(params) {
+            // Apply all parameters
+            if (params.width !== undefined) {
+                document.getElementById('width').value = params.width;
+                document.getElementById('widthValue').textContent = params.width;
+            }
+            if (params.charSet !== undefined) {
+                document.getElementById('charSet').value = params.charSet;
+                // Enable custom chars input if needed
+                document.getElementById('customChars').disabled = params.charSet !== 'custom';
+            }
+            if (params.customChars !== undefined) {
+                document.getElementById('customChars').value = params.customChars;
+            }
+            if (params.algorithm !== undefined) {
+                document.getElementById('algorithm').value = params.algorithm;
+            }
+            if (params.colorMode !== undefined) {
+                document.getElementById('colorMode').value = params.colorMode;
+            }
+            if (params.invert !== undefined) {
+                document.getElementById('invert').value = params.invert ? 'true' : 'false';
+            }
+            if (params.fontSize !== undefined) {
+                document.getElementById('fontSize').value = params.fontSize;
+                document.getElementById('fontSizeValue').textContent = params.fontSize + 'px';
+            }
+            if (params.fontWeight !== undefined) {
+                document.getElementById('fontWeight').value = params.fontWeight;
+            }
+            if (params.letterSpacing !== undefined) {
+                document.getElementById('letterSpacing').value = params.letterSpacing;
+                document.getElementById('letterSpacingValue').textContent = params.letterSpacing + 'px';
+            }
+            if (params.lineHeight !== undefined) {
+                document.getElementById('lineHeight').value = params.lineHeight;
+                document.getElementById('lineHeightValue').textContent = params.lineHeight;
+            }
+            if (params.textColor !== undefined) {
+                document.getElementById('textColor').value = params.textColor;
+            }
+            if (params.bgColor !== undefined) {
+                document.getElementById('bgColor').value = params.bgColor;
+            }
+            if (params.customColor1 !== undefined) {
+                document.getElementById('customColor1').value = params.customColor1;
+            }
+            if (params.customColor2 !== undefined) {
+                document.getElementById('customColor2').value = params.customColor2;
+                // Update custom preset button gradient
+                const customBtn = document.getElementById('customPresetBtn');
+                if (customBtn) {
+                    customBtn.style.background = `linear-gradient(45deg, ${params.customColor1} 50%, ${params.customColor2} 50%)`;
+                }
+            }
+
+            // Update preset button states if colorMode matches a preset
+            if (params.colorMode) {
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Try to find matching preset button
+                if (params.colorMode === 'mono' && params.textColor === '#000000' && params.bgColor === '#FFFFFF') {
+                    document.querySelectorAll('.preset-btn')[0]?.classList.add('active');
+                } else if (params.colorMode === 'mono' && params.textColor === '#FFFFFF' && params.bgColor === '#000000') {
+                    document.querySelectorAll('.preset-btn')[1]?.classList.add('active');
+                } else if (params.colorMode === 'matrix') {
+                    document.querySelectorAll('.preset-btn')[4]?.classList.add('active');
+                } else if (params.colorMode === 'retro') {
+                    document.querySelectorAll('.preset-btn')[5]?.classList.add('active');
+                } else if (params.colorMode === 'cyberpunk') {
+                    document.querySelectorAll('.preset-btn')[6]?.classList.add('active');
+                }
+            }
+
+            // Re-process image if one is loaded
+            if (typeof currentImage !== 'undefined' && currentImage) {
+                processImage();
+            }
+        }
+    </script>
+
+    <!-- Preset System Scripts -->
+    <script type="module">
+        import { PresetManager } from '../../shared/preset-manager.js';
+        import { PresetUIComponent } from '../../shared/preset-ui-component.js';
+
+        // Initialize preset manager for ASCII Creator
+        const presetManager = new PresetManager('ascii-creator');
+        const presetUI = new PresetUIComponent(presetManager, window.extractASCIIParams);
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', async () => {
+                // Create preset UI
+                presetUI.create('presetContainer');
+
+                // Initialize with random preset
+                await presetManager.initialize(window.applyASCIIPreset);
+            });
+        } else {
+            // DOM is already ready
+            presetUI.create('presetContainer');
+            presetManager.initialize(window.applyASCIIPreset);
+        }
+
+        // Make preset manager available globally for debugging
+        window.asciiPresetManager = presetManager;
     </script>
 </body>
 </html>

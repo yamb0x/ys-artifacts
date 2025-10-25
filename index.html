@@ -274,6 +274,38 @@
             pointer-events: none;
         }
 
+        /* Text Visualizer Preview */
+        .text-preview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ys-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .text-pattern {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-suisse);
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ys-black);
+        }
+
+        .text-pattern span {
+            user-select: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover .text-pattern span {
+            opacity: 1;
+        }
+
         /* Tool Info */
         .tool-info {
             padding: 24px;
@@ -516,6 +548,59 @@
                         <span class="tool-tag">Image Processing</span>
                         <span class="tool-tag">Text Art</span>
                         <span class="tool-tag">Creative</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Text Visualizer -->
+            <a href="tools/text-visualizer/index.html" class="tool-card with-crosses">
+                <!-- Corner Crosses -->
+                <div class="card-cross top-left">+</div>
+                <div class="card-cross top-right">+</div>
+                <div class="card-cross bottom-left">+</div>
+                <div class="card-cross bottom-right">+</div>
+
+                <div class="status-badge">New</div>
+                <div class="tool-preview">
+                    <div class="text-preview">
+                        <div class="text-pattern">
+                            <span style="position: absolute; top: 20%; left: 20%; transform: rotate(-15deg);">Y</span>
+                            <span style="position: absolute; top: 20%; left: 40%; transform: rotate(25deg);">S</span>
+                            <span style="position: absolute; top: 20%; left: 60%; transform: rotate(-30deg);">•</span>
+                            <span style="position: absolute; top: 20%; left: 80%; transform: rotate(45deg);">S</span>
+
+                            <span style="position: absolute; top: 40%; left: 10%; transform: rotate(10deg);">T</span>
+                            <span style="position: absolute; top: 40%; left: 30%; transform: rotate(-20deg); font-size: 32px;">U</span>
+                            <span style="position: absolute; top: 40%; left: 50%; transform: rotate(35deg);">D</span>
+                            <span style="position: absolute; top: 40%; left: 70%; transform: rotate(-40deg); font-size: 28px;">I</span>
+                            <span style="position: absolute; top: 40%; left: 90%; transform: rotate(15deg);">O</span>
+
+                            <span style="position: absolute; top: 60%; left: 15%; transform: rotate(-25deg); font-size: 36px;">A</span>
+                            <span style="position: absolute; top: 60%; left: 35%; transform: rotate(50deg);">R</span>
+                            <span style="position: absolute; top: 60%; left: 55%; transform: rotate(-15deg);">T</span>
+                            <span style="position: absolute; top: 60%; left: 75%; transform: rotate(20deg); font-size: 30px;">I</span>
+
+                            <span style="position: absolute; top: 80%; left: 25%; transform: rotate(30deg);">F</span>
+                            <span style="position: absolute; top: 80%; left: 45%; transform: rotate(-35deg); font-size: 34px;">A</span>
+                            <span style="position: absolute; top: 80%; left: 65%; transform: rotate(40deg);">C</span>
+                            <span style="position: absolute; top: 80%; left: 85%; transform: rotate(-10deg);">T</span>
+
+                            <!-- Circle pattern overlay -->
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 1px solid rgba(0,0,0,0.1); border-radius: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-info">
+                    <div class="tool-number">002</div>
+                    <h2 class="tool-title">Text Visualizer<span class="cross-small"></span></h2>
+                    <p class="tool-description">
+                        Transform typography into artistic patterns with grid, circular, wave,
+                        spiral, and random distributions. Real-time preview and PNG export.
+                    </p>
+                    <div class="tool-tags">
+                        <span class="tool-tag">Typography</span>
+                        <span class="tool-tag">Patterns</span>
+                        <span class="tool-tag">Generative</span>
                     </div>
                 </div>
             </a>
