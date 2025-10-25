@@ -554,6 +554,16 @@
             z-index: 100;
         }
 
+        /* Recording Indicator Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        #recordingDot {
+            animation: pulse 1s infinite;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .controls-panel {
@@ -833,11 +843,78 @@
                 <div id="patternParams"></div>
             </div>
 
-            <!-- Actions Section -->
+            <!-- Export Section -->
             <div class="control-section">
-                <h3 class="section-title">Actions</h3>
+                <h3 class="section-title">Export</h3>
+
+                <!-- Export Type Toggle -->
                 <div class="control-group">
-                    <button id="exportBtn" class="btn btn-primary">Export Frame ↓</button>
+                    <label>Export Type</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" data-export="frame">Frame</button>
+                        <button class="toggle-btn" data-export="animation">Animation</button>
+                    </div>
+                </div>
+
+                <!-- Frame Export Controls -->
+                <div id="frameExportControls">
+                    <div class="control-group">
+                        <button id="exportBtn" class="btn btn-primary">Export Frame (PNG) ↓</button>
+                    </div>
+                </div>
+
+                <!-- Animation Export Controls -->
+                <div id="animationExportControls" style="display: none;">
+                    <div class="control-group">
+                        <label>Format</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn active" data-format="mp4">MP4</button>
+                            <button class="toggle-btn" data-format="gif">GIF</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Duration Mode</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn active" data-duration="auto">Auto Loop</button>
+                            <button class="toggle-btn" data-duration="custom">Custom</button>
+                        </div>
+                    </div>
+
+                    <div id="customDurationControls" style="display: none;">
+                        <div class="control-group">
+                            <label>Duration: <span id="customDurationValue">5</span>s</label>
+                            <div class="slider-container">
+                                <input type="range" id="customDuration" min="1" max="30" value="5">
+                                <span class="slider-value">5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div id="loopInfo" style="font-size: 11px; opacity: 0.7; margin-bottom: 8px;">
+                            Loop duration: <strong><span id="autoLoopDuration">6.28</span>s</strong>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <button id="exportAnimationBtn" class="btn btn-primary">
+                            <span id="exportAnimationText">Export Animation ↓</span>
+                        </button>
+                    </div>
+
+                    <!-- Recording Indicator -->
+                    <div id="recordingIndicator" style="display: none;">
+                        <div style="padding: 12px; border: 1px solid var(--ys-red); background: rgba(255,0,0,0.05); margin-top: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <div id="recordingDot" style="width: 8px; height: 8px; background: var(--ys-red); border-radius: 50%;"></div>
+                                <span style="font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">RECORDING</span>
+                            </div>
+                            <div style="font-size: 11px; font-family: var(--font-mono);">
+                                Progress: <span id="recordingProgress">0</span>%
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
                 </div>
@@ -867,6 +944,9 @@
         </div>
     </div>
     </div>
+
+    <!-- GIF.js Library for GIF Export (Local) -->
+    <script src="../../shared/gif.js"></script>
 
     <script>
         // Animated Text Visualizer Engine
@@ -941,9 +1021,67 @@
                 // Pre-calculated positions
                 this.basePositions = [];
 
+                // Recording state
+                this.isRecording = false;
+                this.recordingStartTime = 0;
+                this.recordingDuration = 0;
+                this.mediaRecorder = null;
+                this.recordedChunks = [];
+                this.gifEncoder = null;
+                this.recordingFrames = [];
+                this.recordingProgressCallback = null;
+
                 this.setupCanvas();
                 this.calculateBasePositions();
                 this.animate();
+            }
+
+            calculateLoopDuration() {
+                // Calculate the perfect loop duration based on active animation effects
+                // Each effect uses periodic functions (sin/cos) with different frequencies
+
+                let periods = [];
+
+                // Base oscillation period: sin(t) has period 2π
+                periods.push(2 * Math.PI);
+
+                // Rotation effect: sin(0.5t) has period 4π
+                if (this.effects.rotate) {
+                    periods.push(4 * Math.PI);
+                }
+
+                // Breathe effect: sin(2t) has period π
+                if (this.effects.breathe) {
+                    periods.push(Math.PI);
+                }
+
+                // Wave effect: sin(freq * t) has period 2π/freq
+                if (this.effects.wave) {
+                    periods.push(2 * Math.PI / this.animParams.waveFrequency);
+                }
+
+                // Pattern-specific periods
+                if (this.pattern === 'circle' || this.pattern === 'orbital') {
+                    // Orbital motion: baseAngle + time * 0.2 or 0.3
+                    // For perfect loop, need time * speed = 2π
+                    periods.push(2 * Math.PI / 0.3); // Using 0.3 as it's the fastest
+                }
+
+                if (this.pattern === 'spiral') {
+                    // Spiral: angle + time * 0.3
+                    periods.push(2 * Math.PI / 0.3);
+                    // Growth pulse: sin(time * 0.5)
+                    periods.push(2 * Math.PI / 0.5);
+                }
+
+                // Find the longest period (this ensures all effects complete at least one full cycle)
+                const maxPeriod = Math.max(...periods);
+
+                // Convert to seconds, accounting for animation speed
+                // Higher animation speed = shorter real-world duration
+                const durationSeconds = maxPeriod / this.animationSpeed;
+
+                return durationSeconds;
             }
 
             setupCanvas() {
@@ -1362,6 +1500,223 @@
                     URL.revokeObjectURL(url);
                 }, 'image/png', 1.0);
             }
+
+            async startMP4Recording(duration, progressCallback) {
+                try {
+                    // Reset animation to start of loop
+                    this.time = 0;
+                    this.isPlaying = true;
+                    this.isRecording = true;
+                    this.recordingStartTime = performance.now();
+                    this.recordingDuration = duration * 1000; // Convert to milliseconds
+                    this.recordedChunks = [];
+                    this.recordingProgressCallback = progressCallback;
+
+                    // Create media stream from canvas at 60 FPS
+                    const fps = 60;
+                    const stream = this.canvas.captureStream(fps);
+
+                    // Check for H.264 codec support
+                    let mimeType = 'video/mp4;codecs=h264';
+
+                    // Fallback codec detection
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        // Try alternative H.264 variations
+                        const h264Variations = [
+                            'video/mp4',
+                            'video/webm;codecs=h264',
+                            'video/mp4;codecs=avc1',
+                            'video/mp4;codecs=avc1.42E01E'
+                        ];
+
+                        for (const variation of h264Variations) {
+                            if (MediaRecorder.isTypeSupported(variation)) {
+                                mimeType = variation;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Studio-grade quality settings
+                    const options = {
+                        mimeType: mimeType,
+                        videoBitsPerSecond: 10000000 // 10 Mbps for high quality
+                    };
+
+                    this.mediaRecorder = new MediaRecorder(stream, options);
+
+                    // Handle data available
+                    this.mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            this.recordedChunks.push(event.data);
+                        }
+                    };
+
+                    // Handle recording stop
+                    this.mediaRecorder.onstop = () => {
+                        this.finishMP4Recording();
+                    };
+
+                    // Handle errors
+                    this.mediaRecorder.onerror = (event) => {
+                        console.error('MediaRecorder error:', event.error);
+                        this.stopRecording();
+                        alert('Recording failed: ' + event.error.message);
+                    };
+
+                    // Start recording
+                    this.mediaRecorder.start();
+
+                    // Progress tracking
+                    const progressInterval = setInterval(() => {
+                        if (this.isRecording) {
+                            const elapsed = performance.now() - this.recordingStartTime;
+                            const progress = Math.min(elapsed / this.recordingDuration, 1);
+                            if (this.recordingProgressCallback) {
+                                this.recordingProgressCallback(progress);
+                            }
+                        } else {
+                            clearInterval(progressInterval);
+                        }
+                    }, 100);
+
+                    // Stop recording after duration
+                    setTimeout(() => {
+                        this.stopRecording();
+                        clearInterval(progressInterval);
+                    }, this.recordingDuration);
+
+                } catch (error) {
+                    console.error('Failed to start MP4 recording:', error);
+                    this.isRecording = false;
+                    alert('Failed to start recording: ' + error.message);
+                }
+            }
+
+            stopRecording() {
+                if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+                    this.mediaRecorder.stop();
+                }
+                this.isRecording = false;
+            }
+
+            finishMP4Recording() {
+                // Create blob from chunks
+                const blob = new Blob(this.recordedChunks, {
+                    type: 'video/mp4'
+                });
+
+                // Download file
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `text-visual-animated-${Date.now()}.mp4`;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                // Clean up
+                this.recordedChunks = [];
+                this.recordingProgressCallback = null;
+            }
+
+            async startGIFRecording(duration, progressCallback) {
+                try {
+                    // Reset animation to start of loop
+                    this.time = 0;
+                    this.isPlaying = true;
+                    this.isRecording = true;
+                    this.recordingStartTime = performance.now();
+                    this.recordingDuration = duration * 1000; // Convert to milliseconds
+                    this.recordingProgressCallback = progressCallback;
+
+                    // GIF settings for high quality
+                    // Higher frame rate = smoother animation but larger file
+                    // 30 FPS is a good balance for GIF
+                    const fps = 30;
+                    const frameDelay = 1000 / fps; // milliseconds per frame
+                    const totalFrames = Math.ceil((duration * 1000) / frameDelay);
+
+                    // Initialize GIF encoder with high quality settings
+                    this.gifEncoder = new GIF({
+                        workers: 4, // Use 4 web workers for faster encoding
+                        quality: 1, // 1 = best quality, 30 = worst (lower is better)
+                        width: this.canvas.width,
+                        height: this.canvas.height,
+                        workerScript: '../../shared/gif.worker.js',
+                        repeat: 0, // 0 = loop forever
+                        transparent: null // No transparency
+                    });
+
+                    // Handle GIF rendering finished
+                    this.gifEncoder.on('finished', (blob) => {
+                        this.finishGIFRecording(blob);
+                    });
+
+                    // Handle progress from encoder
+                    this.gifEncoder.on('progress', (p) => {
+                        // This is the encoding progress (happens after frame capture)
+                        // We'll show capture progress during recording
+                    });
+
+                    // Capture frames at intervals
+                    let framesCaptured = 0;
+                    const captureInterval = setInterval(() => {
+                        if (this.isRecording && framesCaptured < totalFrames) {
+                            // Add current frame to GIF
+                            this.gifEncoder.addFrame(this.ctx, {
+                                copy: true,
+                                delay: frameDelay
+                            });
+
+                            framesCaptured++;
+
+                            // Update progress (0 to 0.8 during capture, 0.8 to 1.0 during encoding)
+                            const captureProgress = (framesCaptured / totalFrames) * 0.8;
+                            if (this.recordingProgressCallback) {
+                                this.recordingProgressCallback(captureProgress);
+                            }
+
+                            // Stop after all frames captured
+                            if (framesCaptured >= totalFrames) {
+                                clearInterval(captureInterval);
+                                this.isRecording = false;
+
+                                // Update progress to show encoding phase
+                                if (this.recordingProgressCallback) {
+                                    this.recordingProgressCallback(0.8);
+                                }
+
+                                // Start rendering GIF (this may take a moment)
+                                this.gifEncoder.render();
+                            }
+                        }
+                    }, frameDelay);
+
+                } catch (error) {
+                    console.error('Failed to start GIF recording:', error);
+                    this.isRecording = false;
+                    alert('Failed to start GIF recording: ' + error.message);
+                }
+            }
+
+            finishGIFRecording(blob) {
+                // Download file
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `text-visual-animated-${Date.now()}.gif`;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                // Final progress update
+                if (this.recordingProgressCallback) {
+                    this.recordingProgressCallback(1.0);
+                }
+
+                // Clean up
+                this.gifEncoder = null;
+                this.recordingProgressCallback = null;
+            }
         }
 
         // Initialize the engine
@@ -1580,9 +1935,147 @@
             engine.effects.wave = e.target.checked;
         });
 
-        // Export
+        // Export - Frame (existing)
         controls.exportBtn.addEventListener('click', () => {
             engine.exportFrame();
+        });
+
+        // Export - Type Toggle (Frame vs Animation)
+        const exportTypeButtons = document.querySelectorAll('[data-export]');
+        const frameExportControls = document.getElementById('frameExportControls');
+        const animationExportControls = document.getElementById('animationExportControls');
+
+        exportTypeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                exportTypeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const type = btn.dataset.export;
+                frameExportControls.style.display = type === 'frame' ? 'block' : 'none';
+                animationExportControls.style.display = type === 'animation' ? 'block' : 'none';
+
+                if (type === 'animation') {
+                    updateLoopDuration();
+                }
+            });
+        });
+
+        // Export - Format Toggle (MP4 vs GIF)
+        const formatButtons = document.querySelectorAll('[data-format]');
+        formatButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                formatButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Export - Duration Mode Toggle (Auto vs Custom)
+        const durationModeButtons = document.querySelectorAll('[data-duration]');
+        const customDurationControls = document.getElementById('customDurationControls');
+
+        durationModeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                durationModeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const mode = btn.dataset.duration;
+                customDurationControls.style.display = mode === 'custom' ? 'block' : 'none';
+            });
+        });
+
+        // Update loop duration display
+        function updateLoopDuration() {
+            const duration = engine.calculateLoopDuration();
+            document.getElementById('autoLoopDuration').textContent = duration.toFixed(2);
+        }
+
+        // Update loop duration when animation parameters change
+        controls.animSpeed.addEventListener('input', updateLoopDuration);
+        controls.effectOscillate.addEventListener('change', updateLoopDuration);
+        controls.effectRotate.addEventListener('change', updateLoopDuration);
+        controls.effectBreathe.addEventListener('change', updateLoopDuration);
+        controls.effectWave.addEventListener('change', updateLoopDuration);
+        controls.waveFreq.addEventListener('input', updateLoopDuration);
+        controls.patternSelect.addEventListener('change', updateLoopDuration);
+
+        // Custom duration slider
+        const customDurationSlider = document.getElementById('customDuration');
+        customDurationSlider.addEventListener('input', (e) => {
+            updateSliderDisplay(e.target, document.getElementById('customDurationValue'), 's');
+        });
+
+        // Export Animation Button
+        const exportAnimationBtn = document.getElementById('exportAnimationBtn');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const recordingProgress = document.getElementById('recordingProgress');
+
+        exportAnimationBtn.addEventListener('click', async () => {
+            // Get selected format
+            const activeFormatBtn = document.querySelector('[data-format].active');
+            const format = activeFormatBtn ? activeFormatBtn.dataset.format : 'mp4';
+
+            // Get duration
+            const activeDurationBtn = document.querySelector('[data-duration].active');
+            const durationMode = activeDurationBtn ? activeDurationBtn.dataset.duration : 'auto';
+
+            let duration;
+            if (durationMode === 'auto') {
+                duration = engine.calculateLoopDuration();
+            } else {
+                duration = parseFloat(customDurationSlider.value);
+            }
+
+            // Check browser support for MP4
+            if (format === 'mp4') {
+                const testTypes = [
+                    'video/mp4;codecs=h264',
+                    'video/mp4',
+                    'video/webm;codecs=h264',
+                    'video/mp4;codecs=avc1'
+                ];
+
+                let supported = false;
+                for (const type of testTypes) {
+                    if (MediaRecorder.isTypeSupported(type)) {
+                        supported = true;
+                        break;
+                    }
+                }
+
+                if (!supported) {
+                    alert('Sorry, your browser doesn\'t support MP4 recording. Please try GIF format instead.');
+                    return;
+                }
+            }
+
+            // Show recording indicator
+            recordingIndicator.style.display = 'block';
+            exportAnimationBtn.disabled = true;
+            exportAnimationBtn.style.opacity = '0.5';
+
+            try {
+                // Start recording with progress callback
+                if (format === 'mp4') {
+                    await engine.startMP4Recording(duration, (progress) => {
+                        recordingProgress.textContent = Math.round(progress * 100);
+                    });
+                } else if (format === 'gif') {
+                    await engine.startGIFRecording(duration, (progress) => {
+                        recordingProgress.textContent = Math.round(progress * 100);
+                    });
+                }
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Export failed: ' + error.message);
+            } finally {
+                // Hide recording indicator
+                setTimeout(() => {
+                    recordingIndicator.style.display = 'none';
+                    exportAnimationBtn.disabled = false;
+                    exportAnimationBtn.style.opacity = '1';
+                    recordingProgress.textContent = '0';
+                }, 500);
+            }
         });
 
         // Advanced Mode Controls
@@ -1752,7 +2245,13 @@
                 patternGapX: parseInt(document.getElementById('patternGapX')?.value || 80),
                 patternGapY: parseInt(document.getElementById('patternGapY')?.value || 80),
                 patternRadius: parseInt(document.getElementById('patternRadius')?.value || 200),
-                patternGrowth: parseInt(document.getElementById('patternGrowth')?.value || 15)
+                patternGrowth: parseInt(document.getElementById('patternGrowth')?.value || 15),
+
+                // Export settings
+                exportType: document.querySelector('[data-export].active')?.dataset.export || 'frame',
+                exportFormat: document.querySelector('[data-format].active')?.dataset.format || 'mp4',
+                durationMode: document.querySelector('[data-duration].active')?.dataset.duration || 'auto',
+                customDuration: parseInt(document.getElementById('customDuration')?.value || 5)
             };
         }
 
@@ -1926,6 +2425,44 @@
             if (params.patternGrowth !== undefined && document.getElementById('patternGrowth')) {
                 document.getElementById('patternGrowth').value = params.patternGrowth;
                 engine.patternParams.spiralGrowth = params.patternGrowth;
+            }
+
+            // Export settings
+            if (params.exportType !== undefined) {
+                document.querySelectorAll('[data-export]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.export === params.exportType);
+                });
+                // Show/hide appropriate controls
+                const frameExportControls = document.getElementById('frameExportControls');
+                const animationExportControls = document.getElementById('animationExportControls');
+                frameExportControls.style.display = params.exportType === 'frame' ? 'block' : 'none';
+                animationExportControls.style.display = params.exportType === 'animation' ? 'block' : 'none';
+            }
+
+            if (params.exportFormat !== undefined) {
+                document.querySelectorAll('[data-format]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.format === params.exportFormat);
+                });
+            }
+
+            if (params.durationMode !== undefined) {
+                document.querySelectorAll('[data-duration]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.duration === params.durationMode);
+                });
+                const customDurationControls = document.getElementById('customDurationControls');
+                customDurationControls.style.display = params.durationMode === 'custom' ? 'block' : 'none';
+            }
+
+            if (params.customDuration !== undefined) {
+                const customDurationSlider = document.getElementById('customDuration');
+                if (customDurationSlider) {
+                    customDurationSlider.value = params.customDuration;
+                    document.getElementById('customDurationValue').textContent = params.customDuration;
+                    const sliderValue = customDurationSlider.nextElementSibling;
+                    if (sliderValue && sliderValue.classList.contains('slider-value')) {
+                        sliderValue.textContent = params.customDuration;
+                    }
+                }
             }
 
             // Recalculate positions after applying preset
