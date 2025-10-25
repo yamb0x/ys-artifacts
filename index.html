@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YS Studio Artifacts - Creative Tools Collection</title>
+    <title>Archive - YS Studio Artifacts</title>
     <style>
+        /* YS Studio Design System Base */
         * {
             margin: 0;
             padding: 0;
@@ -12,426 +13,520 @@
         }
 
         :root {
-            --primary: #667eea;
-            --primary-dark: #764ba2;
-            --secondary: #f093fb;
-            --accent: #4facfe;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-blue: #0066FF;
+            --ys-green: #00FF00;
+
+            /* Fonts */
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+            --font-mono: 'Courier New', monospace;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 80px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--secondary) 100%);
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
             min-height: 100vh;
-            color: var(--dark);
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 60px;
-            color: white;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 15px;
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            box-shadow: var(--shadow);
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
         }
 
-        h1 {
-            font-size: 3em;
-            font-weight: 800;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
         }
 
-        .subtitle {
-            font-size: 1.3em;
-            opacity: 0.95;
+        .studio-name {
             font-weight: 300;
         }
 
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
+        .project-type {
+            font-style: italic;
         }
 
-        .tool-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
             display: flex;
-            flex-direction: column;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 120px 24px 40px;
+            min-height: 100vh;
+        }
+
+        /* Title Section */
+        .title-section {
+            margin-bottom: 80px;
+        }
+
+        .title-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title {
+            font-family: var(--font-sangbleu);
+            font-size: 160px;
+            line-height: 136px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        .title-cross {
+            position: absolute;
+            right: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            color: var(--ys-red);
+            font-weight: 300;
+            line-height: 1;
+        }
+
+
+        /* Archive Grid */
+        .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        /* Tool Card */
+        .tool-card {
+            display: block;
+            text-decoration: none;
+            color: var(--ys-black);
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+        }
+
+        .tool-card.with-crosses {
+            margin: 20px;
+        }
+
+        /* Card Corner Crosses */
+        .card-cross {
+            position: absolute;
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--ys-black);
+            line-height: 1;
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .card-cross.top-left {
+            top: -12px;
+            left: -12px;
+        }
+
+        .card-cross.top-right {
+            top: -12px;
+            right: -12px;
+        }
+
+        .card-cross.bottom-left {
+            bottom: -12px;
+            left: -12px;
+        }
+
+        .card-cross.bottom-right {
+            bottom: -12px;
+            right: -12px;
         }
 
         .tool-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
-        .tool-header {
-            padding: 30px;
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-bottom: 1px solid #eee;
+        .tool-card:hover .tool-preview {
+            filter: none;
         }
 
-        .tool-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+        .tool-card:hover .card-cross {
+            color: var(--ys-red);
+        }
+
+        /* Tool Preview */
+        .tool-preview {
+            width: 100%;
+            height: 280px;
+            background: var(--ys-gray);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--ys-black);
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+
+        .tool-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ASCII Art Thumbnail - Using actual ASCII art */
+        .ascii-preview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ys-black);
+            color: var(--ys-green);
+            font-family: var(--font-mono);
+            font-size: 5px;
+            line-height: 1.1;
+            letter-spacing: 0.5px;
+            white-space: pre;
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        .ascii-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(0, 255, 0, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        /* Tool Info */
+        .tool-info {
+            padding: 24px;
+        }
+
+        .tool-number {
+            font-size: 10px;
+            letter-spacing: 0.2px;
+            color: var(--ys-black);
+            opacity: 0.5;
+            margin-bottom: 12px;
         }
 
         .tool-title {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 8px;
-        }
-
-        .tool-category {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--primary);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-bottom: 15px;
+            font-size: 24px;
+            line-height: 32px;
+            font-weight: 400;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
 
         .tool-description {
-            color: #666;
-            line-height: 1.6;
-            flex: 1;
-            padding: 0 30px 20px;
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--ys-black);
+            opacity: 0.7;
+            margin-bottom: 16px;
         }
 
-        .tool-features {
-            padding: 20px 30px;
-            background: var(--light);
-            border-top: 1px solid #eee;
-        }
-
-        .feature-list {
-            list-style: none;
+        .tool-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .feature-item {
-            padding: 5px 12px;
-            background: white;
-            border-radius: 15px;
-            font-size: 0.85em;
-            color: #555;
-            border: 1px solid #e0e0e0;
+        .tool-tag {
+            font-size: 10px;
+            letter-spacing: 0.2px;
+            padding: 4px 8px;
+            border: 1px solid var(--ys-black);
+            text-transform: uppercase;
         }
 
+        /* Status Badge */
         .status-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
+            top: 16px;
+            right: 16px;
+            background: var(--ys-red);
+            color: var(--ys-white);
+            padding: 4px 12px;
+            font-size: 10px;
+            letter-spacing: 0.2px;
             text-transform: uppercase;
+            z-index: 1;
         }
 
-        .status-live {
-            background: #28a745;
-            color: white;
+        /* Cross Decoration */
+        .cross-small {
+            width: 12px;
+            height: 12px;
+            position: relative;
+            color: var(--ys-black);
+            display: inline-block;
+            margin-left: 8px;
         }
 
-        .status-beta {
-            background: #ffc107;
-            color: #333;
+        .cross-small::before,
+        .cross-small::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
         }
 
-        .status-coming {
-            background: #6c757d;
-            color: white;
+        .cross-small::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .coming-soon {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .cross-small::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
-        .coming-soon:hover {
-            transform: none;
-            box-shadow: var(--shadow);
+        /* Footer */
+        .ys-footer {
+            border-top: 1px solid var(--ys-black);
+            padding: 40px 24px;
+            margin-top: 120px;
         }
 
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: white;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 20px;
-            margin-top: 60px;
-        }
-
-        .footer-links {
+        .footer-content {
+            max-width: 1920px;
+            margin: 0 auto;
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .footer-link {
-            color: white;
+        .footer-left {
+            font-size: 12px;
+            line-height: 20px;
+            letter-spacing: 0.24px;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 32px;
+            font-size: 12px;
+            letter-spacing: 0.24px;
+        }
+
+        .footer-right a {
+            color: var(--ys-black);
             text-decoration: none;
-            opacity: 0.9;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s ease;
         }
 
-        .footer-link:hover {
-            opacity: 1;
+        .footer-right a:hover {
+            opacity: 0.6;
         }
 
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 40px 0;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat {
-            text-align: center;
-            color: white;
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
+            .page-title {
+                font-size: 80px;
+                line-height: 80px;
+                letter-spacing: -2.4px;
             }
 
-            .tools-grid {
+            .title-cross {
+                font-size: 40px;
+                right: -40px;
+            }
+
+            .archive-grid {
                 grid-template-columns: 1fr;
+                gap: 24px;
             }
 
-            .stats {
+            .header-center {
+                display: none;
+            }
+
+            .footer-content {
                 flex-direction: column;
-                gap: 20px;
+                align-items: flex-start;
+                gap: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 40px;
+                line-height: 40px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <div class="logo-icon">🛠️</div>
-            </div>
-            <h1>YS Studio Artifacts</h1>
-            <p class="subtitle">A collection of creative tools and utilities for modern web development</p>
-        </header>
-
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-number">1</div>
-                <div class="stat-label">Active Tools</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">5+</div>
-                <div class="stat-label">Coming Soon</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">Possibilities</div>
-            </div>
+    <!-- Header -->
+    <header class="ys-header">
+        <div class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
         </div>
+        <div class="header-center">Artifacts</div>
+        <nav class="header-right">
+            <a href="#about">About</a>
+            <a href="#" class="active">Archive</a>
+        </nav>
+    </header>
 
-        <div class="tools-grid">
+    <!-- Main Container -->
+    <main class="ys-container">
+        <!-- Title Section with Cross Motif -->
+        <section class="title-section">
+            <div class="title-wrapper">
+                <h1 class="page-title">artifacts</h1>
+                <div class="title-cross">+</div>
+            </div>
+        </section>
+
+        <!-- Archive Grid -->
+        <section class="archive-grid">
             <!-- ASCII Art Creator -->
-            <a href="tools/ascii-creator/" class="tool-card">
-                <div class="tool-header" style="position: relative;">
-                    <span class="status-badge status-live">Live</span>
-                    <div class="tool-icon">🎨</div>
-                    <h2 class="tool-title">ASCII Art Creator</h2>
-                    <span class="tool-category">Image Processing</span>
+            <a href="tools/ascii-creator/index_v3.html" class="tool-card with-crosses">
+                <!-- Corner Crosses -->
+                <div class="card-cross top-left">+</div>
+                <div class="card-cross top-right">+</div>
+                <div class="card-cross bottom-left">+</div>
+                <div class="card-cross bottom-right">+</div>
+
+                <div class="status-badge">Live</div>
+                <div class="tool-preview">
+                    <div class="ascii-preview">
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+     @@@@@@@@@@@@@@@%#*+=:.........:=+*#%@@@@@@@@@@@@@
+     @@@@@@@@@@%*=:.....................:=*%@@@@@@@@@@
+     @@@@@@@#=:..............................:=#@@@@@@@
+     @@@@@+:....................................:+@@@@@
+     @@@+.........................................:+@@@
+     @@:............................................:@@
+     @:..............................................@:
+     :................................................:
+     .................................................
+     .................................................
+     :................................................:
+     @:..............................................@:
+     @@:............................................:@@
+     @@@+.........................................:+@@@
+     @@@@@+:....................................:+@@@@@
+     @@@@@@@#=:..............................:=#@@@@@@@
+     @@@@@@@@@@%*=:.....................:=*%@@@@@@@@@@
+     @@@@@@@@@@@@@@@%#*+=:.........:=+*#%@@@@@@@@@@@@@
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+           A S C I I   I N T E R P R E T E R
+                    </div>
                 </div>
-                <p class="tool-description">
-                    Transform images into stunning ASCII art with advanced character mapping,
-                    alpha channel support, and multiple artistic styles. Perfect for creating
-                    unique text-based representations of your visuals.
-                </p>
-                <div class="tool-features">
-                    <ul class="feature-list">
-                        <li class="feature-item">6 Character Sets</li>
-                        <li class="feature-item">Alpha Support</li>
-                        <li class="feature-item">Color Modes</li>
-                        <li class="feature-item">Real-time Preview</li>
-                    </ul>
+                <div class="tool-info">
+                    <div class="tool-number">001</div>
+                    <h2 class="tool-title">ASCII Interpreter<span class="cross-small"></span></h2>
+                    <p class="tool-description">
+                        Advanced image-to-ASCII art converter with multiple character sets,
+                        brightness algorithms, and alpha channel support.
+                    </p>
+                    <div class="tool-tags">
+                        <span class="tool-tag">Image Processing</span>
+                        <span class="tool-tag">Text Art</span>
+                        <span class="tool-tag">Creative</span>
+                    </div>
                 </div>
             </a>
+        </section>
+    </main>
 
-            <!-- Color Palette Generator -->
-            <div class="tool-card coming-soon">
-                <div class="tool-header" style="position: relative;">
-                    <span class="status-badge status-coming">Coming</span>
-                    <div class="tool-icon">🎨</div>
-                    <h2 class="tool-title">Color Palette Generator</h2>
-                    <span class="tool-category">Design Tools</span>
-                </div>
-                <p class="tool-description">
-                    Extract beautiful color palettes from images or generate harmonious color
-                    schemes. Export to various formats including CSS, JSON, and design tokens.
-                </p>
-                <div class="tool-features">
-                    <ul class="feature-list">
-                        <li class="feature-item">AI Extraction</li>
-                        <li class="feature-item">Harmony Rules</li>
-                        <li class="feature-item">Export Formats</li>
-                        <li class="feature-item">Accessibility</li>
-                    </ul>
-                </div>
+    <!-- Footer -->
+    <footer class="ys-footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                © 2025 YS Studio Artifacts<br>
+                Creative Tools Collection
             </div>
-
-            <!-- SVG Pattern Maker -->
-            <div class="tool-card coming-soon">
-                <div class="tool-header" style="position: relative;">
-                    <span class="status-badge status-coming">Coming</span>
-                    <div class="tool-icon">🔷</div>
-                    <h2 class="tool-title">SVG Pattern Maker</h2>
-                    <span class="tool-category">Graphics</span>
-                </div>
-                <p class="tool-description">
-                    Create seamless SVG patterns and backgrounds with an intuitive visual editor.
-                    Perfect for web backgrounds, textures, and decorative elements.
-                </p>
-                <div class="tool-features">
-                    <ul class="feature-list">
-                        <li class="feature-item">Visual Editor</li>
-                        <li class="feature-item">Seamless Tiling</li>
-                        <li class="feature-item">Animation</li>
-                        <li class="feature-item">Code Export</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- CSS Animation Studio -->
-            <div class="tool-card coming-soon">
-                <div class="tool-header" style="position: relative;">
-                    <span class="status-badge status-coming">Coming</span>
-                    <div class="tool-icon">✨</div>
-                    <h2 class="tool-title">CSS Animation Studio</h2>
-                    <span class="tool-category">Animation</span>
-                </div>
-                <p class="tool-description">
-                    Design and preview CSS animations with a timeline-based editor.
-                    Generate optimized keyframes and export production-ready code.
-                </p>
-                <div class="tool-features">
-                    <ul class="feature-list">
-                        <li class="feature-item">Timeline Editor</li>
-                        <li class="feature-item">Easing Curves</li>
-                        <li class="feature-item">Live Preview</li>
-                        <li class="feature-item">Code Generation</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Base64 Encoder/Decoder -->
-            <div class="tool-card coming-soon">
-                <div class="tool-header" style="position: relative;">
-                    <span class="status-badge status-coming">Coming</span>
-                    <div class="tool-icon">🔐</div>
-                    <h2 class="tool-title">Base64 Studio</h2>
-                    <span class="tool-category">Utilities</span>
-                </div>
-                <p class="tool-description">
-                    Encode and decode Base64 data with support for images, text, and files.
-                    Features data URI generation and batch processing capabilities.
-                </p>
-                <div class="tool-features">
-                    <ul class="feature-list">
-                        <li class="feature-item">Image Preview</li>
-                        <li class="feature-item">Data URIs</li>
-                        <li class="feature-item">Batch Process</li>
-                        <li class="feature-item">File Support</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- JSON Formatter -->
-            <div class="tool-card coming-soon">
-                <div class="tool-header" style="position: relative;">
-                    <span class="status-badge status-coming">Coming</span>
-                    <div class="tool-icon">📊</div>
-                    <h2 class="tool-title">JSON Studio</h2>
-                    <span class="tool-category">Development</span>
-                </div>
-                <p class="tool-description">
-                    Format, validate, and transform JSON data with a powerful editor.
-                    Features schema validation, diff comparison, and path extraction.
-                </p>
-                <div class="tool-features">
-                    <ul class="feature-list">
-                        <li class="feature-item">Syntax Highlight</li>
-                        <li class="feature-item">Schema Validation</li>
-                        <li class="feature-item">JSON Path</li>
-                        <li class="feature-item">Diff Tool</li>
-                    </ul>
-                </div>
+            <div class="footer-right">
+                <a href="https://github.com/YS-studio-artifacts">GitHub</a>
+                <a href="mailto:studio@yambo.xyz">Contact</a>
             </div>
         </div>
-
-        <footer>
-            <p>© 2024 YS Studio Artifacts - Built with passion and creativity</p>
-            <div class="footer-links">
-                <a href="https://github.com/YS-studio-artifacts" class="footer-link">GitHub</a>
-                <a href="#" class="footer-link">Documentation</a>
-                <a href="#" class="footer-link">Contributing</a>
-            </div>
-        </footer>
-    </div>
+    </footer>
 </body>
 </html>
