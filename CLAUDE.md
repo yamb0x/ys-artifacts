@@ -9,6 +9,107 @@
 - **Performance Optimized**: Fast, efficient algorithms
 - **Offline Capable**: Works without internet connection
 
+## 🚨 CRITICAL DEVELOPMENT RULES - MUST FOLLOW
+
+**These rules are MANDATORY BLOCKERS. Violations will break the project integrity.**
+
+### Rule 1: Design System & Menu Consistency
+**MANDATORY**: All tool menus and UI components must follow the established design pattern:
+
+- ✅ **REFERENCE TEMPLATES**:
+  - `/tools/ascii-creator/index_v3.html` - Complete design system implementation
+  - `/tools/text-visualizer/index.html` - Fully aligned with design system
+- **Before creating any menu/UI**:
+  1. Open one of the reference templates above
+  2. Study the complete structure: crosses, spacing, typography, colors
+  3. Copy the exact CSS patterns for consistency
+
+**Required Design System Elements:**
+
+1. **Title Section**
+   - Large italic title: `120px` Sangbleu font, lowercase
+   - Proper spacing: `margin: 20px 0`
+
+2. **Decorative Crosses**
+   - Small crosses (12×12px) in all 4 corners of each panel
+   - Uses `.ys-cross-wrapper`, `.cross-row`, `.cross-small` components
+   - Top and bottom cross rows with left/right corners
+
+3. **Side Menu (Controls Panel)**
+   - Fixed width: `320px`
+   - White background, wrapped in cross-wrapper
+   - Border only on the right side (panel divider)
+
+4. **Layout Structure**
+   - Two-panel layout: controls (320px) + canvas (flex: 1)
+   - Gap between panels: `24px`
+   - White background throughout (no gray)
+
+5. **Typography & Spacing**
+   - Section titles: `10px`, uppercase, `0.5px` letter-spacing
+   - Labels: `10px`, uppercase, `0.3px` letter-spacing
+   - Control groups: `12px` margin-bottom
+   - Section spacing: `24px` margin, `16px` padding
+
+6. **Form Controls**
+   - Select/inputs: `6px` padding
+   - Buttons: `10px 16px` padding, `11px` font
+   - Sliders: `1px` track height, `12px` thumb
+   - Checkboxes: `12×12px`, custom black/white styling
+   - Toggle buttons: `8px 12px` padding, `11px` font, uppercase
+
+7. **Color System (Monochromatic)**
+   - Black: `#000000` (primary)
+   - White: `#FFFFFF` (backgrounds)
+   - Gray: `#D9D9D9` (borders only)
+   - Red: `#FF0000` (accents - large crosses only)
+   - ❌ NO BLUE anywhere
+
+**BLOCKER**: If UI doesn't match these design system specifications, task is NOT complete.
+
+### Rule 2: Preset Synchronization - ZERO TOLERANCE
+**MANDATORY**: Every new parameter MUST be integrated into the preset system:
+
+**Checklist for ANY new parameter:**
+- [ ] Parameter added to `extractToolParams()` function in tool file
+- [ ] Parameter added to `applyToolPreset()` function in tool file
+- [ ] Test: Save preset with new parameter
+- [ ] Test: Load preset and verify parameter applies correctly
+- [ ] Test: Random preset on page load includes new parameter
+- [ ] Test: Export/import JSON contains new parameter
+
+**Reference Files:**
+- `/tools/ascii-creator/index.html` - Example integration (14 parameters)
+- `/tools/text-visualizer/index.html` - Example integration (28+ parameters)
+- `/docs/PRESET_SYSTEM_GUIDE.md` - Complete documentation
+
+**BLOCKER**: Cannot mark task complete until ALL checklist items verified. No exceptions.
+
+### Rule 3: Test Before Documentation
+**MANDATORY**: Never document or celebrate features until user confirms functionality:
+
+- ❌ **FORBIDDEN**: Writing README updates before testing
+- ❌ **FORBIDDEN**: Declaring completion before user validation
+- ❌ **FORBIDDEN**: Updating documentation before user confirms it works
+- ✅ **REQUIRED**: Test thoroughly → Get user confirmation → THEN document
+
+**Example Workflow:**
+```
+1. Implement feature
+2. Test manually
+3. Report to user: "Feature implemented, please test"
+4. Wait for user confirmation
+5. Only after confirmation: Update README/docs
+```
+
+**BLOCKER**: Documentation without user confirmation violates project protocol.
+
+---
+
+**⚠️ VIOLATION CONSEQUENCES**: Failing to follow these rules creates technical debt, breaks user experience consistency, and requires costly rework. These are not suggestions—they are requirements.
+
+---
+
 ## 🤖 Claude Skills Integration
 
 ### Available Skills for This Project
@@ -60,14 +161,18 @@ ide: VS Code integration and diagnostics
 
 ## 📋 Workflow Protocol
 
+**FIRST**: Review **🚨 CRITICAL DEVELOPMENT RULES** above - these are MANDATORY BLOCKERS.
+
 1. **Read This File FIRST**: Always read CLAUDE.md completely before starting
    - Project-specific rules OVERRIDE framework defaults
    - Check for existing task files in `.claude/tasks/` for context
+   - Pay special attention to the 3 Critical Development Rules
 
 2. **Plan First**: Write a detailed plan to `.claude/task/plan_name_v.md`
    - Include implementation approach and reasoning
    - Break down into manageable tasks
    - Focus on MVP - don't over-engineer
+   - **Verify plan adheres to Critical Rules (design consistency + preset sync)**
 
 3. **Get Approval**: Ask for review before proceeding with implementation
    - Show the plan file content
@@ -76,7 +181,8 @@ ide: VS Code integration and diagnostics
 4. **Create Task Management**: Use TodoWrite tool AFTER approval
    - Break down work into specific, trackable tasks
    - Mark first task as "in_progress" before starting
-   - Example: Update documentation, fix bugs, implement features, etc.
+   - Include verification steps for Critical Rules in task list
+   - Example tasks: Update documentation, fix bugs, implement features, verify preset sync, etc.
 
 **🚨 VIOLATION ALERT**: If you start work without following ALL steps above, you are violating the established workflow protocol.
 
@@ -134,6 +240,56 @@ TodoWrite([
 - Outstanding items
 - Next steps
 
+## 🔧 Preset System
+
+### Complete Documentation
+**📖 See [PRESET_SYSTEM_GUIDE.md](docs/PRESET_SYSTEM_GUIDE.md) for comprehensive documentation**
+
+### Quick Overview
+YS Artifacts includes a sophisticated preset system that enables:
+- 🎲 **Random preset on startup** - Different look every time
+- ☁️ **Firebase cloud storage** - Synced across devices
+- 🔒 **Password protection** - "yambostudio" for save/delete
+- 📁 **Import/Export JSON** - Offline sharing
+- 💾 **Local fallback** - Works without internet
+- ⚡ **Real-time loading** - Instant parameter application
+
+### Current Integration Status
+- ✅ **ASCII Creator**: 14 parameters fully integrated
+- ✅ **Text Visualizer**: 28+ parameters fully integrated
+- 🎨 **UI Design**: Minimal, perfectly aligned with YS system
+- 📊 **Performance**: 5-minute cache, lazy loading
+
+### Quick Integration for New Tools
+
+1. **Add container** in HTML: `<div id="presetContainer"></div>`
+2. **Define parameter functions** (extract & apply)
+3. **Initialize preset system** with ES6 modules
+4. **Test** with save/load/random startup
+
+### Critical Files
+```
+shared/
+├── preset-manager.js       # Firebase & core logic (360 lines)
+├── preset-ui-component.js  # UI & events (365 lines)
+└── preset-ui.css          # Aligned minimal styles (331 lines)
+
+docs/
+└── PRESET_SYSTEM_GUIDE.md  # Complete documentation (450+ lines)
+```
+
+### Adding New Parameters (Won't Break Existing Presets!)
+1. Add to `extractToolParams()` function
+2. Add to `applyToolPreset()` function
+3. Old presets ignore new params (safe)
+4. New presets include all params
+
+### Firebase Credentials (Already Configured)
+- **Project**: ys-artifacts
+- **Password**: yambostudio
+- **Region**: us-central1
+- **Structure**: `/presets/[tool-name]/items/[preset-id]`
+
 ## 🚀 Tool Development Workflow
 
 ### Creating a New Tool
@@ -177,6 +333,13 @@ TodoWrite([
    ```
 
 ### Tool Quality Checklist
+
+**🚨 CRITICAL RULES (BLOCKERS):**
+- [ ] Design matches ascii-creator menu pattern (Rule 1)
+- [ ] All parameters integrated into preset system (Rule 2)
+- [ ] User confirmed functionality before documentation (Rule 3)
+
+**Standard Quality:**
 - [ ] Zero external dependencies
 - [ ] Works offline
 - [ ] Responsive design (mobile + desktop)

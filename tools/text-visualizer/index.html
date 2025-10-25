@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Visualizer (Animated) - YS Studio Artifacts</title>
+    <link rel="stylesheet" href="../../shared/preset-ui.css">
+    <style>
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-gray-light: #F5F5F5;
+
+            /* Fonts */
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+            --font-mono: 'Courier New', monospace;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 80px;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
+        }
+
+        .studio-name {
+            font-weight: 300;
+        }
+
+        .project-type {
+            font-style: italic;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
+        }
+
+        /* Cross Elements */
+        .cross-small {
+            width: 12px;
+            height: 12px;
+            position: relative;
+            color: var(--ys-black);
+            display: inline-block;
+        }
+
+        .cross-small::before,
+        .cross-small::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-small::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-small::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cross-large {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            color: var(--ys-red);
+            display: inline-block;
+        }
+
+        .cross-large::before,
+        .cross-large::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-large::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-large::after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 80px 24px 24px;
+            min-height: 100vh;
+        }
+
+        /* Title Section */
+        .title-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .type-display-xl {
+            font-family: var(--font-sangbleu);
+            font-size: 120px;
+            line-height: 120px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        /* Cross Wrapper Component */
+        .ys-cross-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: var(--ys-white);
+            margin-bottom: 24px;
+        }
+
+        .cross-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 12px;
+            position: relative;
+        }
+
+        .wrapper-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .control-panel .wrapper-content {
+            padding: 12px;
+        }
+
+        /* Tool Container */
+        .tool-container {
+            display: flex;
+            height: calc(100vh - 200px);
+            gap: 24px;
+        }
+
+        /* Left Panel - Controls */
+        .controls-panel {
+            width: 320px;
+            background: var(--ys-white);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .controls-panel .ys-cross-wrapper {
+            margin-bottom: 0;
+            height: 100%;
+        }
+
+        .controls-panel .wrapper-content {
+            padding: var(--spacing-md);
+            overflow-y: auto;
+        }
+
+        /* Right Panel - Canvas */
+        .canvas-panel {
+            flex: 1;
+            background: var(--ys-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-panel .ys-cross-wrapper {
+            margin-bottom: 0;
+            height: 100%;
+        }
+
+        .canvas-panel .wrapper-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            height: 100%;
+        }
+
+        /* Control Sections */
+        .control-section {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--ys-gray);
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        /* Form Elements */
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        select {
+            width: 100%;
+            padding: 6px;
+            font-size: 12px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            cursor: pointer;
+            font-family: var(--font-suisse);
+        }
+
+        /* Custom Slider */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 1px;
+            background: var(--ys-black);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-track {
+            width: 100%;
+            height: 1px;
+            cursor: pointer;
+            background: var(--ys-black);
+        }
+
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 1px;
+            cursor: pointer;
+            background: var(--ys-black);
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: right;
+            font-size: 12px;
+            font-family: var(--font-mono);
+        }
+
+        /* Toggle Buttons */
+        .toggle-group {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--ys-black);
+            overflow: hidden;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--ys-white);
+            border: none;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-right: 1px solid var(--ys-black);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+        }
+
+        .toggle-btn:last-child {
+            border-right: none;
+        }
+
+        .toggle-btn.active {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: var(--ys-gray-light);
+        }
+
+        /* Action Buttons */
+        .btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--ys-white);
+            color: var(--ys-black);
+            border: 1px solid var(--ys-black);
+            font-size: 11px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .btn-primary {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--ys-white);
+            color: var(--ys-black);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Playback Controls */
+        .playback-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .play-btn {
+            padding: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .play-btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .play-btn.playing {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        /* Canvas Styling */
+        #visualCanvas {
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            cursor: crosshair;
+        }
+
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        input[type="checkbox"] {
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            position: relative;
+        }
+
+        input[type="checkbox"]:checked {
+            background: var(--ys-black);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            color: var(--ys-white);
+            font-size: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+        }
+
+        .checkbox-label {
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Character Counter */
+        .char-counter {
+            text-align: right;
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* FPS Counter */
+        .fps-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: var(--ys-white);
+            padding: 4px 8px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            z-index: 100;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .controls-panel {
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .type-display-xl {
+                font-size: 60px;
+                line-height: 60px;
+            }
+
+            .tool-container {
+                flex-direction: column;
+            }
+
+            .controls-panel {
+                width: 100%;
+                max-height: 50vh;
+                border-right: 1px solid var(--ys-black);
+            }
+
+            .header-center {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- YS Header -->
+    <header class="ys-header">
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">Text Visualizer (Animated)</div>
+        <nav class="header-right">
+            <a href="/about.html">About</a>
+            <a href="/" class="active">Tools</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="ys-container">
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="type-display-xl">text visualizer</h1>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="tool-container">
+        <!-- Left Panel: Controls -->
+        <div class="controls-panel">
+            <div class="ys-cross-wrapper">
+                <div class="cross-row">
+                    <span class="cross-small"></span>
+                    <span class="cross-small"></span>
+                </div>
+                <div class="wrapper-content">
+            <!-- Preset Section -->
+            <div id="presetContainer"></div>
+
+            <!-- Text Input Section -->
+            <div class="control-section">
+                <h3 class="section-title">Text Input</h3>
+                <div class="control-group">
+                    <textarea id="textInput" placeholder="Enter your text here...">YAMBO STUDIO</textarea>
+                    <div class="char-counter"><span id="charCount">12</span> characters</div>
+                </div>
+                <div class="control-group">
+                    <label>Mode</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn" data-mode="words">Words</button>
+                        <button class="toggle-btn active" data-mode="characters">Characters</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animation Control Section -->
+            <div class="control-section">
+                <h3 class="section-title">Animation</h3>
+                <div class="playback-controls">
+                    <button id="playBtn" class="play-btn playing">
+                        <span id="playIcon">⏸</span>
+                    </button>
+                    <button id="resetBtn" class="btn">Reset</button>
+                </div>
+
+                <div class="control-group">
+                    <label>Speed: <span id="speedValue">1.0</span>x</label>
+                    <div class="slider-container">
+                        <input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1">
+                        <span class="slider-value">1.0</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Effects</label>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="effectOscillate" checked>
+                        <label for="effectOscillate" class="checkbox-label">Oscillate</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="effectRotate" checked>
+                        <label for="effectRotate" class="checkbox-label">Rotate</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="effectBreathe">
+                        <label for="effectBreathe" class="checkbox-label">Breathe (Scale)</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="effectWave">
+                        <label for="effectWave" class="checkbox-label">Wave</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Phase X: <span id="phaseXValue">30</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="phaseX" min="0" max="100" value="30">
+                        <span class="slider-value">30</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Phase Y: <span id="phaseYValue">30</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="phaseY" min="0" max="100" value="30">
+                        <span class="slider-value">30</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Rotation Amount: <span id="rotAmountValue">180</span>°</label>
+                    <div class="slider-container">
+                        <input type="range" id="rotAmount" min="0" max="360" value="180">
+                        <span class="slider-value">180</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Wave Frequency: <span id="waveFreqValue">0.5</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="waveFreq" min="0.1" max="2" step="0.1" value="0.5">
+                        <span class="slider-value">0.5</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Stagger: <span id="staggerValue">0.1</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="stagger" min="0" max="0.5" step="0.01" value="0.1">
+                        <span class="slider-value">0.1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Mode Section -->
+            <div class="control-section">
+                <h3 class="section-title">Advanced Mode</h3>
+                <div class="control-group">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="advancedMode">
+                        <label for="advancedMode" class="checkbox-label"><strong>Enable Advanced Mode</strong></label>
+                    </div>
+                </div>
+
+                <div id="advancedControls" style="display: none;">
+                    <div class="control-group">
+                        <label>Repetitions: <span id="repetitionsValue">1</span>x</label>
+                        <div class="slider-container">
+                            <input type="range" id="repetitions" min="1" max="100" value="1">
+                            <span class="slider-value">1</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Fragment Mode</label>
+                        <select id="fragmentMode">
+                            <option value="phrase">Full Phrase</option>
+                            <option value="words">Words</option>
+                            <option value="characters">Characters</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Density: <span id="densityValue">1.0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="density" min="0.1" max="2" step="0.1" value="1">
+                            <span class="slider-value">1.0</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Overlap: <span id="overlapValue">0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="overlap" min="0" max="1" step="0.05" value="0">
+                            <span class="slider-value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Size Variation: <span id="sizeVariationValue">0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="sizeVariation" min="0" max="1" step="0.05" value="0">
+                            <span class="slider-value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Opacity Variation: <span id="opacityVariationValue">0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="opacityVariation" min="0" max="1" step="0.05" value="0">
+                            <span class="slider-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography Section -->
+            <div class="control-section">
+                <h3 class="section-title">Typography</h3>
+                <div class="control-group">
+                    <label>Font</label>
+                    <select id="fontSelect">
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Impact">Impact</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Garamond">Garamond</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Size: <span id="sizeValue">48</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="fontSize" min="10" max="200" value="48">
+                        <span class="slider-value">48</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Weight: <span id="weightValue">400</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="fontWeight" min="100" max="900" step="100" value="400">
+                        <span class="slider-value">400</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pattern Section -->
+            <div class="control-section">
+                <h3 class="section-title">Pattern</h3>
+                <div class="control-group">
+                    <label>Type</label>
+                    <select id="patternSelect">
+                        <option value="grid">Grid</option>
+                        <option value="circle">Circle</option>
+                        <option value="wave">Wave</option>
+                        <option value="spiral">Spiral</option>
+                        <option value="random">Random</option>
+                        <option value="orbital">Orbital</option>
+                    </select>
+                </div>
+
+                <!-- Pattern-specific parameters will be added dynamically -->
+                <div id="patternParams"></div>
+            </div>
+
+            <!-- Actions Section -->
+            <div class="control-section">
+                <h3 class="section-title">Actions</h3>
+                <div class="control-group">
+                    <button id="exportBtn" class="btn btn-primary">Export Frame ↓</button>
+                </div>
+            </div>
+                </div>
+                <div class="cross-row">
+                    <span class="cross-small"></span>
+                    <span class="cross-small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Canvas -->
+        <div class="canvas-panel">
+            <div class="ys-cross-wrapper">
+                <div class="cross-row">
+                    <span class="cross-small"></span>
+                    <span class="cross-small"></span>
+                </div>
+                <div class="wrapper-content">
+            <div class="fps-counter">FPS: <span id="fpsValue">60</span></div>
+            <canvas id="visualCanvas" width="1920" height="1080"></canvas>
+                </div>
+                <div class="cross-row">
+                    <span class="cross-small"></span>
+                    <span class="cross-small"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Animated Text Visualizer Engine
+        class AnimatedTextEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+
+                // Core properties
+                this.text = 'YAMBO STUDIO';
+                this.mode = 'characters';
+                this.pattern = 'grid';
+                this.isPlaying = true;
+
+                // Animation properties
+                this.time = 0;
+                this.deltaTime = 0;
+                this.lastTime = 0;
+                this.animationSpeed = 1.0;
+
+                // Typography
+                this.font = {
+                    family: 'Helvetica',
+                    size: 48,
+                    weight: 400
+                };
+
+                // Animation parameters
+                this.animParams = {
+                    phaseX: 30,
+                    phaseY: 30,
+                    rotationAmount: 180,
+                    waveFrequency: 0.5,
+                    stagger: 0.1,
+                    breatheAmount: 0.2,
+                    orbitRadius: 100
+                };
+
+                // Advanced mode parameters
+                this.advancedMode = false;
+                this.advancedParams = {
+                    repetitions: 1,
+                    fragmentMode: 'phrase',
+                    density: 1.0,
+                    overlap: 0,
+                    sizeVariation: 0,
+                    opacityVariation: 0
+                };
+
+                // Effects toggles
+                this.effects = {
+                    oscillate: true,
+                    rotate: true,
+                    breathe: false,
+                    wave: false
+                };
+
+                // Pattern-specific params
+                this.patternParams = {
+                    cols: 5,
+                    gapX: 80,
+                    gapY: 80,
+                    radius: 200,
+                    spiralGrowth: 15
+                };
+
+                // Performance tracking
+                this.fps = 60;
+                this.frameCount = 0;
+                this.fpsTime = 0;
+
+                // Pre-calculated positions
+                this.basePositions = [];
+
+                this.setupCanvas();
+                this.calculateBasePositions();
+                this.animate();
+            }
+
+            setupCanvas() {
+                const dpr = window.devicePixelRatio || 1;
+                const rect = this.canvas.getBoundingClientRect();
+
+                this.canvas.width = 1920;
+                this.canvas.height = 1080;
+
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = rect.height + 'px';
+
+                this.ctx.imageSmoothingEnabled = true;
+                this.ctx.imageSmoothingQuality = 'high';
+            }
+
+            getElements() {
+                let base;
+
+                // Get base elements based on mode
+                if (this.mode === 'words') {
+                    base = this.text.trim().split(/\s+/).filter(w => w.length > 0);
+                } else {
+                    base = this.text.split('');
+                }
+
+                // Apply advanced mode multiplication
+                if (this.advancedMode && this.advancedParams.repetitions > 1) {
+                    let elements = [];
+
+                    for (let i = 0; i < this.advancedParams.repetitions; i++) {
+                        if (this.advancedParams.fragmentMode === 'phrase') {
+                            // Repeat full phrase
+                            elements.push(...base);
+                        } else if (this.advancedParams.fragmentMode === 'words') {
+                            // Fragment into words even if in char mode
+                            const words = this.text.trim().split(/\s+/);
+                            elements.push(...words);
+                        } else if (this.advancedParams.fragmentMode === 'characters') {
+                            // Fragment into characters even if in word mode
+                            elements.push(...this.text.split(''));
+                        } else if (this.advancedParams.fragmentMode === 'mixed') {
+                            // Mix words and characters
+                            if (i % 2 === 0) {
+                                elements.push(...this.text.trim().split(/\s+/));
+                            } else {
+                                elements.push(...this.text.split(''));
+                            }
+                        }
+                    }
+
+                    return elements;
+                }
+
+                return base;
+            }
+
+            calculateBasePositions() {
+                const elements = this.getElements();
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+
+                switch(this.pattern) {
+                    case 'grid':
+                        this.basePositions = this.calculateGridPositions(elements, centerX, centerY);
+                        break;
+                    case 'circle':
+                        this.basePositions = this.calculateCirclePositions(elements, centerX, centerY);
+                        break;
+                    case 'wave':
+                        this.basePositions = this.calculateWavePositions(elements, centerX, centerY);
+                        break;
+                    case 'spiral':
+                        this.basePositions = this.calculateSpiralPositions(elements, centerX, centerY);
+                        break;
+                    case 'random':
+                        this.basePositions = this.calculateRandomPositions(elements, centerX, centerY);
+                        break;
+                    case 'orbital':
+                        this.basePositions = this.calculateOrbitalPositions(elements, centerX, centerY);
+                        break;
+                    default:
+                        this.basePositions = this.calculateGridPositions(elements, centerX, centerY);
+                }
+            }
+
+            calculateGridPositions(elements, centerX, centerY) {
+                const positions = [];
+
+                // Auto-adjust columns for large element counts
+                let cols = this.patternParams.cols;
+                if (this.advancedMode && elements.length > 25) {
+                    cols = Math.ceil(Math.sqrt(elements.length * 1.2));
+                }
+
+                const rows = Math.ceil(elements.length / cols);
+
+                // Apply density to gaps
+                const gapX = this.patternParams.gapX * this.advancedParams.density;
+                const gapY = this.patternParams.gapY * this.advancedParams.density;
+
+                // Apply overlap reduction
+                const effectiveGapX = gapX * (1 - this.advancedParams.overlap * 0.7);
+                const effectiveGapY = gapY * (1 - this.advancedParams.overlap * 0.7);
+
+                const startX = centerX - ((cols - 1) * effectiveGapX) / 2;
+                const startY = centerY - ((rows - 1) * effectiveGapY) / 2;
+
+                elements.forEach((text, i) => {
+                    const col = i % cols;
+                    const row = Math.floor(i / cols);
+                    positions.push({
+                        text,
+                        baseX: startX + col * effectiveGapX,
+                        baseY: startY + row * effectiveGapY,
+                        index: i,
+                        // Add variation seeds for advanced mode
+                        sizeVar: Math.random(),
+                        opacityVar: Math.random()
+                    });
+                });
+
+                return positions;
+            }
+
+            calculateCirclePositions(elements, centerX, centerY) {
+                const positions = [];
+                const angleStep = (2 * Math.PI) / elements.length;
+
+                // Auto-scale radius for large element counts and apply density
+                let radius = this.patternParams.radius;
+                if (this.advancedMode && elements.length > 20) {
+                    radius = radius * Math.sqrt(elements.length / 12);
+                }
+                radius = radius * this.advancedParams.density;
+
+                elements.forEach((text, i) => {
+                    const angle = i * angleStep - Math.PI / 2;
+                    positions.push({
+                        text,
+                        baseX: centerX + radius * Math.cos(angle),
+                        baseY: centerY + radius * Math.sin(angle),
+                        baseAngle: angle,
+                        index: i,
+                        sizeVar: Math.random(),
+                        opacityVar: Math.random()
+                    });
+                });
+
+                return positions;
+            }
+
+            calculateWavePositions(elements, centerX, centerY) {
+                const positions = [];
+                const width = this.canvas.width * 0.8;
+                const startX = centerX - width / 2;
+                const spacing = width / (elements.length - 1 || 1);
+
+                elements.forEach((text, i) => {
+                    positions.push({
+                        text,
+                        baseX: startX + i * spacing,
+                        baseY: centerY,
+                        index: i
+                    });
+                });
+
+                return positions;
+            }
+
+            calculateSpiralPositions(elements, centerX, centerY) {
+                const positions = [];
+                const growth = this.patternParams.spiralGrowth;
+
+                elements.forEach((text, i) => {
+                    const angle = i * 0.5;
+                    const radius = growth * angle;
+
+                    positions.push({
+                        text,
+                        baseX: centerX + radius * Math.cos(angle),
+                        baseY: centerY + radius * Math.sin(angle),
+                        baseAngle: angle,
+                        index: i
+                    });
+                });
+
+                return positions;
+            }
+
+            calculateRandomPositions(elements, centerX, centerY) {
+                const positions = [];
+                const spreadX = this.canvas.width * 0.6;
+                const spreadY = this.canvas.height * 0.6;
+
+                // Seeded random for consistency
+                let seed = 12345;
+                const random = () => {
+                    seed = (seed * 9301 + 49297) % 233280;
+                    return seed / 233280;
+                };
+
+                elements.forEach((text, i) => {
+                    positions.push({
+                        text,
+                        baseX: centerX + (random() - 0.5) * spreadX,
+                        baseY: centerY + (random() - 0.5) * spreadY,
+                        randomSeed: random(),
+                        index: i
+                    });
+                });
+
+                return positions;
+            }
+
+            calculateOrbitalPositions(elements, centerX, centerY) {
+                const positions = [];
+                const orbits = 3; // Number of orbital rings
+                const perOrbit = Math.ceil(elements.length / orbits);
+
+                elements.forEach((text, i) => {
+                    const orbit = Math.floor(i / perOrbit);
+                    const indexInOrbit = i % perOrbit;
+                    const angleStep = (2 * Math.PI) / perOrbit;
+                    const radius = 100 + orbit * 80;
+                    const angle = indexInOrbit * angleStep;
+
+                    positions.push({
+                        text,
+                        baseX: centerX + radius * Math.cos(angle),
+                        baseY: centerY + radius * Math.sin(angle),
+                        orbit: orbit,
+                        orbitRadius: radius,
+                        baseAngle: angle,
+                        index: i
+                    });
+                });
+
+                return positions;
+            }
+
+            applyAnimations(position, time) {
+                let x = position.baseX;
+                let y = position.baseY;
+                let rotation = 0;
+                let scale = 1;
+                let opacity = 1;
+
+                // Auto-scale stagger for large element counts
+                const elementCount = this.basePositions.length;
+                const staggerScale = elementCount > 50 ? Math.min(1, 20 / elementCount) : 1;
+                const phaseOffset = position.index * this.animParams.stagger * staggerScale;
+
+                // Oscillate effect
+                if (this.effects.oscillate) {
+                    x += Math.sin(time + phaseOffset) * this.animParams.phaseX;
+                    y += Math.cos(time * 0.7 + phaseOffset) * this.animParams.phaseY;
+                }
+
+                // Rotate effect
+                if (this.effects.rotate) {
+                    rotation = Math.sin(time * 0.5 + phaseOffset) * (this.animParams.rotationAmount * Math.PI / 180);
+                }
+
+                // Breathe effect (scale)
+                if (this.effects.breathe) {
+                    scale = 1 + Math.sin(time * 2 + phaseOffset) * this.animParams.breatheAmount;
+                }
+
+                // Wave effect (additional wave motion)
+                if (this.effects.wave) {
+                    const waveY = Math.sin((position.baseX / 100) + time * this.animParams.waveFrequency) * 30;
+                    y += waveY;
+                }
+
+                // Pattern-specific animations
+                if (this.pattern === 'circle' || this.pattern === 'orbital') {
+                    // Orbital motion
+                    if (position.baseAngle !== undefined) {
+                        const orbitSpeed = this.pattern === 'orbital' ? (0.3 * (position.orbit + 1)) : 0.2;
+                        const currentAngle = position.baseAngle + time * orbitSpeed;
+                        const radius = position.orbitRadius || this.patternParams.radius;
+
+                        // Pulsing radius
+                        const radiusPulse = radius + Math.sin(time * 2 + phaseOffset) * 20;
+
+                        x = this.canvas.width / 2 + radiusPulse * Math.cos(currentAngle);
+                        y = this.canvas.height / 2 + radiusPulse * Math.sin(currentAngle);
+
+                        if (this.effects.rotate) {
+                            rotation = currentAngle + Math.PI / 2;
+                        }
+                    }
+                }
+
+                // Spiral growth animation
+                if (this.pattern === 'spiral') {
+                    const growthPulse = Math.sin(time * 0.5) * 0.3;
+                    const angle = position.baseAngle + time * 0.3;
+                    const radius = this.patternParams.spiralGrowth * angle * (1 + growthPulse);
+
+                    x = this.canvas.width / 2 + radius * Math.cos(angle);
+                    y = this.canvas.height / 2 + radius * Math.sin(angle);
+                    rotation = angle;
+                }
+
+                // Apply advanced mode variations
+                if (this.advancedMode) {
+                    // Size variation
+                    if (this.advancedParams.sizeVariation > 0) {
+                        const sizeModifier = 1 + (position.sizeVar - 0.5) * this.advancedParams.sizeVariation;
+                        scale *= sizeModifier;
+                    }
+
+                    // Opacity variation
+                    if (this.advancedParams.opacityVariation > 0) {
+                        opacity = 1 - (position.opacityVar * this.advancedParams.opacityVariation);
+                    }
+                }
+
+                return { x, y, rotation, scale, opacity };
+            }
+
+            render() {
+                // Clear canvas
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                if (this.basePositions.length === 0) return;
+
+                // Set up font
+                this.ctx.font = `${this.font.weight} ${this.font.size}px ${this.font.family}`;
+                this.ctx.fillStyle = '#000000';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+
+                // Render each element with animations
+                this.basePositions.forEach(position => {
+                    const animated = this.applyAnimations(position, this.time);
+
+                    this.ctx.save();
+                    this.ctx.translate(animated.x, animated.y);
+                    this.ctx.rotate(animated.rotation);
+                    this.ctx.scale(animated.scale, animated.scale);
+
+                    // Use animated opacity or default variation
+                    if (this.advancedMode && this.advancedParams.opacityVariation > 0) {
+                        this.ctx.globalAlpha = animated.opacity;
+                    } else {
+                        const opacityVariation = 0.8 + Math.sin(this.time + position.index * 0.1) * 0.2;
+                        this.ctx.globalAlpha = opacityVariation;
+                    }
+
+                    this.ctx.fillText(position.text, 0, 0);
+                    this.ctx.restore();
+                });
+            }
+
+            animate(currentTime) {
+                // Initialize time on first frame
+                if (!currentTime) currentTime = 0;
+                if (!this.lastTime) this.lastTime = currentTime;
+
+                this.deltaTime = (currentTime - this.lastTime) / 1000;
+                this.lastTime = currentTime;
+
+                if (this.isPlaying) {
+                    this.time += this.deltaTime * this.animationSpeed;
+                }
+
+                // Calculate FPS
+                this.frameCount++;
+                this.fpsTime += this.deltaTime;
+                if (this.fpsTime >= 1) {
+                    this.fps = Math.round(this.frameCount / this.fpsTime);
+                    this.frameCount = 0;
+                    this.fpsTime = 0;
+                    document.getElementById('fpsValue').textContent = this.fps;
+                }
+
+                this.render();
+
+                requestAnimationFrame((time) => this.animate(time));
+            }
+
+            play() {
+                this.isPlaying = true;
+            }
+
+            pause() {
+                this.isPlaying = false;
+            }
+
+            reset() {
+                this.time = 0;
+                this.render();
+            }
+
+            updateText(text) {
+                this.text = text;
+                this.calculateBasePositions();
+            }
+
+            updatePattern(pattern) {
+                this.pattern = pattern;
+                this.calculateBasePositions();
+            }
+
+            exportFrame() {
+                this.canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `text-visual-${Date.now()}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/png', 1.0);
+            }
+        }
+
+        // Initialize the engine
+        const canvas = document.getElementById('visualCanvas');
+        const engine = new AnimatedTextEngine(canvas);
+
+        // UI Controls
+        const controls = {
+            textInput: document.getElementById('textInput'),
+            charCount: document.getElementById('charCount'),
+            modeButtons: document.querySelectorAll('.toggle-btn[data-mode]'),
+            fontSelect: document.getElementById('fontSelect'),
+            fontSize: document.getElementById('fontSize'),
+            fontWeight: document.getElementById('fontWeight'),
+            patternSelect: document.getElementById('patternSelect'),
+            playBtn: document.getElementById('playBtn'),
+            playIcon: document.getElementById('playIcon'),
+            resetBtn: document.getElementById('resetBtn'),
+            exportBtn: document.getElementById('exportBtn'),
+            animSpeed: document.getElementById('animSpeed'),
+
+            // Animation parameters
+            phaseX: document.getElementById('phaseX'),
+            phaseY: document.getElementById('phaseY'),
+            rotAmount: document.getElementById('rotAmount'),
+            waveFreq: document.getElementById('waveFreq'),
+            stagger: document.getElementById('stagger'),
+
+            // Effects checkboxes
+            effectOscillate: document.getElementById('effectOscillate'),
+            effectRotate: document.getElementById('effectRotate'),
+            effectBreathe: document.getElementById('effectBreathe'),
+            effectWave: document.getElementById('effectWave'),
+
+            // Advanced mode controls
+            advancedMode: document.getElementById('advancedMode'),
+            advancedControls: document.getElementById('advancedControls'),
+            repetitions: document.getElementById('repetitions'),
+            fragmentMode: document.getElementById('fragmentMode'),
+            density: document.getElementById('density'),
+            overlap: document.getElementById('overlap'),
+            sizeVariation: document.getElementById('sizeVariation'),
+            opacityVariation: document.getElementById('opacityVariation')
+        };
+
+        // Pattern parameter templates
+        const patternParamTemplates = {
+            grid: `
+                <div class="control-group">
+                    <label>Columns: <span id="colsValue">5</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="gridCols" min="1" max="20" value="5">
+                        <span class="slider-value">5</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Gap X: <span id="gapXValue">80</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="gapX" min="20" max="200" value="80">
+                        <span class="slider-value">80</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Gap Y: <span id="gapYValue">80</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="gapY" min="20" max="200" value="80">
+                        <span class="slider-value">80</span>
+                    </div>
+                </div>
+            `,
+            circle: `
+                <div class="control-group">
+                    <label>Radius: <span id="radiusValue">200</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="radius" min="50" max="400" value="200">
+                        <span class="slider-value">200</span>
+                    </div>
+                </div>
+            `,
+            spiral: `
+                <div class="control-group">
+                    <label>Growth: <span id="spiralGrowthValue">15</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="spiralGrowth" min="5" max="30" value="15">
+                        <span class="slider-value">15</span>
+                    </div>
+                </div>
+            `,
+            wave: `
+                <p style="font-size: 11px; opacity: 0.7; margin: 8px 0;">
+                    Wave pattern uses animation parameters above
+                </p>
+            `,
+            random: `
+                <p style="font-size: 11px; opacity: 0.7; margin: 8px 0;">
+                    Random pattern creates organic motion
+                </p>
+            `,
+            orbital: `
+                <p style="font-size: 11px; opacity: 0.7; margin: 8px 0;">
+                    Elements orbit in multiple rings
+                </p>
+            `
+        };
+
+        // Helper function to update slider displays
+        function updateSliderDisplay(slider, displayElement, suffix = '') {
+            displayElement.textContent = slider.value + suffix;
+            if (slider.nextElementSibling && slider.nextElementSibling.classList.contains('slider-value')) {
+                slider.nextElementSibling.textContent = slider.value;
+            }
+        }
+
+        // Event Listeners
+
+        // Text input
+        controls.textInput.addEventListener('input', (e) => {
+            engine.updateText(e.target.value);
+            controls.charCount.textContent = e.target.value.length;
+        });
+
+        // Mode toggle
+        controls.modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                controls.modeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                engine.mode = btn.dataset.mode;
+                engine.calculateBasePositions();
+            });
+        });
+
+        // Typography controls
+        controls.fontSelect.addEventListener('change', (e) => {
+            engine.font.family = e.target.value;
+        });
+
+        controls.fontSize.addEventListener('input', (e) => {
+            engine.font.size = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('sizeValue'), 'px');
+        });
+
+        controls.fontWeight.addEventListener('input', (e) => {
+            engine.font.weight = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('weightValue'));
+        });
+
+        // Pattern selection
+        controls.patternSelect.addEventListener('change', (e) => {
+            engine.updatePattern(e.target.value);
+            document.getElementById('patternParams').innerHTML = patternParamTemplates[e.target.value] || '';
+            attachPatternListeners(e.target.value);
+        });
+
+        // Animation controls
+        controls.playBtn.addEventListener('click', () => {
+            if (engine.isPlaying) {
+                engine.pause();
+                controls.playBtn.classList.remove('playing');
+                controls.playIcon.textContent = '▶';
+            } else {
+                engine.play();
+                controls.playBtn.classList.add('playing');
+                controls.playIcon.textContent = '⏸';
+            }
+        });
+
+        controls.resetBtn.addEventListener('click', () => {
+            engine.reset();
+        });
+
+        controls.animSpeed.addEventListener('input', (e) => {
+            engine.animationSpeed = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('speedValue'), 'x');
+        });
+
+        // Animation parameters
+        controls.phaseX.addEventListener('input', (e) => {
+            engine.animParams.phaseX = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('phaseXValue'), 'px');
+        });
+
+        controls.phaseY.addEventListener('input', (e) => {
+            engine.animParams.phaseY = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('phaseYValue'), 'px');
+        });
+
+        controls.rotAmount.addEventListener('input', (e) => {
+            engine.animParams.rotationAmount = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('rotAmountValue'), '°');
+        });
+
+        controls.waveFreq.addEventListener('input', (e) => {
+            engine.animParams.waveFrequency = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('waveFreqValue'));
+        });
+
+        controls.stagger.addEventListener('input', (e) => {
+            engine.animParams.stagger = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('staggerValue'));
+        });
+
+        // Effects toggles
+        controls.effectOscillate.addEventListener('change', (e) => {
+            engine.effects.oscillate = e.target.checked;
+        });
+
+        controls.effectRotate.addEventListener('change', (e) => {
+            engine.effects.rotate = e.target.checked;
+        });
+
+        controls.effectBreathe.addEventListener('change', (e) => {
+            engine.effects.breathe = e.target.checked;
+        });
+
+        controls.effectWave.addEventListener('change', (e) => {
+            engine.effects.wave = e.target.checked;
+        });
+
+        // Export
+        controls.exportBtn.addEventListener('click', () => {
+            engine.exportFrame();
+        });
+
+        // Advanced Mode Controls
+        controls.advancedMode.addEventListener('change', (e) => {
+            engine.advancedMode = e.target.checked;
+            controls.advancedControls.style.display = e.target.checked ? 'block' : 'none';
+
+            // Reset repetitions if disabling
+            if (!e.target.checked) {
+                engine.advancedParams.repetitions = 1;
+                controls.repetitions.value = 1;
+                updateSliderDisplay(controls.repetitions, document.getElementById('repetitionsValue'), 'x');
+            }
+
+            engine.calculateBasePositions();
+        });
+
+        controls.repetitions.addEventListener('input', (e) => {
+            engine.advancedParams.repetitions = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('repetitionsValue'), 'x');
+            engine.calculateBasePositions();
+        });
+
+        controls.fragmentMode.addEventListener('change', (e) => {
+            engine.advancedParams.fragmentMode = e.target.value;
+            engine.calculateBasePositions();
+        });
+
+        controls.density.addEventListener('input', (e) => {
+            engine.advancedParams.density = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('densityValue'));
+            engine.calculateBasePositions();
+        });
+
+        controls.overlap.addEventListener('input', (e) => {
+            engine.advancedParams.overlap = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('overlapValue'));
+            engine.calculateBasePositions();
+        });
+
+        controls.sizeVariation.addEventListener('input', (e) => {
+            engine.advancedParams.sizeVariation = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('sizeVariationValue'));
+        });
+
+        controls.opacityVariation.addEventListener('input', (e) => {
+            engine.advancedParams.opacityVariation = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('opacityVariationValue'));
+        });
+
+        // Attach pattern-specific listeners
+        function attachPatternListeners(pattern) {
+            switch(pattern) {
+                case 'grid':
+                    const gridCols = document.getElementById('gridCols');
+                    const gapX = document.getElementById('gapX');
+                    const gapY = document.getElementById('gapY');
+
+                    if (gridCols) {
+                        gridCols.addEventListener('input', (e) => {
+                            engine.patternParams.cols = parseInt(e.target.value);
+                            engine.calculateBasePositions();
+                            updateSliderDisplay(e.target, document.getElementById('colsValue'));
+                        });
+                    }
+                    if (gapX) {
+                        gapX.addEventListener('input', (e) => {
+                            engine.patternParams.gapX = parseInt(e.target.value);
+                            engine.calculateBasePositions();
+                            updateSliderDisplay(e.target, document.getElementById('gapXValue'), 'px');
+                        });
+                    }
+                    if (gapY) {
+                        gapY.addEventListener('input', (e) => {
+                            engine.patternParams.gapY = parseInt(e.target.value);
+                            engine.calculateBasePositions();
+                            updateSliderDisplay(e.target, document.getElementById('gapYValue'), 'px');
+                        });
+                    }
+                    break;
+
+                case 'circle':
+                    const radius = document.getElementById('radius');
+                    if (radius) {
+                        radius.addEventListener('input', (e) => {
+                            engine.patternParams.radius = parseInt(e.target.value);
+                            engine.calculateBasePositions();
+                            updateSliderDisplay(e.target, document.getElementById('radiusValue'), 'px');
+                        });
+                    }
+                    break;
+
+                case 'spiral':
+                    const spiralGrowth = document.getElementById('spiralGrowth');
+                    if (spiralGrowth) {
+                        spiralGrowth.addEventListener('input', (e) => {
+                            engine.patternParams.spiralGrowth = parseInt(e.target.value);
+                            engine.calculateBasePositions();
+                            updateSliderDisplay(e.target, document.getElementById('spiralGrowthValue'));
+                        });
+                    }
+                    break;
+            }
+        }
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            engine.setupCanvas();
+        });
+
+        // Initialize pattern parameters
+        document.getElementById('patternParams').innerHTML = patternParamTemplates.grid;
+        attachPatternListeners('grid');
+
+        // Text Visualizer Preset Integration
+        // Extract all current parameters
+        function extractTextParams() {
+            // Get active mode (words/characters)
+            let activeMode = 'characters';
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    activeMode = btn.getAttribute('data-mode');
+                }
+            });
+
+            return {
+                // Text and mode
+                textInput: document.getElementById('textInput').value,
+                mode: activeMode,
+
+                // Animation settings
+                isPlaying: engine.isPlaying,
+                animSpeed: parseFloat(document.getElementById('animSpeed').value),
+
+                // Effects
+                effectOscillate: document.getElementById('effectOscillate').checked,
+                effectRotate: document.getElementById('effectRotate').checked,
+                effectBreathe: document.getElementById('effectBreathe').checked,
+                effectWave: document.getElementById('effectWave').checked,
+
+                // Animation parameters
+                phaseX: parseInt(document.getElementById('phaseX').value),
+                phaseY: parseInt(document.getElementById('phaseY').value),
+                rotAmount: parseInt(document.getElementById('rotAmount').value),
+                waveFreq: parseFloat(document.getElementById('waveFreq').value),
+                stagger: parseFloat(document.getElementById('stagger').value),
+
+                // Advanced mode
+                advancedMode: document.getElementById('advancedMode').checked,
+                repetitions: parseInt(document.getElementById('repetitions').value),
+                fragmentMode: document.getElementById('fragmentMode').value,
+                density: parseFloat(document.getElementById('density').value),
+                overlap: parseFloat(document.getElementById('overlap').value),
+                sizeVariation: parseFloat(document.getElementById('sizeVariation').value),
+                opacityVariation: parseFloat(document.getElementById('opacityVariation').value),
+
+                // Typography
+                fontFamily: document.getElementById('fontSelect').value,
+                fontSize: parseInt(document.getElementById('fontSize').value),
+                fontWeight: parseInt(document.getElementById('fontWeight').value),
+
+                // Pattern
+                pattern: document.getElementById('patternSelect').value,
+
+                // Pattern-specific parameters
+                patternCols: parseInt(document.getElementById('patternCols')?.value || 5),
+                patternGapX: parseInt(document.getElementById('patternGapX')?.value || 80),
+                patternGapY: parseInt(document.getElementById('patternGapY')?.value || 80),
+                patternRadius: parseInt(document.getElementById('patternRadius')?.value || 200),
+                patternGrowth: parseInt(document.getElementById('patternGrowth')?.value || 15)
+            };
+        }
+
+        // Apply preset parameters
+        function applyTextPreset(params) {
+            // Text and mode
+            if (params.textInput !== undefined) {
+                document.getElementById('textInput').value = params.textInput;
+                document.getElementById('charCount').textContent = params.textInput.length;
+                engine.text = params.textInput;
+            }
+
+            if (params.mode !== undefined) {
+                document.querySelectorAll('[data-mode]').forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-mode') === params.mode);
+                });
+                engine.mode = params.mode;
+            }
+
+            // Animation settings
+            if (params.isPlaying !== undefined) {
+                engine.isPlaying = params.isPlaying;
+                const playBtn = document.getElementById('playBtn');
+                playBtn.classList.toggle('playing', params.isPlaying);
+                document.getElementById('playIcon').textContent = params.isPlaying ? '⏸' : '▶';
+            }
+
+            if (params.animSpeed !== undefined) {
+                document.getElementById('animSpeed').value = params.animSpeed;
+                document.getElementById('speedValue').textContent = params.animSpeed.toFixed(1);
+                document.querySelector('#animSpeed + .slider-value').textContent = params.animSpeed.toFixed(1);
+                engine.animationSpeed = params.animSpeed;
+            }
+
+            // Effects
+            if (params.effectOscillate !== undefined) {
+                document.getElementById('effectOscillate').checked = params.effectOscillate;
+                engine.effects.oscillate = params.effectOscillate;
+            }
+            if (params.effectRotate !== undefined) {
+                document.getElementById('effectRotate').checked = params.effectRotate;
+                engine.effects.rotate = params.effectRotate;
+            }
+            if (params.effectBreathe !== undefined) {
+                document.getElementById('effectBreathe').checked = params.effectBreathe;
+                engine.effects.breathe = params.effectBreathe;
+            }
+            if (params.effectWave !== undefined) {
+                document.getElementById('effectWave').checked = params.effectWave;
+                engine.effects.wave = params.effectWave;
+            }
+
+            // Animation parameters
+            if (params.phaseX !== undefined) {
+                document.getElementById('phaseX').value = params.phaseX;
+                document.getElementById('phaseXValue').textContent = params.phaseX;
+                document.querySelector('#phaseX + .slider-value').textContent = params.phaseX;
+                engine.animParams.phaseX = params.phaseX;
+            }
+            if (params.phaseY !== undefined) {
+                document.getElementById('phaseY').value = params.phaseY;
+                document.getElementById('phaseYValue').textContent = params.phaseY;
+                document.querySelector('#phaseY + .slider-value').textContent = params.phaseY;
+                engine.animParams.phaseY = params.phaseY;
+            }
+            if (params.rotAmount !== undefined) {
+                document.getElementById('rotAmount').value = params.rotAmount;
+                document.getElementById('rotAmountValue').textContent = params.rotAmount;
+                document.querySelector('#rotAmount + .slider-value').textContent = params.rotAmount;
+                engine.animParams.rotationAmount = params.rotAmount;
+            }
+            if (params.waveFreq !== undefined) {
+                document.getElementById('waveFreq').value = params.waveFreq;
+                document.getElementById('waveFreqValue').textContent = params.waveFreq;
+                document.querySelector('#waveFreq + .slider-value').textContent = params.waveFreq;
+                engine.animParams.waveFrequency = params.waveFreq;
+            }
+            if (params.stagger !== undefined) {
+                document.getElementById('stagger').value = params.stagger;
+                document.getElementById('staggerValue').textContent = params.stagger;
+                document.querySelector('#stagger + .slider-value').textContent = params.stagger;
+                engine.animParams.stagger = params.stagger;
+            }
+
+            // Advanced mode
+            if (params.advancedMode !== undefined) {
+                document.getElementById('advancedMode').checked = params.advancedMode;
+                document.getElementById('advancedControls').style.display = params.advancedMode ? 'block' : 'none';
+                engine.advancedMode = params.advancedMode;
+            }
+
+            if (params.repetitions !== undefined) {
+                document.getElementById('repetitions').value = params.repetitions;
+                document.getElementById('repetitionsValue').textContent = params.repetitions;
+                document.querySelector('#repetitions + .slider-value').textContent = params.repetitions;
+                engine.advancedParams.repetitions = params.repetitions;
+            }
+            if (params.fragmentMode !== undefined) {
+                document.getElementById('fragmentMode').value = params.fragmentMode;
+                engine.advancedParams.fragmentMode = params.fragmentMode;
+            }
+            if (params.density !== undefined) {
+                document.getElementById('density').value = params.density;
+                document.getElementById('densityValue').textContent = params.density.toFixed(1);
+                document.querySelector('#density + .slider-value').textContent = params.density.toFixed(1);
+                engine.advancedParams.density = params.density;
+            }
+            if (params.overlap !== undefined) {
+                document.getElementById('overlap').value = params.overlap;
+                document.getElementById('overlapValue').textContent = params.overlap;
+                document.querySelector('#overlap + .slider-value').textContent = params.overlap;
+                engine.advancedParams.overlap = params.overlap;
+            }
+            if (params.sizeVariation !== undefined) {
+                document.getElementById('sizeVariation').value = params.sizeVariation;
+                document.getElementById('sizeVariationValue').textContent = params.sizeVariation;
+                document.querySelector('#sizeVariation + .slider-value').textContent = params.sizeVariation;
+                engine.advancedParams.sizeVariation = params.sizeVariation;
+            }
+            if (params.opacityVariation !== undefined) {
+                document.getElementById('opacityVariation').value = params.opacityVariation;
+                document.getElementById('opacityVariationValue').textContent = params.opacityVariation;
+                document.querySelector('#opacityVariation + .slider-value').textContent = params.opacityVariation;
+                engine.advancedParams.opacityVariation = params.opacityVariation;
+            }
+
+            // Typography
+            if (params.fontFamily !== undefined) {
+                document.getElementById('fontSelect').value = params.fontFamily;
+                engine.font.family = params.fontFamily;
+            }
+            if (params.fontSize !== undefined) {
+                document.getElementById('fontSize').value = params.fontSize;
+                document.getElementById('sizeValue').textContent = params.fontSize;
+                document.querySelector('#fontSize + .slider-value').textContent = params.fontSize;
+                engine.font.size = params.fontSize;
+            }
+            if (params.fontWeight !== undefined) {
+                document.getElementById('fontWeight').value = params.fontWeight;
+                document.getElementById('weightValue').textContent = params.fontWeight;
+                document.querySelector('#fontWeight + .slider-value').textContent = params.fontWeight;
+                engine.font.weight = params.fontWeight;
+            }
+
+            // Pattern
+            if (params.pattern !== undefined) {
+                document.getElementById('patternSelect').value = params.pattern;
+                engine.pattern = params.pattern;
+                // Update pattern UI
+                document.getElementById('patternParams').innerHTML = patternParamTemplates[params.pattern] || '';
+                attachPatternListeners(params.pattern);
+            }
+
+            // Pattern-specific parameters
+            if (params.patternCols !== undefined && document.getElementById('patternCols')) {
+                document.getElementById('patternCols').value = params.patternCols;
+                engine.patternParams.cols = params.patternCols;
+            }
+            if (params.patternGapX !== undefined && document.getElementById('patternGapX')) {
+                document.getElementById('patternGapX').value = params.patternGapX;
+                engine.patternParams.gapX = params.patternGapX;
+            }
+            if (params.patternGapY !== undefined && document.getElementById('patternGapY')) {
+                document.getElementById('patternGapY').value = params.patternGapY;
+                engine.patternParams.gapY = params.patternGapY;
+            }
+            if (params.patternRadius !== undefined && document.getElementById('patternRadius')) {
+                document.getElementById('patternRadius').value = params.patternRadius;
+                engine.patternParams.radius = params.patternRadius;
+            }
+            if (params.patternGrowth !== undefined && document.getElementById('patternGrowth')) {
+                document.getElementById('patternGrowth').value = params.patternGrowth;
+                engine.patternParams.spiralGrowth = params.patternGrowth;
+            }
+
+            // Recalculate positions after applying preset
+            engine.calculateBasePositions();
+        }
+
+        // Make functions global for module access
+        window.extractTextParams = extractTextParams;
+        window.applyTextPreset = applyTextPreset;
+    </script>
+
+    <!-- Preset System Scripts -->
+    <script type="module">
+        import { PresetManager } from '../../shared/preset-manager.js';
+        import { PresetUIComponent } from '../../shared/preset-ui-component.js';
+
+        // Initialize preset manager for Text Visualizer
+        const presetManager = new PresetManager('text-visualizer');
+        const presetUI = new PresetUIComponent(presetManager, window.extractTextParams);
+
+        // Wait for a short delay to ensure engine is initialized
+        setTimeout(async () => {
+            // Create preset UI
+            presetUI.create('presetContainer');
+
+            // Initialize with random preset
+            await presetManager.initialize(window.applyTextPreset);
+        }, 100);
+
+        // Make preset manager available globally for debugging
+        window.textPresetManager = presetManager;
+    </script>
+</body>
+</html>

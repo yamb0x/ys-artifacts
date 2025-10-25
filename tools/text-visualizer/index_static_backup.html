@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Visualizer - YS Studio Artifacts</title>
+    <style>
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-gray-light: #F5F5F5;
+
+            /* Fonts */
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+            --font-mono: 'Courier New', monospace;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 80px;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
+        }
+
+        .studio-name {
+            font-weight: 300;
+        }
+
+        .project-type {
+            font-style: italic;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .tool-container {
+            display: flex;
+            height: 100vh;
+            padding-top: 57px;
+        }
+
+        /* Left Panel - Controls */
+        .controls-panel {
+            width: 420px;
+            background: var(--ys-white);
+            border-right: 1px solid var(--ys-black);
+            padding: var(--spacing-md);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        /* Right Panel - Canvas */
+        .canvas-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ys-gray-light);
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Control Sections */
+        .control-section {
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--ys-gray);
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* Form Elements */
+        .control-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 400;
+        }
+
+        textarea {
+            width: 100%;
+            padding: var(--spacing-sm);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            font-size: 12px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            cursor: pointer;
+            font-family: var(--font-suisse);
+        }
+
+        /* Custom Slider */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 2px;
+            background: var(--ys-black);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: right;
+            font-size: 12px;
+            font-family: var(--font-mono);
+        }
+
+        /* Toggle Buttons */
+        .toggle-group {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--ys-black);
+            overflow: hidden;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: var(--spacing-sm);
+            background: var(--ys-white);
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-right: 1px solid var(--ys-black);
+        }
+
+        .toggle-btn:last-child {
+            border-right: none;
+        }
+
+        .toggle-btn.active {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: var(--ys-gray-light);
+        }
+
+        /* Action Buttons */
+        .btn {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--ys-white);
+            color: var(--ys-black);
+            border: 1px solid var(--ys-black);
+            font-size: 12px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .btn-primary {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--ys-white);
+            color: var(--ys-black);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        /* Canvas Styling */
+        #visualCanvas {
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            cursor: crosshair;
+        }
+
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* Character Counter */
+        .char-counter {
+            text-align: right;
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Dynamic Pattern Controls */
+        .pattern-params {
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--ys-gray-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .controls-panel {
+                width: 360px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tool-container {
+                flex-direction: column;
+            }
+
+            .controls-panel {
+                width: 100%;
+                max-height: 50vh;
+                border-right: none;
+                border-bottom: 1px solid var(--ys-black);
+            }
+
+            .header-center {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- YS Header -->
+    <header class="ys-header">
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">Text Visualizer</div>
+        <nav class="header-right">
+            <a href="/about.html">About</a>
+            <a href="/" class="active">Tools</a>
+        </nav>
+    </header>
+
+    <!-- Main Tool Container -->
+    <div class="tool-container">
+        <!-- Left Panel: Controls -->
+        <div class="controls-panel">
+            <!-- Text Input Section -->
+            <div class="control-section">
+                <h3 class="section-title">Text Input</h3>
+                <div class="control-group">
+                    <textarea id="textInput" placeholder="Enter your text here...">YAMBO STUDIO</textarea>
+                    <div class="char-counter"><span id="charCount">12</span> characters</div>
+                </div>
+                <div class="control-group">
+                    <label>Mode</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn" data-mode="words">Words</button>
+                        <button class="toggle-btn active" data-mode="characters">Characters</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography Section -->
+            <div class="control-section">
+                <h3 class="section-title">Typography</h3>
+                <div class="control-group">
+                    <label>Font</label>
+                    <select id="fontSelect">
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Impact">Impact</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Garamond">Garamond</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Size: <span id="sizeValue">48</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="fontSize" min="10" max="200" value="48">
+                        <span class="slider-value">48</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Weight: <span id="weightValue">400</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="fontWeight" min="100" max="900" step="100" value="400">
+                        <span class="slider-value">400</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Letter Spacing: <span id="spacingValue">0</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="letterSpacing" min="-10" max="50" value="0">
+                        <span class="slider-value">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pattern Section -->
+            <div class="control-section">
+                <h3 class="section-title">Pattern</h3>
+                <div class="control-group">
+                    <label>Type</label>
+                    <select id="patternSelect">
+                        <option value="grid">Grid</option>
+                        <option value="circle">Circle</option>
+                        <option value="wave">Wave</option>
+                        <option value="spiral">Spiral</option>
+                        <option value="random">Random</option>
+                        <option value="line">Line</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Pattern Parameters -->
+                <div id="patternParams" class="pattern-params">
+                    <!-- Grid Parameters (default) -->
+                    <div class="control-group">
+                        <label>Columns: <span id="colsValue">5</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="gridCols" min="1" max="20" value="5">
+                            <span class="slider-value">5</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Gap X: <span id="gapXValue">60</span>px</label>
+                        <div class="slider-container">
+                            <input type="range" id="gapX" min="20" max="200" value="60">
+                            <span class="slider-value">60</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Gap Y: <span id="gapYValue">60</span>px</label>
+                        <div class="slider-container">
+                            <input type="range" id="gapY" min="20" max="200" value="60">
+                            <span class="slider-value">60</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transform Section -->
+            <div class="control-section">
+                <h3 class="section-title">Transform</h3>
+                <div class="control-group">
+                    <label>Rotation: <span id="rotationValue">0</span>°</label>
+                    <div class="slider-container">
+                        <input type="range" id="rotation" min="0" max="360" value="0">
+                        <span class="slider-value">0</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Opacity: <span id="opacityValue">100</span>%</label>
+                    <div class="slider-container">
+                        <input type="range" id="opacity" min="0" max="100" value="100">
+                        <span class="slider-value">100</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="applyToEach">
+                        <label for="applyToEach" class="checkbox-label">Apply to each character</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Section -->
+            <div class="control-section">
+                <h3 class="section-title">Actions</h3>
+                <div class="control-group">
+                    <div class="btn-group">
+                        <button id="clearBtn" class="btn">Clear</button>
+                        <button id="renderBtn" class="btn">Render</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <button id="exportBtn" class="btn btn-primary">Export PNG ↓</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Canvas -->
+        <div class="canvas-panel">
+            <canvas id="visualCanvas" width="1920" height="1080"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Text Visualizer Engine
+        class TextEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.text = 'YAMBO STUDIO';
+                this.mode = 'characters'; // 'words' or 'characters'
+                this.font = {
+                    family: 'Helvetica',
+                    size: 48,
+                    weight: 400,
+                    spacing: 0
+                };
+                this.pattern = 'grid';
+                this.transform = {
+                    rotation: 0,
+                    opacity: 1,
+                    applyToEach: false
+                };
+                this.patternParams = {
+                    // Grid params
+                    cols: 5,
+                    gapX: 60,
+                    gapY: 60,
+                    // Circle params
+                    radius: 200,
+                    // Wave params
+                    amplitude: 50,
+                    frequency: 0.1,
+                    phase: 0,
+                    // Spiral params
+                    spiralGrowth: 10,
+                    spiralDensity: 0.1,
+                    // Random params
+                    density: 0.8,
+                    spread: 1,
+                    // Line params
+                    lineDirection: 'horizontal',
+                    lineSpacing: 50
+                };
+
+                this.setupCanvas();
+                this.render();
+            }
+
+            setupCanvas() {
+                // Set up high DPI canvas
+                const dpr = window.devicePixelRatio || 1;
+                const rect = this.canvas.getBoundingClientRect();
+
+                // Keep internal dimensions
+                this.canvas.width = 1920;
+                this.canvas.height = 1080;
+
+                // Scale for display
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = rect.height + 'px';
+
+                // Prevent blurry text
+                this.ctx.imageSmoothingEnabled = true;
+                this.ctx.imageSmoothingQuality = 'high';
+            }
+
+            getElements() {
+                if (this.mode === 'words') {
+                    return this.text.trim().split(/\s+/);
+                } else {
+                    return this.text.split('');
+                }
+            }
+
+            clear() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            render() {
+                this.clear();
+
+                const elements = this.getElements();
+                if (elements.length === 0 || elements[0] === '') return;
+
+                // Get positions based on pattern
+                const positions = this.getPatternPositions(elements);
+
+                // Set up font
+                this.ctx.font = `${this.font.weight} ${this.font.size}px ${this.font.family}`;
+                this.ctx.fillStyle = `rgba(0, 0, 0, ${this.transform.opacity})`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+
+                // Render each element
+                positions.forEach(({text, x, y, rotation}) => {
+                    this.ctx.save();
+                    this.ctx.translate(x, y);
+
+                    // Apply rotation
+                    const totalRotation = this.transform.applyToEach ?
+                        rotation + (this.transform.rotation * Math.PI / 180) :
+                        this.transform.rotation * Math.PI / 180;
+
+                    this.ctx.rotate(totalRotation);
+
+                    // Apply letter spacing if in character mode
+                    if (this.mode === 'characters' && this.font.spacing !== 0) {
+                        this.ctx.letterSpacing = `${this.font.spacing}px`;
+                    }
+
+                    this.ctx.fillText(text, 0, 0);
+                    this.ctx.restore();
+                });
+            }
+
+            getPatternPositions(elements) {
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+
+                switch(this.pattern) {
+                    case 'grid':
+                        return this.gridPattern(elements, centerX, centerY);
+                    case 'circle':
+                        return this.circlePattern(elements, centerX, centerY);
+                    case 'wave':
+                        return this.wavePattern(elements, centerX, centerY);
+                    case 'spiral':
+                        return this.spiralPattern(elements, centerX, centerY);
+                    case 'random':
+                        return this.randomPattern(elements, centerX, centerY);
+                    case 'line':
+                        return this.linePattern(elements, centerX, centerY);
+                    default:
+                        return this.gridPattern(elements, centerX, centerY);
+                }
+            }
+
+            gridPattern(elements, centerX, centerY) {
+                const positions = [];
+                const cols = this.patternParams.cols;
+                const rows = Math.ceil(elements.length / cols);
+                const startX = centerX - ((cols - 1) * this.patternParams.gapX) / 2;
+                const startY = centerY - ((rows - 1) * this.patternParams.gapY) / 2;
+
+                elements.forEach((text, i) => {
+                    const col = i % cols;
+                    const row = Math.floor(i / cols);
+                    positions.push({
+                        text,
+                        x: startX + col * this.patternParams.gapX,
+                        y: startY + row * this.patternParams.gapY,
+                        rotation: 0
+                    });
+                });
+
+                return positions;
+            }
+
+            circlePattern(elements, centerX, centerY) {
+                const positions = [];
+                const angleStep = (2 * Math.PI) / elements.length;
+                const radius = this.patternParams.radius;
+
+                elements.forEach((text, i) => {
+                    const angle = i * angleStep - Math.PI / 2; // Start from top
+                    positions.push({
+                        text,
+                        x: centerX + radius * Math.cos(angle),
+                        y: centerY + radius * Math.sin(angle),
+                        rotation: this.transform.applyToEach ? angle + Math.PI / 2 : 0
+                    });
+                });
+
+                return positions;
+            }
+
+            wavePattern(elements, centerX, centerY) {
+                const positions = [];
+                const width = this.canvas.width * 0.8;
+                const startX = centerX - width / 2;
+                const spacing = width / (elements.length - 1 || 1);
+                const amplitude = this.patternParams.amplitude;
+                const frequency = this.patternParams.frequency;
+                const phase = this.patternParams.phase;
+
+                elements.forEach((text, i) => {
+                    const x = startX + i * spacing;
+                    const y = centerY + amplitude * Math.sin(frequency * i + phase);
+                    const rotation = this.transform.applyToEach ?
+                        Math.atan(amplitude * frequency * Math.cos(frequency * i + phase)) : 0;
+
+                    positions.push({ text, x, y, rotation });
+                });
+
+                return positions;
+            }
+
+            spiralPattern(elements, centerX, centerY) {
+                const positions = [];
+                const growth = this.patternParams.spiralGrowth;
+                const density = this.patternParams.spiralDensity;
+
+                elements.forEach((text, i) => {
+                    const angle = i * density * Math.PI;
+                    const radius = growth * angle;
+
+                    positions.push({
+                        text,
+                        x: centerX + radius * Math.cos(angle),
+                        y: centerY + radius * Math.sin(angle),
+                        rotation: this.transform.applyToEach ? angle : 0
+                    });
+                });
+
+                return positions;
+            }
+
+            randomPattern(elements, centerX, centerY) {
+                const positions = [];
+                const spreadX = this.canvas.width * 0.7 * this.patternParams.spread;
+                const spreadY = this.canvas.height * 0.7 * this.patternParams.spread;
+
+                // Use seeded random for consistency
+                let seed = 12345;
+                const random = () => {
+                    seed = (seed * 9301 + 49297) % 233280;
+                    return seed / 233280;
+                };
+
+                elements.forEach((text) => {
+                    positions.push({
+                        text,
+                        x: centerX + (random() - 0.5) * spreadX,
+                        y: centerY + (random() - 0.5) * spreadY,
+                        rotation: this.transform.applyToEach ? random() * Math.PI * 2 : 0
+                    });
+                });
+
+                return positions;
+            }
+
+            linePattern(elements, centerX, centerY) {
+                const positions = [];
+                const isHorizontal = this.patternParams.lineDirection === 'horizontal';
+                const spacing = this.patternParams.lineSpacing;
+                const totalLength = elements.length * spacing;
+
+                if (isHorizontal) {
+                    const startX = centerX - totalLength / 2;
+                    elements.forEach((text, i) => {
+                        positions.push({
+                            text,
+                            x: startX + i * spacing,
+                            y: centerY,
+                            rotation: 0
+                        });
+                    });
+                } else {
+                    const startY = centerY - totalLength / 2;
+                    elements.forEach((text, i) => {
+                        positions.push({
+                            text,
+                            x: centerX,
+                            y: startY + i * spacing,
+                            rotation: this.transform.applyToEach ? Math.PI / 2 : 0
+                        });
+                    });
+                }
+
+                return positions;
+            }
+
+            export() {
+                this.canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `text-visual-${Date.now()}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/png', 1.0);
+            }
+        }
+
+        // Initialize the engine
+        const canvas = document.getElementById('visualCanvas');
+        const engine = new TextEngine(canvas);
+
+        // UI Controls
+        const controls = {
+            textInput: document.getElementById('textInput'),
+            charCount: document.getElementById('charCount'),
+            modeButtons: document.querySelectorAll('.toggle-btn[data-mode]'),
+            fontSelect: document.getElementById('fontSelect'),
+            fontSize: document.getElementById('fontSize'),
+            fontWeight: document.getElementById('fontWeight'),
+            letterSpacing: document.getElementById('letterSpacing'),
+            patternSelect: document.getElementById('patternSelect'),
+            rotation: document.getElementById('rotation'),
+            opacity: document.getElementById('opacity'),
+            applyToEach: document.getElementById('applyToEach'),
+            clearBtn: document.getElementById('clearBtn'),
+            renderBtn: document.getElementById('renderBtn'),
+            exportBtn: document.getElementById('exportBtn')
+        };
+
+        // Pattern parameter controls
+        const patternControls = {
+            grid: `
+                <div class="control-group">
+                    <label>Columns: <span id="colsValue">5</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="gridCols" min="1" max="20" value="5">
+                        <span class="slider-value">5</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Gap X: <span id="gapXValue">60</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="gapX" min="20" max="200" value="60">
+                        <span class="slider-value">60</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Gap Y: <span id="gapYValue">60</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="gapY" min="20" max="200" value="60">
+                        <span class="slider-value">60</span>
+                    </div>
+                </div>
+            `,
+            circle: `
+                <div class="control-group">
+                    <label>Radius: <span id="radiusValue">200</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="radius" min="50" max="400" value="200">
+                        <span class="slider-value">200</span>
+                    </div>
+                </div>
+            `,
+            wave: `
+                <div class="control-group">
+                    <label>Amplitude: <span id="amplitudeValue">50</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="amplitude" min="0" max="200" value="50">
+                        <span class="slider-value">50</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Frequency: <span id="frequencyValue">0.5</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="frequency" min="0.1" max="2" step="0.1" value="0.5">
+                        <span class="slider-value">0.5</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Phase: <span id="phaseValue">0</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="phase" min="0" max="6.28" step="0.1" value="0">
+                        <span class="slider-value">0</span>
+                    </div>
+                </div>
+            `,
+            spiral: `
+                <div class="control-group">
+                    <label>Growth: <span id="spiralGrowthValue">10</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="spiralGrowth" min="1" max="30" value="10">
+                        <span class="slider-value">10</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Density: <span id="spiralDensityValue">0.3</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="spiralDensity" min="0.1" max="1" step="0.05" value="0.3">
+                        <span class="slider-value">0.3</span>
+                    </div>
+                </div>
+            `,
+            random: `
+                <div class="control-group">
+                    <label>Spread: <span id="spreadValue">100</span>%</label>
+                    <div class="slider-container">
+                        <input type="range" id="spread" min="0" max="100" value="100">
+                        <span class="slider-value">100</span>
+                    </div>
+                </div>
+            `,
+            line: `
+                <div class="control-group">
+                    <label>Direction</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" data-direction="horizontal">Horizontal</button>
+                        <button class="toggle-btn" data-direction="vertical">Vertical</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Spacing: <span id="lineSpacingValue">50</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="lineSpacing" min="10" max="150" value="50">
+                        <span class="slider-value">50</span>
+                    </div>
+                </div>
+            `
+        };
+
+        // Debounce function for performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Update functions
+        function updateSliderDisplay(slider, displayElement, suffix = '') {
+            displayElement.textContent = slider.value + suffix;
+            if (slider.nextElementSibling && slider.nextElementSibling.classList.contains('slider-value')) {
+                slider.nextElementSibling.textContent = slider.value;
+            }
+        }
+
+        // Debounced render
+        const debouncedRender = debounce(() => engine.render(), 100);
+
+        // Event Listeners
+        controls.textInput.addEventListener('input', (e) => {
+            engine.text = e.target.value;
+            controls.charCount.textContent = e.target.value.length;
+            debouncedRender();
+        });
+
+        // Mode toggle
+        controls.modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                controls.modeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                engine.mode = btn.dataset.mode;
+                debouncedRender();
+            });
+        });
+
+        // Font controls
+        controls.fontSelect.addEventListener('change', (e) => {
+            engine.font.family = e.target.value;
+            debouncedRender();
+        });
+
+        controls.fontSize.addEventListener('input', (e) => {
+            engine.font.size = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('sizeValue'), 'px');
+            debouncedRender();
+        });
+
+        controls.fontWeight.addEventListener('input', (e) => {
+            engine.font.weight = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('weightValue'));
+            debouncedRender();
+        });
+
+        controls.letterSpacing.addEventListener('input', (e) => {
+            engine.font.spacing = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('spacingValue'), 'px');
+            debouncedRender();
+        });
+
+        // Pattern selection
+        controls.patternSelect.addEventListener('change', (e) => {
+            engine.pattern = e.target.value;
+            document.getElementById('patternParams').innerHTML = patternControls[e.target.value];
+            attachPatternListeners(e.target.value);
+            debouncedRender();
+        });
+
+        // Transform controls
+        controls.rotation.addEventListener('input', (e) => {
+            engine.transform.rotation = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('rotationValue'), '°');
+            debouncedRender();
+        });
+
+        controls.opacity.addEventListener('input', (e) => {
+            engine.transform.opacity = parseInt(e.target.value) / 100;
+            updateSliderDisplay(e.target, document.getElementById('opacityValue'), '%');
+            debouncedRender();
+        });
+
+        controls.applyToEach.addEventListener('change', (e) => {
+            engine.transform.applyToEach = e.target.checked;
+            debouncedRender();
+        });
+
+        // Action buttons
+        controls.clearBtn.addEventListener('click', () => {
+            engine.clear();
+        });
+
+        controls.renderBtn.addEventListener('click', () => {
+            engine.render();
+        });
+
+        controls.exportBtn.addEventListener('click', () => {
+            engine.export();
+        });
+
+        // Attach pattern-specific listeners
+        function attachPatternListeners(pattern) {
+            switch(pattern) {
+                case 'grid':
+                    const gridCols = document.getElementById('gridCols');
+                    const gapX = document.getElementById('gapX');
+                    const gapY = document.getElementById('gapY');
+
+                    if (gridCols) {
+                        gridCols.addEventListener('input', (e) => {
+                            engine.patternParams.cols = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('colsValue'));
+                            debouncedRender();
+                        });
+                    }
+                    if (gapX) {
+                        gapX.addEventListener('input', (e) => {
+                            engine.patternParams.gapX = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('gapXValue'), 'px');
+                            debouncedRender();
+                        });
+                    }
+                    if (gapY) {
+                        gapY.addEventListener('input', (e) => {
+                            engine.patternParams.gapY = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('gapYValue'), 'px');
+                            debouncedRender();
+                        });
+                    }
+                    break;
+
+                case 'circle':
+                    const radius = document.getElementById('radius');
+                    if (radius) {
+                        radius.addEventListener('input', (e) => {
+                            engine.patternParams.radius = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('radiusValue'), 'px');
+                            debouncedRender();
+                        });
+                    }
+                    break;
+
+                case 'wave':
+                    const amplitude = document.getElementById('amplitude');
+                    const frequency = document.getElementById('frequency');
+                    const phase = document.getElementById('phase');
+
+                    if (amplitude) {
+                        amplitude.addEventListener('input', (e) => {
+                            engine.patternParams.amplitude = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('amplitudeValue'), 'px');
+                            debouncedRender();
+                        });
+                    }
+                    if (frequency) {
+                        frequency.addEventListener('input', (e) => {
+                            engine.patternParams.frequency = parseFloat(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('frequencyValue'));
+                            debouncedRender();
+                        });
+                    }
+                    if (phase) {
+                        phase.addEventListener('input', (e) => {
+                            engine.patternParams.phase = parseFloat(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('phaseValue'));
+                            debouncedRender();
+                        });
+                    }
+                    break;
+
+                case 'spiral':
+                    const spiralGrowth = document.getElementById('spiralGrowth');
+                    const spiralDensity = document.getElementById('spiralDensity');
+
+                    if (spiralGrowth) {
+                        spiralGrowth.addEventListener('input', (e) => {
+                            engine.patternParams.spiralGrowth = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('spiralGrowthValue'));
+                            debouncedRender();
+                        });
+                    }
+                    if (spiralDensity) {
+                        spiralDensity.addEventListener('input', (e) => {
+                            engine.patternParams.spiralDensity = parseFloat(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('spiralDensityValue'));
+                            debouncedRender();
+                        });
+                    }
+                    break;
+
+                case 'random':
+                    const spread = document.getElementById('spread');
+                    if (spread) {
+                        spread.addEventListener('input', (e) => {
+                            engine.patternParams.spread = parseInt(e.target.value) / 100;
+                            updateSliderDisplay(e.target, document.getElementById('spreadValue'), '%');
+                            debouncedRender();
+                        });
+                    }
+                    break;
+
+                case 'line':
+                    const directionBtns = document.querySelectorAll('.toggle-btn[data-direction]');
+                    const lineSpacing = document.getElementById('lineSpacing');
+
+                    directionBtns.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            directionBtns.forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            engine.patternParams.lineDirection = btn.dataset.direction;
+                            debouncedRender();
+                        });
+                    });
+
+                    if (lineSpacing) {
+                        lineSpacing.addEventListener('input', (e) => {
+                            engine.patternParams.lineSpacing = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('lineSpacingValue'), 'px');
+                            debouncedRender();
+                        });
+                    }
+                    break;
+            }
+        }
+
+        // Window resize handler
+        window.addEventListener('resize', debounce(() => {
+            engine.setupCanvas();
+            engine.render();
+        }, 250));
+
+        // Initialize pattern listeners for default grid
+        attachPatternListeners('grid');
+    </script>
+</body>
+</html>
