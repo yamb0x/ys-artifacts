@@ -65,6 +65,13 @@
             font-size: 12px;
             line-height: 24px;
             letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
         }
 
         .studio-name {
@@ -437,15 +444,15 @@
 <body>
     <!-- Header -->
     <header class="ys-header">
-        <div class="header-left">
+        <a href="/" class="header-left">
             <span class="studio-name">YAMBO STUDIO</span>
             <span>—</span>
             <span class="project-type">Artifacts</span>
-        </div>
+        </a>
         <div class="header-center">Artifacts</div>
         <nav class="header-right">
-            <a href="#about">About</a>
-            <a href="#" class="active">Archive</a>
+            <a href="/about.html">About</a>
+            <a href="/" class="active">Tools</a>
         </nav>
     </header>
 

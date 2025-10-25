@@ -217,6 +217,38 @@ ys-artifacts/
 - **Add** comprehensive error handling and validation
 - **Document** all features and usage in tool README
 
+### Navigation Bar Requirements
+
+**MANDATORY**: Every page in the YS Studio Artifacts collection MUST include the standard navigation bar for consistent user experience.
+
+#### Navigation Structure
+```html
+<!-- Standard YS Header - Required on ALL pages -->
+<header class="ys-header">
+    <a href="/" class="header-left">
+        <span class="studio-name">YAMBO STUDIO</span>
+        <span>—</span>
+        <span class="project-type">Artifacts</span>
+    </a>
+    <div class="header-center">[Current Page Name]</div>
+    <nav class="header-right">
+        <a href="/about.html">About</a>
+        <a href="/" class="active">Tools</a>
+    </nav>
+</header>
+```
+
+#### Navigation Rules:
+1. **Logo Link**: "YAMBO STUDIO — Artifacts" must always link to homepage (`/`)
+2. **Center Text**: Shows current page context (e.g., "Artifacts", "About", "ASCII Interpreter")
+3. **Right Navigation**:
+   - "About" links to `/about.html`
+   - "Tools" links to homepage `/`
+   - Mark current page with `class="active"`
+4. **Consistent Styling**: Use exact CSS from main index.html header styles
+5. **Fixed Position**: Header must be fixed at top with `z-index: 1000`
+6. **Responsive**: Hide center text on tablet, hide right nav on mobile
+
 ### HTML Tool Requirements
 ```html
 <!-- Every tool should include -->
@@ -227,10 +259,14 @@ ys-artifacts/
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tool Name - YS Studio</title>
     <style>
-        /* All CSS inline for portability */
+        /* Include YS header styles */
+        /* Tool-specific CSS */
     </style>
 </head>
 <body>
+    <!-- YS Header (mandatory) -->
+    <header class="ys-header">...</header>
+
     <!-- Tool UI -->
     <script>
         // All JavaScript inline

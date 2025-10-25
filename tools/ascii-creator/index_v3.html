@@ -78,6 +78,13 @@
             font-size: 12px;
             line-height: 24px;
             letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
         }
 
         .studio-name {
@@ -105,6 +112,20 @@
             line-height: 24px;
             letter-spacing: 0.24px;
             font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
         }
 
         /* Cross Elements */
@@ -534,17 +555,16 @@
 <body>
     <!-- Header -->
     <header class="ys-header">
-        <div class="header-left">
-            <span class="studio-name">Yambo Studio</span>
-            <span class="project-type">(Artifacts)</span>
-        </div>
-        <div class="header-center">
-            <span class="artifact-name">ARTIFACT_#001</span>
-        </div>
-        <div class="header-right">
-            <span class="date" id="currentDate"></span>
-            <span class="copyright">©2025 Yambo studio</span>
-        </div>
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">ASCII Interpreter</div>
+        <nav class="header-right">
+            <a href="/about.html">About</a>
+            <a href="/">Tools</a>
+        </nav>
     </header>
 
     <!-- Main Container -->
@@ -777,7 +797,7 @@
         // Update date
         const today = new Date();
         const dateStr = today.toISOString().split('T')[0];
-        document.getElementById('currentDate').textContent = `${dateStr} (Creation Date: Today)`;
+        // Date display removed - navigation bar is now consistent across all pages
 
         // Character sets
         const charSets = {

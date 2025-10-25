@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - YS Studio Artifacts</title>
+    <style>
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-blue: #0066FF;
+            --ys-green: #00FF00;
+
+            /* Fonts */
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+            --font-mono: 'Courier New', monospace;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 80px;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
+        }
+
+        .studio-name {
+            font-weight: 300;
+        }
+
+        .project-type {
+            font-style: italic;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 120px 24px 40px;
+            min-height: 100vh;
+        }
+
+        /* Title Section */
+        .title-section {
+            margin-bottom: 80px;
+        }
+
+        .page-title {
+            font-family: var(--font-sangbleu);
+            font-size: 160px;
+            line-height: 136px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        /* Content Section */
+        .content-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-block {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            line-height: 32px;
+            font-weight: 400;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-text {
+            font-size: 16px;
+            line-height: 28px;
+            color: var(--ys-black);
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            color: var(--ys-red);
+            font-weight: 500;
+        }
+
+        /* List Styles */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 24px;
+        }
+
+        .feature-list li::before {
+            content: '+';
+            position: absolute;
+            left: 0;
+            color: var(--ys-red);
+            font-weight: 300;
+        }
+
+        /* Footer */
+        .ys-footer {
+            border-top: 1px solid var(--ys-black);
+            padding: 40px 24px;
+            margin-top: 120px;
+        }
+
+        .footer-content {
+            max-width: 1920px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 12px;
+            line-height: 20px;
+            letter-spacing: 0.24px;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 32px;
+            font-size: 12px;
+            letter-spacing: 0.24px;
+        }
+
+        .footer-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .footer-right a:hover {
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 80px;
+                line-height: 80px;
+                letter-spacing: -2.4px;
+            }
+
+            .header-center {
+                display: none;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 48px;
+                line-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="ys-header">
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">About</div>
+        <nav class="header-right">
+            <a href="/about.html" class="active">About</a>
+            <a href="/">Tools</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="ys-container">
+        <!-- Title Section -->
+        <section class="title-section">
+            <h1 class="page-title">about</h1>
+        </section>
+
+        <!-- Content Section -->
+        <section class="content-section">
+            <div class="content-block">
+                <h2 class="section-title">YS Studio Artifacts</h2>
+                <p class="section-text">
+                    A curated collection of <span class="highlight">powerful web-based studio tools</span> and creative utilities
+                    designed for modern development workflows. Each tool in our collection represents a commitment to
+                    quality, privacy, and performance.
+                </p>
+            </div>
+
+            <div class="content-block">
+                <h2 class="section-title">Philosophy</h2>
+                <p class="section-text">
+                    We believe in tools that respect your workflow and your data. Every artifact in our collection is:
+                </p>
+                <ul class="feature-list">
+                    <li>Self-contained with zero external dependencies</li>
+                    <li>Privacy-first with all processing done client-side</li>
+                    <li>Performant with optimized algorithms</li>
+                    <li>Offline capable for uninterrupted creativity</li>
+                    <li>Open source and transparent</li>
+                </ul>
+            </div>
+
+            <div class="content-block">
+                <h2 class="section-title">Current Collection</h2>
+                <p class="section-text">
+                    Our first tool, the <span class="highlight">ASCII Interpreter</span>, showcases our approach to creative utilities.
+                    Transform images into stunning ASCII art with advanced features including multiple character sets,
+                    alpha channel support, and various brightness algorithms.
+                </p>
+                <p class="section-text">
+                    More tools are in development, each following our core principles of quality,
+                    independence, and creative empowerment.
+                </p>
+            </div>
+
+            <div class="content-block">
+                <h2 class="section-title">Technology</h2>
+                <p class="section-text">
+                    Built with pure HTML, CSS, and JavaScript. No frameworks, no dependencies, no tracking.
+                    Just clean, efficient code that works everywhere.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="ys-footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                © 2025 YS Studio Artifacts<br>
+                Creative Tools Collection
+            </div>
+            <div class="footer-right">
+                <a href="https://github.com/YS-studio-artifacts">GitHub</a>
+                <a href="mailto:studio@yambo.xyz">Contact</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
