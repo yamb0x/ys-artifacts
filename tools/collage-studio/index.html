@@ -807,7 +807,12 @@
             // Interaction
             isPainting: false,
             isSampling: false,
-            sampleStart: { x: 0, y: 0 }
+            sampleStart: { x: 0, y: 0 },
+
+            // Cursor preview
+            mouseX: 0,
+            mouseY: 0,
+            showCursor: false
         };
 
         // ============================================
@@ -915,7 +920,10 @@
             state.canvas.addEventListener('mousedown', handleMouseDown);
             state.canvas.addEventListener('mousemove', handleMouseMove);
             state.canvas.addEventListener('mouseup', handleMouseUp);
-            state.canvas.addEventListener('mouseleave', handleMouseUp);
+            state.canvas.addEventListener('mouseleave', () => {
+                handleMouseUp();
+                handleMouseLeave();
+            });
             state.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
             // Keyboard
@@ -1103,6 +1111,11 @@
             const canvasX = x * scaleX;
             const canvasY = y * scaleY;
 
+            // Update cursor position for preview
+            state.mouseX = canvasX;
+            state.mouseY = canvasY;
+            state.showCursor = true;
+
             if (state.isSampling) {
                 // Show sample preview
                 renderSamplePreview(canvasX, canvasY);
@@ -1118,6 +1131,9 @@
                     paintDuplicate(canvasX, canvasY);
                     state.lastPaintPos = { x: canvasX, y: canvasY };
                 }
+            } else {
+                // Not painting or sampling - just show cursor preview
+                render();
             }
 
             // Update cursor
@@ -1136,6 +1152,11 @@
                 render();
             }
             state.isPainting = false;
+        }
+
+        function handleMouseLeave() {
+            state.showCursor = false;
+            render();
         }
 
         // ============================================
@@ -1251,15 +1272,19 @@
             ctx.globalAlpha = state.opacity;
             ctx.globalCompositeOperation = 'source-over';
 
-            const drawX = x - sample.width / 2;
-            const drawY = y - sample.height / 2;
+            // Use current brush size (stretches/shrinks the sample)
+            const targetWidth = state.sampleWidth;
+            const targetHeight = state.sampleHeight;
+
+            const drawX = x - targetWidth / 2;
+            const drawY = y - targetHeight / 2;
 
             if (state.rotation !== 0) {
                 ctx.translate(x, y);
                 ctx.rotate((state.rotation * Math.PI) / 180);
-                ctx.drawImage(sample.canvas, -sample.width / 2, -sample.height / 2);
+                ctx.drawImage(sample.canvas, -targetWidth / 2, -targetHeight / 2, targetWidth, targetHeight);
             } else {
-                ctx.drawImage(sample.canvas, drawX, drawY);
+                ctx.drawImage(sample.canvas, drawX, drawY, targetWidth, targetHeight);
             }
 
             ctx.restore();
@@ -1283,15 +1308,19 @@
                 ctx.save();
                 ctx.globalAlpha = layerOpacity;
 
-                const drawX = x - sample.width / 2;
-                const drawY = y - sample.height / 2;
+                // Use current brush size (stretches/shrinks the sample)
+                const targetWidth = state.sampleWidth;
+                const targetHeight = state.sampleHeight;
+
+                const drawX = x - targetWidth / 2;
+                const drawY = y - targetHeight / 2;
 
                 if (state.rotation !== 0) {
                     ctx.translate(x, y);
                     ctx.rotate((state.rotation * Math.PI) / 180);
-                    ctx.drawImage(sample.canvas, -sample.width / 2, -sample.height / 2);
+                    ctx.drawImage(sample.canvas, -targetWidth / 2, -targetHeight / 2, targetWidth, targetHeight);
                 } else {
-                    ctx.drawImage(sample.canvas, drawX, drawY);
+                    ctx.drawImage(sample.canvas, drawX, drawY, targetWidth, targetHeight);
                 }
 
                 ctx.restore();
@@ -1460,6 +1489,21 @@
             // Draw grid
             if (state.gridEnabled) {
                 drawGrid();
+            }
+
+            // Draw cursor preview
+            if (state.showCursor && !state.isSampling && !state.isPainting) {
+                ctx.save();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
+                ctx.globalAlpha = 0.7;
+
+                const x = state.mouseX - state.sampleWidth / 2;
+                const y = state.mouseY - state.sampleHeight / 2;
+
+                ctx.strokeRect(x, y, state.sampleWidth, state.sampleHeight);
+                ctx.restore();
             }
         }
 
