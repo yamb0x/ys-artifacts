@@ -217,7 +217,12 @@
         .control-item {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .control-item:last-child {
+            margin-bottom: 0;
         }
 
         .control-item label {
@@ -225,6 +230,11 @@
             letter-spacing: 0.3px;
             text-transform: uppercase;
             font-weight: 400;
+        }
+
+        /* Checkbox groups - reduce spacing between individual checkboxes */
+        .controls-section > div > .checkbox-wrapper + .checkbox-wrapper {
+            margin-top: 6px;
         }
 
         .control-item input[type="number"],
@@ -268,7 +278,7 @@
         .checkbox-wrapper {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
         }
 
@@ -280,8 +290,12 @@
         }
 
         .checkbox-wrapper label {
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
             cursor: pointer;
             margin: 0;
+            font-weight: 400;
         }
 
         /* Buttons */
