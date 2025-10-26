@@ -6,6 +6,33 @@
     <title>Text Visualizer (Animated) - YS Studio Artifacts</title>
     <link rel="stylesheet" href="../../shared/preset-ui.css">
     <style>
+        /* Font Imports */
+        @font-face {
+            font-family: 'Basis Grotesque';
+            src: url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.woff2') format('woff2'),
+                 url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.woff') format('woff'),
+                 url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Kalice';
+            src: url('../../fonts/Kalice/Kalice-Regular-alternative.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Kalice';
+            src: url('../../fonts/Kalice/Kalice-Italic-alternative.otf') format('opentype');
+            font-weight: 400;
+            font-style: italic;
+            font-display: swap;
+        }
+
         /* YS Studio Design System Base */
         * {
             margin: 0;
@@ -740,10 +767,125 @@
                 </div>
 
                 <div id="advancedControls" style="display: none;">
+                    <!-- ORGANIC DISTRIBUTION SYSTEM -->
+                    <div class="control-group">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="organicEnabled">
+                            <label for="organicEnabled" class="checkbox-label"><strong>Enable Organic Distribution</strong></label>
+                        </div>
+                    </div>
+
+                    <div id="organicControls" style="display: none;">
+                        <div class="control-group">
+                            <label>Repetition Type</label>
+                            <select id="repetitionType">
+                                <option value="phrase">Repeat Phrase</option>
+                                <option value="words">Repeat Words</option>
+                                <option value="letters">Repeat Letters</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Layout</label>
+                            <select id="organicLayout">
+                                <option value="vertical">Vertical</option>
+                                <option value="horizontal">Horizontal</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Interval: <span id="intervalValue">10</span>px</label>
+                            <div class="slider-container">
+                                <input type="range" id="interval" min="0" max="50" value="10">
+                                <span class="slider-value">10</span>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Distribution Order</label>
+                            <select id="distributionOrder">
+                                <option value="sequential">Sequential</option>
+                                <option value="random">Random</option>
+                                <option value="reverse">Reverse</option>
+                                <option value="ping-pong">Ping-Pong</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- COMPOSABLE INFLUENCES (work with any base) -->
+                    <div class="control-group" style="margin-top: 20px;">
+                        <label style="font-size: 11px; opacity: 0.8;">POSITION INFLUENCE (adds to any pattern)</label>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Position Mode</label>
+                        <select id="positionMode">
+                            <option value="none">None</option>
+                            <option value="noise">Noise (Organic)</option>
+                            <option value="sin">Sine Wave</option>
+                            <option value="doublesin">Double Sine</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Amplitude: <span id="posAmplitudeValue">50</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="posAmplitude" min="0" max="100" value="50">
+                            <span class="slider-value">50</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Amplitude Distribution</label>
+                        <select id="amplitudeMode">
+                            <option value="uniform">Uniform</option>
+                            <option value="center">Center Focus</option>
+                            <option value="edge">Edge Focus</option>
+                            <option value="side-left">Left Side</option>
+                            <option value="side-right">Right Side</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group" style="margin-top: 20px;">
+                        <label style="font-size: 11px; opacity: 0.8;">SCALE INFLUENCE (multiplies any scale)</label>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Scale Mode</label>
+                        <select id="scaleMode">
+                            <option value="none">None</option>
+                            <option value="position">By Position</option>
+                            <option value="sin">Sine Wave</option>
+                            <option value="doublesin">Double Sine</option>
+                            <option value="noise">Noise</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Scale Min: <span id="scaleMinValue">0.2</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="scaleInfluenceMin" min="0.1" max="1" step="0.1" value="0.2">
+                            <span class="slider-value">0.2</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Scale Max: <span id="scaleMaxValue">1.0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="scaleInfluenceMax" min="1" max="3" step="0.1" value="1">
+                            <span class="slider-value">1.0</span>
+                        </div>
+                    </div>
+
+                    <!-- LEGACY CONTROLS (still work!) -->
+                    <div class="control-group" style="margin-top: 20px;">
+                        <label style="font-size: 11px; opacity: 0.8;">LEGACY ADVANCED CONTROLS</label>
+                    </div>
+
                     <div class="control-group">
                         <label>Repetitions: <span id="repetitionsValue">1</span>x</label>
                         <div class="slider-container">
-                            <input type="range" id="repetitions" min="1" max="100" value="1">
+                            <input type="range" id="repetitions" min="1" max="200" value="1">
                             <span class="slider-value">1</span>
                         </div>
                     </div>
@@ -798,6 +940,8 @@
                 <div class="control-group">
                     <label>Font</label>
                     <select id="fontSelect">
+                        <option value="Basis Grotesque">Basis Grotesque</option>
+                        <option value="Kalice">Kalice</option>
                         <option value="Helvetica">Helvetica</option>
                         <option value="Arial">Arial</option>
                         <option value="Georgia">Georgia</option>
@@ -996,6 +1140,45 @@
                     opacityVariation: 0
                 };
 
+                // Organic distribution parameters (v3 - composable system)
+                this.organicParams = {
+                    enabled: false,
+                    repetitionType: 'phrase', // 'phrase', 'words', 'letters'
+                    interval: 10,             // Base spacing between repetitions
+                    layout: 'vertical'        // 'vertical', 'horizontal'
+                };
+
+                // Position influence (composable - adds to base position)
+                this.positionInfluence = {
+                    mode: 'noise',            // 'none', 'noise', 'sin', 'doublesin'
+                    amplitude: 50,            // 0-100 strength
+                    amplitudeMode: 'uniform', // 'uniform', 'center', 'edge', 'side-left', 'side-right'
+                    noise: {
+                        x: 0.3,               // Noise frequency X
+                        y: 1.0,               // Noise frequency Y
+                        speed: 0.5,           // Animation speed
+                        seed: Math.floor(Math.random() * 10000)
+                    },
+                    sin: {
+                        x: 1,                 // Sine frequency X
+                        y: 1.5,               // Sine frequency Y
+                        cycle: 2              // Wave cycles
+                    }
+                };
+
+                // Scale influence (composable - multiplies with base scale)
+                this.scaleInfluence = {
+                    mode: 'none',             // 'none', 'position', 'sin', 'doublesin', 'noise'
+                    min: 0.2,                 // Minimum scale multiplier
+                    max: 1.0,                 // Maximum scale multiplier
+                    easing: 'linear'          // Easing function
+                };
+
+                // Distribution control
+                this.distribution = {
+                    order: 'sequential'       // 'sequential', 'random', 'reverse', 'ping-pong'
+                };
+
                 // Effects toggles
                 this.effects = {
                     oscillate: true,
@@ -1144,6 +1327,13 @@
                 const centerX = this.canvas.width / 2;
                 const centerY = this.canvas.height / 2;
 
+                // Check for organic distribution system (composable with patterns)
+                if (this.advancedMode && this.organicParams.enabled) {
+                    this.basePositions = this.calculateOrganicDistribution(centerX, centerY);
+                    return;
+                }
+
+                // Use existing pattern system
                 switch(this.pattern) {
                     case 'grid':
                         this.basePositions = this.calculateGridPositions(elements, centerX, centerY);
@@ -1323,6 +1513,560 @@
                 return positions;
             }
 
+            // ORGANIC DISTRIBUTION SYSTEM (v3)
+
+            // Simple 2D noise generator (multiple sine waves for organic feel)
+            simpleNoise2D(x, y, seed = 0) {
+                const X = x + seed;
+                const Y = y + seed;
+
+                // Multiple frequencies for organic feel
+                const n1 = Math.sin(X * 12.9898 + Y * 78.233) * 43758.5453;
+                const n2 = Math.sin(X * 93.9898 + Y * 47.233) * 27183.5453;
+                const n3 = Math.sin(X * 43.9898 + Y * 12.233) * 81724.5453;
+
+                // Combine and normalize to -1 to 1
+                return ((n1 % 1) + (n2 % 1) + (n3 % 1)) / 3 * 2 - 1;
+            }
+
+            // Smooth noise using bilinear interpolation
+            smoothNoise(x, y, scale, seed) {
+                const sx = x * scale;
+                const sy = y * scale;
+
+                const x0 = Math.floor(sx);
+                const x1 = x0 + 1;
+                const y0 = Math.floor(sy);
+                const y1 = y0 + 1;
+
+                const fx = sx - x0;
+                const fy = sy - y0;
+
+                // Sample 4 corners
+                const n00 = this.simpleNoise2D(x0, y0, seed);
+                const n10 = this.simpleNoise2D(x1, y0, seed);
+                const n01 = this.simpleNoise2D(x0, y1, seed);
+                const n11 = this.simpleNoise2D(x1, y1, seed);
+
+                // Bilinear interpolation
+                const nx0 = n00 * (1 - fx) + n10 * fx;
+                const nx1 = n01 * (1 - fx) + n11 * fx;
+
+                return nx0 * (1 - fy) + nx1 * fy;
+            }
+
+            // Calculate amplitude factor based on position and amplitude mode
+            getAmplitudeFactor(normalizedPos, canvasSize, mode) {
+                const x = normalizedPos.x;
+                const y = normalizedPos.y;
+                const centerDist = Math.sqrt(Math.pow(x - 0.5, 2) + Math.pow(y - 0.5, 2)) * 2;
+
+                switch(mode) {
+                    case 'uniform':
+                        return 1.0;
+
+                    case 'center':
+                        // Stronger in center, weaker at edges
+                        return 1.0 - centerDist;
+
+                    case 'edge':
+                        // Stronger at edges, weaker in center
+                        return centerDist;
+
+                    case 'side-left':
+                        // Stronger on left, weaker on right
+                        return 1.0 - x;
+
+                    case 'side-right':
+                        // Stronger on right, weaker on left
+                        return x;
+
+                    default:
+                        return 1.0;
+                }
+            }
+
+            // Main organic distribution calculation
+            calculateOrganicDistribution(centerX, centerY) {
+                const positions = [];
+                const reps = this.advancedParams.repetitions;
+                const interval = this.organicParams.interval;
+                const layout = this.organicParams.layout;
+                const repType = this.organicParams.repetitionType;
+
+                let elements = [];
+
+                // Generate elements based on repetition type
+                if (repType === 'phrase') {
+                    // Repeat entire phrase
+                    for (let i = 0; i < reps; i++) {
+                        elements.push({
+                            text: this.text,
+                            type: 'phrase',
+                            repIndex: i
+                        });
+                    }
+                } else if (repType === 'words') {
+                    // Repeat words
+                    const words = this.text.split(/\s+/).filter(w => w.length > 0);
+                    for (let i = 0; i < reps; i++) {
+                        words.forEach((word, wordIdx) => {
+                            elements.push({
+                                text: word,
+                                type: 'word',
+                                repIndex: i,
+                                wordIndex: wordIdx
+                            });
+                        });
+                    }
+                } else if (repType === 'letters') {
+                    // Repeat individual letters
+                    const chars = this.text.replace(/\s+/g, '').split('');
+                    for (let i = 0; i < reps; i++) {
+                        chars.forEach((char, charIdx) => {
+                            elements.push({
+                                text: char,
+                                type: 'letter',
+                                repIndex: i,
+                                charIndex: charIdx
+                            });
+                        });
+                    }
+                }
+
+                // Apply distribution order
+                const orderedElements = this.applyDistributionOrder(elements);
+
+                // Calculate positions based on layout
+                if (layout === 'vertical') {
+                    orderedElements.forEach((el, idx) => {
+                        positions.push({
+                            text: el.text,
+                            baseX: centerX,
+                            baseY: centerY - (orderedElements.length * interval / 2) + idx * interval,
+                            index: idx,
+                            repIndex: el.repIndex,
+                            type: el.type,
+                            sizeVar: Math.random(),
+                            opacityVar: Math.random(),
+                            normalizedX: 0.5,
+                            normalizedY: idx / Math.max(orderedElements.length - 1, 1)
+                        });
+                    });
+                } else {
+                    // Horizontal
+                    orderedElements.forEach((el, idx) => {
+                        positions.push({
+                            text: el.text,
+                            baseX: centerX - (orderedElements.length * interval / 2) + idx * interval,
+                            baseY: centerY,
+                            index: idx,
+                            repIndex: el.repIndex,
+                            type: el.type,
+                            sizeVar: Math.random(),
+                            opacityVar: Math.random(),
+                            normalizedX: idx / Math.max(orderedElements.length - 1, 1),
+                            normalizedY: 0.5
+                        });
+                    });
+                }
+
+                return positions;
+            }
+
+            // Apply distribution ordering
+            applyDistributionOrder(elements) {
+                const order = this.distribution.order;
+
+                switch(order) {
+                    case 'sequential':
+                        return elements;
+
+                    case 'reverse':
+                        return [...elements].reverse();
+
+                    case 'random':
+                        return [...elements].sort(() => Math.random() - 0.5);
+
+                    case 'ping-pong':
+                        const result = [];
+                        for (let i = 0; i < elements.length; i++) {
+                            const pingPongIndex = i % 2 === 0 ? i : elements.length - 1 - i;
+                            if (pingPongIndex < elements.length) {
+                                result.push(elements[pingPongIndex]);
+                            }
+                        }
+                        return result;
+
+                    default:
+                        return elements;
+                }
+            }
+
+            calculatePathFollowing(centerX, centerY) {
+                const positions = [];
+                const pathType = this.pathParams.type;
+                const pathCount = this.pathParams.count;
+                const tangentRot = this.pathParams.tangentRotation;
+
+                const sentence = this.text;
+                const chars = sentence.split('');
+
+                for (let pathIdx = 0; pathIdx < pathCount; pathIdx++) {
+                    const pathProgress = pathCount > 1 ? pathIdx / (pathCount - 1) : 0;
+
+                    chars.forEach((char, charIdx) => {
+                        if (char === ' ') return; // Skip spaces for cleaner paths
+
+                        const t = charIdx / Math.max(chars.length - 1, 1); // 0 to 1 along path
+                        const point = this.getPathPoint(pathType, t, pathProgress);
+                        const tangent = tangentRot ? this.getPathTangent(pathType, t, pathProgress) : 0;
+
+                        positions.push({
+                            text: char,
+                            baseX: centerX + point.x,
+                            baseY: centerY + point.y,
+                            rotation: tangent,
+                            pathIndex: pathIdx,
+                            index: pathIdx * chars.length + charIdx,
+                            sizeVar: Math.random(),
+                            opacityVar: Math.random()
+                        });
+                    });
+                }
+
+                return positions;
+            }
+
+            getPathPoint(type, t, pathIndex) {
+                const startRadius = this.pathParams.startRadius;
+                const endRadius = this.pathParams.endRadius;
+                const amplitude = this.pathParams.waveAmplitude;
+                const frequency = this.pathParams.waveFrequency;
+
+                switch(type) {
+                    case 'circle': {
+                        const radius = startRadius + pathIndex * 50;
+                        const angle = t * Math.PI * 2;
+                        return {
+                            x: radius * Math.cos(angle - Math.PI / 2),
+                            y: radius * Math.sin(angle - Math.PI / 2)
+                        };
+                    }
+
+                    case 'spiral-arch': {
+                        const angle = t * Math.PI * 2 * 3; // 3 turns
+                        const radius = startRadius + t * (endRadius - startRadius);
+                        return {
+                            x: radius * Math.cos(angle),
+                            y: radius * Math.sin(angle)
+                        };
+                    }
+
+                    case 'spiral-log': {
+                        const angle = t * Math.PI * 2 * 3;
+                        const a = startRadius;
+                        const b = 0.15;
+                        const radius = a * Math.exp(b * angle);
+                        return {
+                            x: radius * Math.cos(angle),
+                            y: radius * Math.sin(angle)
+                        };
+                    }
+
+                    case 'wave-sine': {
+                        const layerOffset = pathIndex * 80;
+                        return {
+                            x: (t - 0.5) * 800,
+                            y: Math.sin(t * Math.PI * frequency) * amplitude + layerOffset
+                        };
+                    }
+
+                    case 'lissajous': {
+                        const a = 3;
+                        const b = 4;
+                        const delta = Math.PI / 2;
+                        const scale = startRadius + pathIndex * 30;
+                        return {
+                            x: scale * Math.sin(a * t * Math.PI * 2 + delta),
+                            y: scale * Math.sin(b * t * Math.PI * 2)
+                        };
+                    }
+
+                    default:
+                        return { x: 0, y: 0 };
+                }
+            }
+
+            getPathTangent(type, t, pathIndex) {
+                const startRadius = this.pathParams.startRadius;
+                const endRadius = this.pathParams.endRadius;
+                const frequency = this.pathParams.waveFrequency;
+
+                switch(type) {
+                    case 'circle': {
+                        const angle = t * Math.PI * 2;
+                        return angle; // Tangent is perpendicular to radius
+                    }
+
+                    case 'spiral-arch':
+                    case 'spiral-log': {
+                        const angle = t * Math.PI * 2 * 3;
+                        return angle + Math.PI / 2;
+                    }
+
+                    case 'wave-sine': {
+                        const derivative = Math.cos(t * Math.PI * frequency) * Math.PI * frequency;
+                        return Math.atan(derivative);
+                    }
+
+                    case 'lissajous': {
+                        // Approximate tangent for Lissajous
+                        const a = 3;
+                        const b = 4;
+                        const delta = Math.PI / 2;
+                        const dx = a * Math.cos(a * t * Math.PI * 2 + delta);
+                        const dy = b * Math.cos(b * t * Math.PI * 2);
+                        return Math.atan2(dy, dx);
+                    }
+
+                    default:
+                        return 0;
+                }
+            }
+
+            calculateWordExtraction(centerX, centerY) {
+                const positions = [];
+                const words = this.text.split(' ').filter(w => w.length > 0);
+                if (words.length === 0) return positions;
+
+                const pattern = this.wordExtractParams.pattern;
+                const density = this.wordExtractParams.density;
+                const rotSpread = this.wordExtractParams.rotationSpread * Math.PI / 180;
+                const scaleMin = this.wordExtractParams.scaleMin;
+                const scaleMax = this.wordExtractParams.scaleMax;
+                const opacityMin = this.wordExtractParams.opacityMin;
+                const opacityMax = this.wordExtractParams.opacityMax;
+
+                const totalPositions = Math.floor(density);
+
+                for (let i = 0; i < totalPositions; i++) {
+                    const progress = i / Math.max(totalPositions - 1, 1);
+                    const word = words[i % words.length];
+
+                    const point = this.getWordDistributionPoint(pattern, progress, i, totalPositions);
+
+                    // Calculate variations
+                    const rotation = (Math.random() - 0.5) * rotSpread;
+                    const scale = scaleMin + Math.random() * (scaleMax - scaleMin);
+                    const opacity = opacityMin + Math.random() * (opacityMax - opacityMin);
+
+                    positions.push({
+                        text: word,
+                        baseX: centerX + point.x,
+                        baseY: centerY + point.y,
+                        rotation: rotation,
+                        scale: scale,
+                        opacity: opacity,
+                        wordIndex: i % words.length,
+                        index: i,
+                        sizeVar: Math.random(),
+                        opacityVar: Math.random()
+                    });
+                }
+
+                return positions;
+            }
+
+            getWordDistributionPoint(pattern, progress, index, total) {
+                switch(pattern) {
+                    case 'radial-burst': {
+                        // Golden angle distribution for even spacing
+                        const goldenAngle = 137.5 * Math.PI / 180;
+                        const angle = index * goldenAngle;
+                        const radius = Math.sqrt(index / total) * 400;
+                        return {
+                            x: radius * Math.cos(angle),
+                            y: radius * Math.sin(angle)
+                        };
+                    }
+
+                    case 'wave-scatter': {
+                        const waveCount = 4;
+                        const waveX = (progress - 0.5) * 800;
+                        const waveY = Math.sin(progress * Math.PI * waveCount) * 200;
+                        const scatter = (Math.random() - 0.5) * 100;
+                        return {
+                            x: waveX + scatter,
+                            y: waveY + (Math.random() - 0.5) * 80
+                        };
+                    }
+
+                    case 'concentric-rings': {
+                        const rings = 5;
+                        const ring = Math.floor(progress * rings);
+                        const inRing = (progress * rings) - ring;
+                        const angle = inRing * Math.PI * 2;
+                        const radius = 80 + ring * 70;
+                        return {
+                            x: radius * Math.cos(angle),
+                            y: radius * Math.sin(angle)
+                        };
+                    }
+
+                    case 'diagonal-streams': {
+                        const streamCount = 6;
+                        const stream = Math.floor(progress * streamCount);
+                        const inStream = (progress * streamCount) - stream;
+                        const streamAngle = (stream / streamCount) * Math.PI * 2;
+                        const distance = inStream * 600;
+                        return {
+                            x: distance * Math.cos(streamAngle) - 300,
+                            y: distance * Math.sin(streamAngle) - 300
+                        };
+                    }
+
+                    case 'organic-cluster': {
+                        // Multiple cluster centers
+                        const clusterCount = 4;
+                        const cluster = index % clusterCount;
+                        const clusterAngle = (cluster / clusterCount) * Math.PI * 2;
+                        const clusterRadius = 200;
+                        const clusterX = clusterRadius * Math.cos(clusterAngle);
+                        const clusterY = clusterRadius * Math.sin(clusterAngle);
+
+                        // Random offset within cluster
+                        const spread = 120;
+                        const offsetAngle = Math.random() * Math.PI * 2;
+                        const offsetDist = Math.random() * spread;
+
+                        return {
+                            x: clusterX + offsetDist * Math.cos(offsetAngle),
+                            y: clusterY + offsetDist * Math.sin(offsetAngle)
+                        };
+                    }
+
+                    default:
+                        return { x: 0, y: 0 };
+                }
+            }
+
+            // Calculate position influence (additive offset)
+            calculatePositionInfluence(position, time) {
+                const mode = this.positionInfluence.mode;
+                const amplitude = this.positionInfluence.amplitude;
+                const ampMode = this.positionInfluence.amplitudeMode;
+
+                // Get normalized position for amplitude calculation
+                const normPos = {
+                    x: position.normalizedX !== undefined ? position.normalizedX : 0.5,
+                    y: position.normalizedY !== undefined ? position.normalizedY : 0.5
+                };
+
+                // Calculate amplitude factor based on position
+                const ampFactor = this.getAmplitudeFactor(normPos, this.canvas.width, ampMode);
+                const effectiveAmplitude = (amplitude / 100) * 200 * ampFactor; // Scale to pixels
+
+                let offsetX = 0;
+                let offsetY = 0;
+
+                switch(mode) {
+                    case 'noise': {
+                        const noiseX = this.positionInfluence.noise.x;
+                        const noiseY = this.positionInfluence.noise.y;
+                        const speed = this.positionInfluence.noise.speed;
+                        const seed = this.positionInfluence.noise.seed;
+
+                        const t = time * speed;
+                        offsetX = this.smoothNoise(position.index, t, noiseX, seed) * effectiveAmplitude;
+                        offsetY = this.smoothNoise(position.index + 1000, t, noiseY, seed + 1000) * effectiveAmplitude;
+                        break;
+                    }
+
+                    case 'sin': {
+                        const freqX = this.positionInfluence.sin.x;
+                        const freqY = this.positionInfluence.sin.y;
+                        const cycle = this.positionInfluence.sin.cycle;
+
+                        const phaseOffset = position.index * 0.1;
+                        offsetX = Math.sin(time * freqX + phaseOffset) * effectiveAmplitude;
+                        offsetY = Math.cos(time * freqY + phaseOffset) * effectiveAmplitude;
+                        break;
+                    }
+
+                    case 'doublesin': {
+                        const freqX = this.positionInfluence.sin.x;
+                        const freqY = this.positionInfluence.sin.y;
+
+                        const phaseOffset = position.index * 0.1;
+                        offsetX = (Math.sin(time * freqX + phaseOffset) + Math.sin(time * freqX * 2.3 + phaseOffset)) * effectiveAmplitude * 0.5;
+                        offsetY = (Math.cos(time * freqY + phaseOffset) + Math.cos(time * freqY * 1.7 + phaseOffset)) * effectiveAmplitude * 0.5;
+                        break;
+                    }
+                }
+
+                return { x: offsetX, y: offsetY };
+            }
+
+            // Calculate scale influence (multiplicative factor)
+            calculateScaleInfluence(position, time) {
+                const mode = this.scaleInfluence.mode;
+                const min = this.scaleInfluence.min;
+                const max = this.scaleInfluence.max;
+                const easing = this.scaleInfluence.easing;
+
+                let scaleFactor = 1.0;
+
+                switch(mode) {
+                    case 'position': {
+                        // Scale based on position in sequence
+                        const progress = position.index / Math.max(this.basePositions.length - 1, 1);
+                        const easedProgress = this.applyEasingFunction(progress, easing);
+                        scaleFactor = min + (max - min) * easedProgress;
+                        break;
+                    }
+
+                    case 'sin': {
+                        const phaseOffset = position.index * 0.1;
+                        const sinValue = (Math.sin(time + phaseOffset) + 1) * 0.5; // 0 to 1
+                        scaleFactor = min + (max - min) * sinValue;
+                        break;
+                    }
+
+                    case 'doublesin': {
+                        const phaseOffset = position.index * 0.1;
+                        const sin1 = Math.sin(time + phaseOffset);
+                        const sin2 = Math.sin(time * 2.3 + phaseOffset);
+                        const sinValue = ((sin1 + sin2) / 2 + 1) * 0.5; // 0 to 1
+                        scaleFactor = min + (max - min) * sinValue;
+                        break;
+                    }
+
+                    case 'noise': {
+                        const seed = this.positionInfluence.noise.seed;
+                        const speed = this.positionInfluence.noise.speed;
+                        const t = time * speed;
+                        const noiseValue = (this.smoothNoise(position.index, t, 0.5, seed + 5000) + 1) * 0.5; // 0 to 1
+                        scaleFactor = min + (max - min) * noiseValue;
+                        break;
+                    }
+                }
+
+                return scaleFactor;
+            }
+
+            // Helper easing function
+            applyEasingFunction(t, easing) {
+                switch(easing) {
+                    case 'linear': return t;
+                    case 'ease-in': return t * t;
+                    case 'ease-out': return 1 - (1 - t) * (1 - t);
+                    case 'ease-in-out': return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                    case 'exponential': return Math.pow(t, 2.5);
+                    default: return t;
+                }
+            }
+
             applyAnimations(position, time) {
                 let x = position.baseX;
                 let y = position.baseY;
@@ -1355,6 +2099,18 @@
                 if (this.effects.wave) {
                     const waveY = Math.sin((position.baseX / 100) + time * this.animParams.waveFrequency) * 30;
                     y += waveY;
+                }
+
+                // COMPOSABLE POSITION INFLUENCE (works with any base distribution)
+                if (this.positionInfluence.mode !== 'none') {
+                    const influence = this.calculatePositionInfluence(position, time);
+                    x += influence.x;
+                    y += influence.y;
+                }
+
+                // COMPOSABLE SCALE INFLUENCE (works with any base scale)
+                if (this.scaleInfluence.mode !== 'none') {
+                    scale *= this.calculateScaleInfluence(position, time);
                 }
 
                 // Pattern-specific animations
@@ -1822,6 +2578,123 @@
             `
         };
 
+        // Strategy parameter templates
+        const strategyParamTemplates = {
+            'progressive-spacing': `
+                <div class="control-group">
+                    <label>Start Spacing: <span id="startSpacingValue">5</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="startSpacing" min="1" max="50" value="5">
+                        <span class="slider-value">5</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>End Spacing: <span id="endSpacingValue">100</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="endSpacing" min="10" max="200" value="100">
+                        <span class="slider-value">100</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Vertical Spacing: <span id="vertSpacingValue">30</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="vertSpacing" min="10" max="100" value="30">
+                        <span class="slider-value">30</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Progression Curve</label>
+                    <select id="progressionCurve">
+                        <option value="linear">Linear</option>
+                        <option value="ease-in">Ease In</option>
+                        <option value="ease-out">Ease Out</option>
+                        <option value="ease-in-out">Ease In-Out</option>
+                        <option value="exponential">Exponential</option>
+                    </select>
+                </div>
+            `,
+            'path-following': `
+                <div class="control-group">
+                    <label>Path Type</label>
+                    <select id="pathType">
+                        <option value="circle">Circle</option>
+                        <option value="spiral-arch">Spiral (Archimedean)</option>
+                        <option value="spiral-log">Spiral (Logarithmic)</option>
+                        <option value="wave-sine">Sine Wave</option>
+                        <option value="lissajous">Lissajous Curve</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Path Count: <span id="pathCountValue">3</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="pathCount" min="1" max="20" value="3">
+                        <span class="slider-value">3</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Start Radius: <span id="startRadiusValue">100</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="startRadius" min="50" max="400" value="100">
+                        <span class="slider-value">100</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>End Radius: <span id="endRadiusValue">300</span>px</label>
+                    <div class="slider-container">
+                        <input type="range" id="endRadius" min="100" max="600" value="300">
+                        <span class="slider-value">300</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="tangentRotation" checked>
+                        <label for="tangentRotation" class="checkbox-label">Rotate Along Path</label>
+                    </div>
+                </div>
+            `,
+            'word-extraction': `
+                <div class="control-group">
+                    <label>Distribution Pattern</label>
+                    <select id="wordDistPattern">
+                        <option value="radial-burst">Radial Burst</option>
+                        <option value="wave-scatter">Wave Scatter</option>
+                        <option value="concentric-rings">Concentric Rings</option>
+                        <option value="diagonal-streams">Diagonal Streams</option>
+                        <option value="organic-cluster">Organic Clusters</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Word Density: <span id="wordDensityValue">50</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="wordDensity" min="10" max="200" value="50">
+                        <span class="slider-value">50</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Rotation Spread: <span id="rotSpreadValue">45</span>°</label>
+                    <div class="slider-container">
+                        <input type="range" id="rotSpread" min="0" max="180" value="45">
+                        <span class="slider-value">45</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Scale Min: <span id="scaleMinValue">0.5</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="scaleMin" min="0.1" max="1" step="0.1" value="0.5">
+                        <span class="slider-value">0.5</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Scale Max: <span id="scaleMaxValue">2.0</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="scaleMax" min="1" max="3" step="0.1" value="2">
+                        <span class="slider-value">2.0</span>
+                    </div>
+                </div>
+            `,
+            'none': ''
+        };
+
         // Helper function to update slider displays
         function updateSliderDisplay(slider, displayElement, suffix = '') {
             displayElement.textContent = slider.value + suffix;
@@ -2126,6 +2999,199 @@
             updateSliderDisplay(e.target, document.getElementById('opacityVariationValue'));
         });
 
+        // Organic Distribution Controls
+        const organicEnabled = document.getElementById('organicEnabled');
+        organicEnabled.addEventListener('change', (e) => {
+            engine.organicParams.enabled = e.target.checked;
+            document.getElementById('organicControls').style.display = e.target.checked ? 'block' : 'none';
+            engine.calculateBasePositions();
+        });
+
+        const repetitionType = document.getElementById('repetitionType');
+        repetitionType.addEventListener('change', (e) => {
+            engine.organicParams.repetitionType = e.target.value;
+            engine.calculateBasePositions();
+        });
+
+        const organicLayout = document.getElementById('organicLayout');
+        organicLayout.addEventListener('change', (e) => {
+            engine.organicParams.layout = e.target.value;
+            engine.calculateBasePositions();
+        });
+
+        const interval = document.getElementById('interval');
+        interval.addEventListener('input', (e) => {
+            engine.organicParams.interval = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('intervalValue'), 'px');
+            engine.calculateBasePositions();
+        });
+
+        const distributionOrder = document.getElementById('distributionOrder');
+        distributionOrder.addEventListener('change', (e) => {
+            engine.distribution.order = e.target.value;
+            engine.calculateBasePositions();
+        });
+
+        // Position Influence Controls
+        const positionMode = document.getElementById('positionMode');
+        positionMode.addEventListener('change', (e) => {
+            engine.positionInfluence.mode = e.target.value;
+        });
+
+        const posAmplitude = document.getElementById('posAmplitude');
+        posAmplitude.addEventListener('input', (e) => {
+            engine.positionInfluence.amplitude = parseInt(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('posAmplitudeValue'));
+        });
+
+        const amplitudeMode = document.getElementById('amplitudeMode');
+        amplitudeMode.addEventListener('change', (e) => {
+            engine.positionInfluence.amplitudeMode = e.target.value;
+        });
+
+        // Scale Influence Controls
+        const scaleMode = document.getElementById('scaleMode');
+        scaleMode.addEventListener('change', (e) => {
+            engine.scaleInfluence.mode = e.target.value;
+        });
+
+        const scaleInfluenceMin = document.getElementById('scaleInfluenceMin');
+        scaleInfluenceMin.addEventListener('input', (e) => {
+            engine.scaleInfluence.min = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('scaleMinValue'));
+        });
+
+        const scaleInfluenceMax = document.getElementById('scaleInfluenceMax');
+        scaleInfluenceMax.addEventListener('input', (e) => {
+            engine.scaleInfluence.max = parseFloat(e.target.value);
+            updateSliderDisplay(e.target, document.getElementById('scaleMaxValue'));
+        });
+
+        // Attach strategy-specific listeners
+        function attachStrategyListeners(strategy) {
+            switch(strategy) {
+                case 'progressive-spacing':
+                    const startSpacing = document.getElementById('startSpacing');
+                    const endSpacing = document.getElementById('endSpacing');
+                    const vertSpacing = document.getElementById('vertSpacing');
+                    const progressionCurve = document.getElementById('progressionCurve');
+
+                    if (startSpacing) {
+                        startSpacing.addEventListener('input', (e) => {
+                            engine.progressiveParams.startSpacing = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('startSpacingValue'), 'px');
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (endSpacing) {
+                        endSpacing.addEventListener('input', (e) => {
+                            engine.progressiveParams.endSpacing = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('endSpacingValue'), 'px');
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (vertSpacing) {
+                        vertSpacing.addEventListener('input', (e) => {
+                            engine.progressiveParams.verticalSpacing = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('vertSpacingValue'), 'px');
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (progressionCurve) {
+                        progressionCurve.addEventListener('change', (e) => {
+                            engine.progressiveParams.easing = e.target.value;
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    break;
+
+                case 'path-following':
+                    const pathType = document.getElementById('pathType');
+                    const pathCount = document.getElementById('pathCount');
+                    const startRadius = document.getElementById('startRadius');
+                    const endRadius = document.getElementById('endRadius');
+                    const tangentRotation = document.getElementById('tangentRotation');
+
+                    if (pathType) {
+                        pathType.addEventListener('change', (e) => {
+                            engine.pathParams.type = e.target.value;
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (pathCount) {
+                        pathCount.addEventListener('input', (e) => {
+                            engine.pathParams.count = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('pathCountValue'));
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (startRadius) {
+                        startRadius.addEventListener('input', (e) => {
+                            engine.pathParams.startRadius = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('startRadiusValue'), 'px');
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (endRadius) {
+                        endRadius.addEventListener('input', (e) => {
+                            engine.pathParams.endRadius = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('endRadiusValue'), 'px');
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (tangentRotation) {
+                        tangentRotation.addEventListener('change', (e) => {
+                            engine.pathParams.tangentRotation = e.target.checked;
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    break;
+
+                case 'word-extraction':
+                    const wordDistPattern = document.getElementById('wordDistPattern');
+                    const wordDensity = document.getElementById('wordDensity');
+                    const rotSpread = document.getElementById('rotSpread');
+                    const scaleMin = document.getElementById('scaleMin');
+                    const scaleMax = document.getElementById('scaleMax');
+
+                    if (wordDistPattern) {
+                        wordDistPattern.addEventListener('change', (e) => {
+                            engine.wordExtractParams.pattern = e.target.value;
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (wordDensity) {
+                        wordDensity.addEventListener('input', (e) => {
+                            engine.wordExtractParams.density = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('wordDensityValue'));
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (rotSpread) {
+                        rotSpread.addEventListener('input', (e) => {
+                            engine.wordExtractParams.rotationSpread = parseInt(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('rotSpreadValue'), '°');
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (scaleMin) {
+                        scaleMin.addEventListener('input', (e) => {
+                            engine.wordExtractParams.scaleMin = parseFloat(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('scaleMinValue'));
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    if (scaleMax) {
+                        scaleMax.addEventListener('input', (e) => {
+                            engine.wordExtractParams.scaleMax = parseFloat(e.target.value);
+                            updateSliderDisplay(e.target, document.getElementById('scaleMaxValue'));
+                            engine.calculateBasePositions();
+                        });
+                    }
+                    break;
+            }
+        }
+
         // Attach pattern-specific listeners
         function attachPatternListeners(pattern) {
             switch(pattern) {
@@ -2231,6 +3297,23 @@
                 overlap: parseFloat(document.getElementById('overlap').value),
                 sizeVariation: parseFloat(document.getElementById('sizeVariation').value),
                 opacityVariation: parseFloat(document.getElementById('opacityVariation').value),
+
+                // Organic Distribution System
+                organicEnabled: document.getElementById('organicEnabled')?.checked || false,
+                repetitionType: document.getElementById('repetitionType')?.value || 'phrase',
+                organicLayout: document.getElementById('organicLayout')?.value || 'vertical',
+                interval: parseInt(document.getElementById('interval')?.value || 10),
+                distributionOrder: document.getElementById('distributionOrder')?.value || 'sequential',
+
+                // Position Influence
+                positionMode: document.getElementById('positionMode')?.value || 'none',
+                posAmplitude: parseInt(document.getElementById('posAmplitude')?.value || 50),
+                amplitudeMode: document.getElementById('amplitudeMode')?.value || 'uniform',
+
+                // Scale Influence
+                scaleMode: document.getElementById('scaleMode')?.value || 'none',
+                scaleInfluenceMin: parseFloat(document.getElementById('scaleInfluenceMin')?.value || 0.2),
+                scaleInfluenceMax: parseFloat(document.getElementById('scaleInfluenceMax')?.value || 1.0),
 
                 // Typography
                 fontFamily: document.getElementById('fontSelect').value,
@@ -2376,6 +3459,65 @@
                 document.getElementById('opacityVariationValue').textContent = params.opacityVariation;
                 document.querySelector('#opacityVariation + .slider-value').textContent = params.opacityVariation;
                 engine.advancedParams.opacityVariation = params.opacityVariation;
+            }
+
+            // Organic Distribution System
+            if (params.organicEnabled !== undefined) {
+                document.getElementById('organicEnabled').checked = params.organicEnabled;
+                engine.organicParams.enabled = params.organicEnabled;
+                document.getElementById('organicControls').style.display = params.organicEnabled ? 'block' : 'none';
+            }
+            if (params.repetitionType !== undefined) {
+                document.getElementById('repetitionType').value = params.repetitionType;
+                engine.organicParams.repetitionType = params.repetitionType;
+            }
+            if (params.organicLayout !== undefined) {
+                document.getElementById('organicLayout').value = params.organicLayout;
+                engine.organicParams.layout = params.organicLayout;
+            }
+            if (params.interval !== undefined) {
+                document.getElementById('interval').value = params.interval;
+                document.getElementById('intervalValue').textContent = params.interval;
+                document.querySelector('#interval + .slider-value').textContent = params.interval;
+                engine.organicParams.interval = params.interval;
+            }
+            if (params.distributionOrder !== undefined) {
+                document.getElementById('distributionOrder').value = params.distributionOrder;
+                engine.distribution.order = params.distributionOrder;
+            }
+
+            // Position Influence
+            if (params.positionMode !== undefined) {
+                document.getElementById('positionMode').value = params.positionMode;
+                engine.positionInfluence.mode = params.positionMode;
+            }
+            if (params.posAmplitude !== undefined) {
+                document.getElementById('posAmplitude').value = params.posAmplitude;
+                document.getElementById('posAmplitudeValue').textContent = params.posAmplitude;
+                document.querySelector('#posAmplitude + .slider-value').textContent = params.posAmplitude;
+                engine.positionInfluence.amplitude = params.posAmplitude;
+            }
+            if (params.amplitudeMode !== undefined) {
+                document.getElementById('amplitudeMode').value = params.amplitudeMode;
+                engine.positionInfluence.amplitudeMode = params.amplitudeMode;
+            }
+
+            // Scale Influence
+            if (params.scaleMode !== undefined) {
+                document.getElementById('scaleMode').value = params.scaleMode;
+                engine.scaleInfluence.mode = params.scaleMode;
+            }
+            if (params.scaleInfluenceMin !== undefined) {
+                document.getElementById('scaleInfluenceMin').value = params.scaleInfluenceMin;
+                document.getElementById('scaleMinValue').textContent = params.scaleInfluenceMin;
+                document.querySelector('#scaleInfluenceMin + .slider-value').textContent = params.scaleInfluenceMin;
+                engine.scaleInfluence.min = params.scaleInfluenceMin;
+            }
+            if (params.scaleInfluenceMax !== undefined) {
+                document.getElementById('scaleInfluenceMax').value = params.scaleInfluenceMax;
+                document.getElementById('scaleMaxValue').textContent = params.scaleInfluenceMax;
+                document.querySelector('#scaleInfluenceMax + .slider-value').textContent = params.scaleInfluenceMax;
+                engine.scaleInfluence.max = params.scaleInfluenceMax;
             }
 
             // Typography
