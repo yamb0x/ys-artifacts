@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sickollage - YS Studio Artifacts</title>
+    <link rel="stylesheet" href="../../shared/preset-ui.css">
+    <style>
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover { opacity: 0.7; }
+        .studio-name { font-weight: 300; }
+        .project-type { font-style: italic; }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover { opacity: 0.6; }
+        .header-right a.active { font-weight: 500; }
+
+        /* Cross Elements */
+        .cross-small {
+            width: 12px;
+            height: 12px;
+            position: relative;
+            color: var(--ys-black);
+            display: inline-block;
+        }
+
+        .cross-small::before,
+        .cross-small::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-small::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-small::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 80px 24px 24px;
+            min-height: 100vh;
+        }
+
+        .title-section {
+            margin-bottom: 20px;
+        }
+
+        .type-display-xl {
+            font-family: var(--font-sangbleu);
+            font-size: 120px;
+            line-height: 120px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        /* Cross Wrapper */
+        .ys-cross-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: var(--ys-white);
+            margin-bottom: 24px;
+        }
+
+        .cross-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            height: 12px;
+        }
+
+        .wrapper-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .control-panel .wrapper-content {
+            padding: 12px;
+        }
+
+        /* Main Workspace */
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            align-items: start;
+        }
+
+        /* Left Panel - Controls */
+        .control-panel {
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .control-panel::-webkit-scrollbar { width: 6px; }
+        .control-panel::-webkit-scrollbar-track { background: var(--ys-white); }
+        .control-panel::-webkit-scrollbar-thumb { background: var(--ys-black); }
+
+        /* Controls */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .controls-section > div {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-item label {
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        .control-item input[type="number"],
+        .control-item select {
+            padding: 6px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            font-family: var(--font-suisse);
+            font-size: 12px;
+        }
+
+        .control-item input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 1px;
+            background: var(--ys-black);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Checkboxes */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .checkbox-wrapper label {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Buttons */
+        .control-btn {
+            padding: 10px 16px;
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            font-family: var(--font-suisse);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .control-btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .control-btn.red {
+            border-color: var(--ys-red);
+            color: var(--ys-red);
+        }
+
+        .control-btn.red:hover {
+            background: var(--ys-red);
+            color: var(--ys-white);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 1px dashed var(--ys-black);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--ys-white);
+        }
+
+        .upload-area:hover {
+            background: var(--ys-gray);
+        }
+
+        .upload-area.dragover {
+            background: var(--ys-gray);
+            border-style: solid;
+        }
+
+        .info-text {
+            font-size: 11px;
+            line-height: 14px;
+            color: var(--ys-black);
+        }
+
+        /* Sample Slots */
+        .sample-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .sample-slot {
+            aspect-ratio: 1;
+            border: 1px solid var(--ys-gray);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+            background: var(--ys-white);
+        }
+
+        .sample-slot:hover {
+            border-color: var(--ys-black);
+        }
+
+        .sample-slot.active {
+            border: 2px solid var(--ys-black);
+        }
+
+        .sample-slot.next {
+            border: 2px solid var(--ys-red);
+        }
+
+        .sample-slot.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--ys-gray);
+        }
+
+        .sample-slot canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sample-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: var(--ys-white);
+            padding: 1px 3px;
+            font-size: 8px;
+            font-weight: 500;
+        }
+
+        /* Canvas Area */
+        .canvas-container {
+            position: relative;
+            background: var(--ys-white);
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        #mainCanvas {
+            display: block;
+            cursor: crosshair;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--ys-black);
+        }
+
+        #mainCanvas.sampling {
+            cursor: cell;
+        }
+
+        /* Keyboard Shortcuts Panel */
+        .shortcuts-panel {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            padding: 12px;
+            font-size: 9px;
+            line-height: 1.4;
+            max-width: 200px;
+            z-index: 100;
+        }
+
+        .shortcuts-title {
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .shortcut-key {
+            font-weight: 500;
+            font-family: monospace;
+        }
+
+        .shortcut-desc {
+            color: var(--ys-black);
+        }
+
+        /* Mode Indicators */
+        .mode-indicator {
+            font-size: 9px;
+            padding: 2px 6px;
+            background: var(--ys-black);
+            color: var(--ys-white);
+            display: inline-block;
+            margin-left: 4px;
+        }
+
+        .range-value {
+            font-size: 10px;
+            color: var(--ys-black);
+            margin-left: 4px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+            .control-panel {
+                position: static;
+                max-height: none;
+            }
+            .type-display-xl {
+                font-size: 60px;
+                line-height: 60px;
+            }
+            .header-center {
+                display: none;
+            }
+            .shortcuts-panel {
+                position: static;
+                margin-top: 24px;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-right {
+                display: none;
+            }
+            .sample-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="ys-header">
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">sickollage</div>
+        <nav class="header-right">
+            <a href="/about.html">About</a>
+            <a href="/" class="active">Tools</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="ys-container">
+        <!-- Title -->
+        <div class="title-section">
+            <h1 class="type-display-xl">sickollage</h1>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="main-workspace">
+            <!-- Left Panel: Controls -->
+            <div class="control-panel">
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <!-- SOURCE IMAGE -->
+                            <div>
+                                <div class="section-title">Source Image</div>
+                                <div class="upload-area" id="uploadArea">
+                                    <span style="font-size: 24px; display: block; margin-bottom: 8px;">+</span>
+                                    <p class="info-text">Click or drag image</p>
+                                    <p class="info-text" style="font-size: 9px; margin-top: 4px; opacity: 0.6;">Alt+Click to sample</p>
+                                </div>
+                                <input type="file" id="fileInput" accept="image/*">
+                            </div>
+
+                            <!-- SAMPLES -->
+                            <div>
+                                <div class="section-title">Samples (1-5 keys)</div>
+                                <div class="sample-grid" id="sampleGrid"></div>
+                            </div>
+
+                            <!-- MODES -->
+                            <div>
+                                <div class="section-title">Paint Modes</div>
+
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="autoCycleMode">
+                                    <label for="autoCycleMode">Auto-Cycle (A)</label>
+                                </div>
+
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="randomMode">
+                                    <label for="randomMode">Random (X)</label>
+                                </div>
+
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="blendAllMode">
+                                    <label for="blendAllMode">Blend All (B)</label>
+                                </div>
+                            </div>
+
+                            <!-- BRUSH -->
+                            <div>
+                                <div class="section-title">Brush</div>
+
+                                <div class="control-item">
+                                    <label>Width ([ ]) <span class="range-value" id="sampleWidthValue">100px</span></label>
+                                    <input type="range" id="sampleWidth" min="20" max="400" value="100">
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Height (- =) <span class="range-value" id="sampleHeightValue">100px</span></label>
+                                    <input type="range" id="sampleHeight" min="20" max="400" value="100">
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Opacity <span class="range-value" id="opacityValue">100%</span></label>
+                                    <input type="range" id="opacity" min="0" max="100" value="100">
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Rotation <span class="range-value" id="rotationValue">0°</span></label>
+                                    <input type="range" id="rotation" min="0" max="360" value="0" step="90">
+                                </div>
+                            </div>
+
+                            <!-- SPACING -->
+                            <div>
+                                <div class="section-title">Spacing (Arrows)</div>
+
+                                <div class="control-item">
+                                    <label>Horizontal <span class="range-value" id="hSpacingValue">0px</span></label>
+                                    <input type="range" id="hSpacing" min="0" max="200" value="0">
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Vertical <span class="range-value" id="vSpacingValue">0px</span></label>
+                                    <input type="range" id="vSpacing" min="0" max="200" value="0">
+                                </div>
+                            </div>
+
+                            <!-- GRID -->
+                            <div>
+                                <div class="section-title">Grid (G to toggle)</div>
+
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="gridEnabled">
+                                    <label for="gridEnabled">Show Grid</label>
+                                </div>
+
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="snapToGrid">
+                                    <label for="snapToGrid">Snap to Grid (H)</label>
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Grid Size <span class="range-value" id="gridSizeValue">50px</span></label>
+                                    <input type="range" id="gridSize" min="10" max="200" value="50">
+                                </div>
+                            </div>
+
+                            <!-- CANVAS -->
+                            <div>
+                                <div class="section-title">Canvas</div>
+
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="sourceVisible" checked>
+                                    <label for="sourceVisible">Show Source (I)</label>
+                                </div>
+
+                                <button class="control-btn red" id="clearCanvasBtn">Clear Canvas (C)</button>
+                            </div>
+
+                            <!-- EXPORT -->
+                            <div>
+                                <div class="section-title">Export</div>
+                                <button class="control-btn" id="exportBtn">Download PNG (S)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
+                <!-- Preset Section -->
+                <div id="presetContainer"></div>
+            </div>
+
+            <!-- Right Panel: Canvas -->
+            <div class="canvas-panel">
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+
+                    <div class="wrapper-content">
+                        <div class="canvas-container">
+                            <canvas id="mainCanvas" width="1200" height="800"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Panel -->
+    <div class="shortcuts-panel">
+        <div class="shortcuts-title">Shortcuts</div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">Alt+Click</span>
+            <span class="shortcut-desc">Sample</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">Drag</span>
+            <span class="shortcut-desc">Paint</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">[ ]</span>
+            <span class="shortcut-desc">Width</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">- =</span>
+            <span class="shortcut-desc">Height</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">1-5</span>
+            <span class="shortcut-desc">Switch sample</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">Tab</span>
+            <span class="shortcut-desc">Next sample</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">A</span>
+            <span class="shortcut-desc">Auto-cycle</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">X</span>
+            <span class="shortcut-desc">Random</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">B</span>
+            <span class="shortcut-desc">Blend all</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">R</span>
+            <span class="shortcut-desc">Rotate 90°</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">G</span>
+            <span class="shortcut-desc">Toggle grid</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">H</span>
+            <span class="shortcut-desc">Toggle snap</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">I</span>
+            <span class="shortcut-desc">Toggle source</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">↑↓←→</span>
+            <span class="shortcut-desc">Adjust spacing</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">C</span>
+            <span class="shortcut-desc">Clear</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">S</span>
+            <span class="shortcut-desc">Save/export</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            // Canvas
+            canvas: null,
+            ctx: null,
+            paintLayer: null,  // Separate layer for painted content
+            paintLayerCtx: null,
+
+            // Source Image
+            sourceImage: null,
+            sourceVisible: true,
+
+            // Samples (5 slots)
+            samples: Array(5).fill(null).map(() => ({
+                canvas: null,
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0
+            })),
+            currentSampleIndex: 0,
+            nextSampleSlot: 0,  // Auto-advance
+
+            // Modes
+            autoCycleMode: false,
+            randomMode: false,
+            blendAllMode: false,
+            autoCycleIndex: 0,
+
+            // Brush
+            sampleWidth: 100,
+            sampleHeight: 100,
+            opacity: 1.0,
+            rotation: 0,
+
+            // Spacing
+            horizontalSpacing: 0,
+            verticalSpacing: 0,
+            lastPaintPos: { x: 0, y: 0 },
+
+            // Grid
+            gridEnabled: false,
+            gridSize: 50,
+            snapToGrid: false,
+
+            // Interaction
+            isPainting: false,
+            isSampling: false,
+            sampleStart: { x: 0, y: 0 }
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            state.canvas = document.getElementById('mainCanvas');
+            state.ctx = state.canvas.getContext('2d');
+
+            // Create paint layer (separate canvas)
+            state.paintLayer = document.createElement('canvas');
+            state.paintLayer.width = state.canvas.width;
+            state.paintLayer.height = state.canvas.height;
+            state.paintLayerCtx = state.paintLayer.getContext('2d');
+
+            initializeSampleSlots();
+            setupEventListeners();
+            render();
+
+            console.log('🎨 sickollage initialized - Ready to create magic!');
+        }
+
+        // ============================================
+        // SAMPLE SLOTS UI
+        // ============================================
+        function initializeSampleSlots() {
+            const grid = document.getElementById('sampleGrid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'sample-slot empty';
+                if (i === state.currentSampleIndex) slot.classList.add('active');
+                if (i === state.nextSampleSlot) slot.classList.add('next');
+
+                slot.dataset.index = i;
+                slot.innerHTML = `<span class="sample-number">${i + 1}</span>`;
+
+                slot.addEventListener('click', () => {
+                    if (state.samples[i].canvas) {
+                        state.currentSampleIndex = i;
+                        updateSampleSlotsUI();
+                    }
+                });
+
+                grid.appendChild(slot);
+            }
+        }
+
+        function updateSampleSlotsUI() {
+            const slots = document.querySelectorAll('.sample-slot');
+            slots.forEach((slot, i) => {
+                const sample = state.samples[i];
+
+                // Update classes
+                slot.classList.toggle('active', i === state.currentSampleIndex);
+                slot.classList.toggle('next', i === state.nextSampleSlot);
+
+                // Update content
+                if (sample.canvas) {
+                    slot.classList.remove('empty');
+                    slot.innerHTML = `
+                        <span class="sample-number">${i + 1}</span>
+                        <canvas></canvas>
+                    `;
+                    const canvas = slot.querySelector('canvas');
+                    canvas.width = sample.width;
+                    canvas.height = sample.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(sample.canvas, 0, 0);
+                } else {
+                    slot.classList.add('empty');
+                    slot.innerHTML = `<span class="sample-number">${i + 1}</span>`;
+                }
+            });
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {
+            // File upload
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFileSelect({ target: { files: e.dataTransfer.files } });
+            });
+
+            // Canvas interactions
+            state.canvas.addEventListener('mousedown', handleMouseDown);
+            state.canvas.addEventListener('mousemove', handleMouseMove);
+            state.canvas.addEventListener('mouseup', handleMouseUp);
+            state.canvas.addEventListener('mouseleave', handleMouseUp);
+            state.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // Keyboard
+            document.addEventListener('keydown', handleKeyPress);
+
+            // Controls
+            document.getElementById('autoCycleMode').addEventListener('change', (e) => {
+                state.autoCycleMode = e.target.checked;
+                if (state.autoCycleMode) {
+                    state.randomMode = false;
+                    state.blendAllMode = false;
+                    document.getElementById('randomMode').checked = false;
+                    document.getElementById('blendAllMode').checked = false;
+                }
+            });
+
+            document.getElementById('randomMode').addEventListener('change', (e) => {
+                state.randomMode = e.target.checked;
+                if (state.randomMode) {
+                    state.autoCycleMode = false;
+                    state.blendAllMode = false;
+                    document.getElementById('autoCycleMode').checked = false;
+                    document.getElementById('blendAllMode').checked = false;
+                }
+            });
+
+            document.getElementById('blendAllMode').addEventListener('change', (e) => {
+                state.blendAllMode = e.target.checked;
+                if (state.blendAllMode) {
+                    state.autoCycleMode = false;
+                    state.randomMode = false;
+                    document.getElementById('autoCycleMode').checked = false;
+                    document.getElementById('randomMode').checked = false;
+                }
+            });
+
+            document.getElementById('sampleWidth').addEventListener('input', (e) => {
+                state.sampleWidth = parseInt(e.target.value);
+                document.getElementById('sampleWidthValue').textContent = state.sampleWidth + 'px';
+            });
+
+            document.getElementById('sampleHeight').addEventListener('input', (e) => {
+                state.sampleHeight = parseInt(e.target.value);
+                document.getElementById('sampleHeightValue').textContent = state.sampleHeight + 'px';
+            });
+
+            document.getElementById('opacity').addEventListener('input', (e) => {
+                state.opacity = parseInt(e.target.value) / 100;
+                document.getElementById('opacityValue').textContent = e.target.value + '%';
+            });
+
+            document.getElementById('rotation').addEventListener('input', (e) => {
+                state.rotation = parseInt(e.target.value);
+                document.getElementById('rotationValue').textContent = state.rotation + '°';
+            });
+
+            document.getElementById('hSpacing').addEventListener('input', (e) => {
+                state.horizontalSpacing = parseInt(e.target.value);
+                document.getElementById('hSpacingValue').textContent = e.target.value + 'px';
+            });
+
+            document.getElementById('vSpacing').addEventListener('input', (e) => {
+                state.verticalSpacing = parseInt(e.target.value);
+                document.getElementById('vSpacingValue').textContent = e.target.value + 'px';
+            });
+
+            document.getElementById('gridEnabled').addEventListener('change', (e) => {
+                state.gridEnabled = e.target.checked;
+                render();
+            });
+
+            document.getElementById('snapToGrid').addEventListener('change', (e) => {
+                state.snapToGrid = e.target.checked;
+            });
+
+            document.getElementById('gridSize').addEventListener('input', (e) => {
+                state.gridSize = parseInt(e.target.value);
+                document.getElementById('gridSizeValue').textContent = state.gridSize + 'px';
+                render();
+            });
+
+            document.getElementById('sourceVisible').addEventListener('change', (e) => {
+                state.sourceVisible = e.target.checked;
+                render();
+            });
+
+            document.getElementById('clearCanvasBtn').addEventListener('click', clearCanvas);
+            document.getElementById('exportBtn').addEventListener('click', exportCanvas);
+        }
+
+        // ============================================
+        // IMAGE LOADING
+        // ============================================
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    state.sourceImage = img;
+
+                    // Resize canvas to match image aspect ratio
+                    const maxWidth = 1400;
+                    const maxHeight = 900;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width = width * ratio;
+                        height = height * ratio;
+                    }
+
+                    state.canvas.width = width;
+                    state.canvas.height = height;
+                    state.paintLayer.width = width;
+                    state.paintLayer.height = height;
+
+                    // Adjust grid size based on image dimensions
+                    const avgDimension = (width + height) / 2;
+                    state.gridSize = Math.round(avgDimension / 20); // 20 divisions
+                    document.getElementById('gridSize').value = state.gridSize;
+                    document.getElementById('gridSizeValue').textContent = state.gridSize + 'px';
+
+                    // Reset samples
+                    state.samples = Array(5).fill(null).map(() => ({
+                        canvas: null,
+                        x: 0,
+                        y: 0,
+                        width: 0,
+                        height: 0
+                    }));
+                    state.nextSampleSlot = 0;
+                    state.currentSampleIndex = 0;
+
+                    updateSampleSlotsUI();
+                    render();
+                    console.log(`✅ Image loaded: ${width}×${height}px`);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ============================================
+        // MOUSE INTERACTION
+        // ============================================
+        function handleMouseDown(e) {
+            if (!state.sourceImage) return;
+
+            const rect = state.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Scale to canvas coordinates
+            const scaleX = state.canvas.width / rect.width;
+            const scaleY = state.canvas.height / rect.height;
+            const canvasX = x * scaleX;
+            const canvasY = y * scaleY;
+
+            if (e.altKey) {
+                // Alt+Click = Sample
+                state.isSampling = true;
+                state.sampleStart = { x: canvasX, y: canvasY };
+                state.canvas.classList.add('sampling');
+            } else {
+                // Regular drag = Paint
+                state.isPainting = true;
+                state.lastPaintPos = { x: canvasX, y: canvasY };
+                paintDuplicate(canvasX, canvasY);
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (!state.sourceImage) return;
+
+            const rect = state.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const scaleX = state.canvas.width / rect.width;
+            const scaleY = state.canvas.height / rect.height;
+            const canvasX = x * scaleX;
+            const canvasY = y * scaleY;
+
+            if (state.isSampling) {
+                // Show sample preview
+                renderSamplePreview(canvasX, canvasY);
+            } else if (state.isPainting) {
+                // Check spacing before painting
+                const dx = canvasX - state.lastPaintPos.x;
+                const dy = canvasY - state.lastPaintPos.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                const minSpacing = Math.max(state.horizontalSpacing, state.verticalSpacing, 5);
+
+                if (distance >= minSpacing) {
+                    paintDuplicate(canvasX, canvasY);
+                    state.lastPaintPos = { x: canvasX, y: canvasY };
+                }
+            }
+
+            // Update cursor
+            if (e.altKey) {
+                state.canvas.classList.add('sampling');
+            } else {
+                state.canvas.classList.remove('sampling');
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (state.isSampling) {
+                captureSample();
+                state.isSampling = false;
+                state.canvas.classList.remove('sampling');
+                render();
+            }
+            state.isPainting = false;
+        }
+
+        // ============================================
+        // SAMPLING
+        // ============================================
+        function renderSamplePreview(x, y) {
+            render();
+
+            const ctx = state.ctx;
+            const width = state.sampleWidth;
+            const height = state.sampleHeight;
+            const startX = state.sampleStart.x - width / 2;
+            const startY = state.sampleStart.y - height / 2;
+
+            ctx.save();
+            ctx.strokeStyle = '#FF0000';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(startX, startY, width, height);
+            ctx.restore();
+        }
+
+        function captureSample() {
+            if (!state.sourceImage) return;
+
+            const width = state.sampleWidth;
+            const height = state.sampleHeight;
+            const x = Math.max(0, Math.min(state.sampleStart.x - width / 2, state.canvas.width - width));
+            const y = Math.max(0, Math.min(state.sampleStart.y - height / 2, state.canvas.height - height));
+
+            // Create sample canvas
+            const sampleCanvas = document.createElement('canvas');
+            sampleCanvas.width = width;
+            sampleCanvas.height = height;
+            const sampleCtx = sampleCanvas.getContext('2d');
+
+            // Extract from source image (scaled to canvas size)
+            const scaleX = state.sourceImage.width / state.canvas.width;
+            const scaleY = state.sourceImage.height / state.canvas.height;
+
+            sampleCtx.drawImage(
+                state.sourceImage,
+                x * scaleX,
+                y * scaleY,
+                width * scaleX,
+                height * scaleY,
+                0, 0, width, height
+            );
+
+            // Save to next slot
+            state.samples[state.nextSampleSlot] = {
+                canvas: sampleCanvas,
+                x: x,
+                y: y,
+                width: width,
+                height: height
+            };
+
+            state.currentSampleIndex = state.nextSampleSlot;
+
+            // Auto-advance to next slot
+            state.nextSampleSlot = (state.nextSampleSlot + 1) % 5;
+
+            updateSampleSlotsUI();
+            console.log(`✅ Sample ${state.currentSampleIndex + 1} captured: ${width}×${height}px`);
+        }
+
+        // ============================================
+        // PAINTING
+        // ============================================
+        function paintDuplicate(x, y) {
+            let sampleIndex = state.currentSampleIndex;
+
+            // Determine which sample to use based on mode
+            if (state.blendAllMode) {
+                paintAllSamples(x, y);
+                return;
+            } else if (state.autoCycleMode) {
+                // Find next filled slot
+                const filledSlots = state.samples
+                    .map((s, i) => s.canvas ? i : -1)
+                    .filter(i => i >= 0);
+
+                if (filledSlots.length === 0) return;
+
+                sampleIndex = filledSlots[state.autoCycleIndex % filledSlots.length];
+                state.autoCycleIndex++;
+            } else if (state.randomMode) {
+                const filledSlots = state.samples
+                    .map((s, i) => s.canvas ? i : -1)
+                    .filter(i => i >= 0);
+
+                if (filledSlots.length === 0) return;
+
+                sampleIndex = filledSlots[Math.floor(Math.random() * filledSlots.length)];
+            }
+
+            const sample = state.samples[sampleIndex];
+            if (!sample.canvas) return;
+
+            paintSingleSample(x, y, sample);
+        }
+
+        function paintSingleSample(x, y, sample) {
+            const ctx = state.paintLayerCtx;
+
+            if (state.snapToGrid) {
+                x = Math.round(x / state.gridSize) * state.gridSize;
+                y = Math.round(y / state.gridSize) * state.gridSize;
+            }
+
+            ctx.save();
+            ctx.globalAlpha = state.opacity;
+            ctx.globalCompositeOperation = 'source-over';
+
+            const drawX = x - sample.width / 2;
+            const drawY = y - sample.height / 2;
+
+            if (state.rotation !== 0) {
+                ctx.translate(x, y);
+                ctx.rotate((state.rotation * Math.PI) / 180);
+                ctx.drawImage(sample.canvas, -sample.width / 2, -sample.height / 2);
+            } else {
+                ctx.drawImage(sample.canvas, drawX, drawY);
+            }
+
+            ctx.restore();
+            render();
+        }
+
+        function paintAllSamples(x, y) {
+            const filledSamples = state.samples.filter(s => s.canvas);
+            if (filledSamples.length === 0) return;
+
+            const layerOpacity = state.opacity / filledSamples.length;
+
+            filledSamples.forEach(sample => {
+                const ctx = state.paintLayerCtx;
+
+                if (state.snapToGrid) {
+                    x = Math.round(x / state.gridSize) * state.gridSize;
+                    y = Math.round(y / state.gridSize) * state.gridSize;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = layerOpacity;
+
+                const drawX = x - sample.width / 2;
+                const drawY = y - sample.height / 2;
+
+                if (state.rotation !== 0) {
+                    ctx.translate(x, y);
+                    ctx.rotate((state.rotation * Math.PI) / 180);
+                    ctx.drawImage(sample.canvas, -sample.width / 2, -sample.height / 2);
+                } else {
+                    ctx.drawImage(sample.canvas, drawX, drawY);
+                }
+
+                ctx.restore();
+            });
+
+            render();
+        }
+
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
+        function handleKeyPress(e) {
+            // Number keys (1-5)
+            const key = parseInt(e.key);
+            if (key >= 1 && key <= 5) {
+                const index = key - 1;
+                if (state.samples[index].canvas) {
+                    state.currentSampleIndex = index;
+                    updateSampleSlotsUI();
+                }
+                return;
+            }
+
+            switch (e.key.toLowerCase()) {
+                case 'tab':
+                    e.preventDefault();
+                    // Cycle to next filled sample
+                    const filledSlots = state.samples
+                        .map((s, i) => s.canvas ? i : -1)
+                        .filter(i => i >= 0);
+                    if (filledSlots.length > 0) {
+                        const currentPos = filledSlots.indexOf(state.currentSampleIndex);
+                        const nextPos = (currentPos + 1) % filledSlots.length;
+                        state.currentSampleIndex = filledSlots[nextPos];
+                        updateSampleSlotsUI();
+                    }
+                    break;
+
+                case 'a':
+                    const autoCycleCheckbox = document.getElementById('autoCycleMode');
+                    autoCycleCheckbox.checked = !autoCycleCheckbox.checked;
+                    autoCycleCheckbox.dispatchEvent(new Event('change'));
+                    break;
+
+                case 'x':
+                    const randomCheckbox = document.getElementById('randomMode');
+                    randomCheckbox.checked = !randomCheckbox.checked;
+                    randomCheckbox.dispatchEvent(new Event('change'));
+                    break;
+
+                case 'b':
+                    const blendCheckbox = document.getElementById('blendAllMode');
+                    blendCheckbox.checked = !blendCheckbox.checked;
+                    blendCheckbox.dispatchEvent(new Event('change'));
+                    break;
+
+                case 'r':
+                    state.rotation = (state.rotation + 90) % 360;
+                    document.getElementById('rotation').value = state.rotation;
+                    document.getElementById('rotationValue').textContent = state.rotation + '°';
+                    break;
+
+                case 'g':
+                    state.gridEnabled = !state.gridEnabled;
+                    document.getElementById('gridEnabled').checked = state.gridEnabled;
+                    render();
+                    break;
+
+                case 'h':
+                    state.snapToGrid = !state.snapToGrid;
+                    document.getElementById('snapToGrid').checked = state.snapToGrid;
+                    break;
+
+                case 'i':
+                    state.sourceVisible = !state.sourceVisible;
+                    document.getElementById('sourceVisible').checked = state.sourceVisible;
+                    render();
+                    break;
+
+                case 'c':
+                    clearCanvas();
+                    break;
+
+                case 's':
+                    exportCanvas();
+                    break;
+
+                case 'arrowup':
+                    e.preventDefault();
+                    state.verticalSpacing = Math.max(0, state.verticalSpacing - 5);
+                    document.getElementById('vSpacing').value = state.verticalSpacing;
+                    document.getElementById('vSpacingValue').textContent = state.verticalSpacing + 'px';
+                    break;
+
+                case 'arrowdown':
+                    e.preventDefault();
+                    state.verticalSpacing = Math.min(200, state.verticalSpacing + 5);
+                    document.getElementById('vSpacing').value = state.verticalSpacing;
+                    document.getElementById('vSpacingValue').textContent = state.verticalSpacing + 'px';
+                    break;
+
+                case 'arrowleft':
+                    e.preventDefault();
+                    state.horizontalSpacing = Math.max(0, state.horizontalSpacing - 5);
+                    document.getElementById('hSpacing').value = state.horizontalSpacing;
+                    document.getElementById('hSpacingValue').textContent = state.horizontalSpacing + 'px';
+                    break;
+
+                case 'arrowright':
+                    e.preventDefault();
+                    state.horizontalSpacing = Math.min(200, state.horizontalSpacing + 5);
+                    document.getElementById('hSpacing').value = state.horizontalSpacing;
+                    document.getElementById('hSpacingValue').textContent = state.horizontalSpacing + 'px';
+                    break;
+
+                case '[':
+                    // Decrease width
+                    state.sampleWidth = Math.max(20, state.sampleWidth - 10);
+                    document.getElementById('sampleWidth').value = state.sampleWidth;
+                    document.getElementById('sampleWidthValue').textContent = state.sampleWidth + 'px';
+                    break;
+
+                case ']':
+                    // Increase width
+                    state.sampleWidth = Math.min(400, state.sampleWidth + 10);
+                    document.getElementById('sampleWidth').value = state.sampleWidth;
+                    document.getElementById('sampleWidthValue').textContent = state.sampleWidth + 'px';
+                    break;
+
+                case '-':
+                    // Decrease height
+                    state.sampleHeight = Math.max(20, state.sampleHeight - 10);
+                    document.getElementById('sampleHeight').value = state.sampleHeight;
+                    document.getElementById('sampleHeightValue').textContent = state.sampleHeight + 'px';
+                    break;
+
+                case '=':
+                    // Increase height
+                    state.sampleHeight = Math.min(400, state.sampleHeight + 10);
+                    document.getElementById('sampleHeight').value = state.sampleHeight;
+                    document.getElementById('sampleHeightValue').textContent = state.sampleHeight + 'px';
+                    break;
+            }
+        }
+
+        // ============================================
+        // RENDERING
+        // ============================================
+        function render() {
+            const ctx = state.ctx;
+
+            // Clear
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
+
+            // Draw source image (if visible)
+            if (state.sourceVisible && state.sourceImage) {
+                ctx.globalAlpha = 1.0;
+                ctx.drawImage(state.sourceImage, 0, 0, state.canvas.width, state.canvas.height);
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Draw paint layer
+            ctx.drawImage(state.paintLayer, 0, 0);
+
+            // Draw grid
+            if (state.gridEnabled) {
+                drawGrid();
+            }
+        }
+
+        function drawGrid() {
+            const ctx = state.ctx;
+            const { gridSize } = state;
+
+            ctx.save();
+            ctx.strokeStyle = '#D9D9D9';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.3;
+
+            // Vertical lines
+            for (let x = 0; x <= state.canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, state.canvas.height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let y = 0; y <= state.canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(state.canvas.width, y);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // ============================================
+        // CANVAS OPERATIONS
+        // ============================================
+        function clearCanvas() {
+            if (confirm('Clear all painted content? (Source image will remain)')) {
+                state.paintLayerCtx.clearRect(0, 0, state.paintLayer.width, state.paintLayer.height);
+                render();
+                console.log('🧹 Canvas cleared');
+            }
+        }
+
+        function exportCanvas() {
+            if (!state.sourceImage) {
+                alert('No image loaded to export');
+                return;
+            }
+
+            // Create export canvas without grid/source
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = state.canvas.width;
+            exportCanvas.height = state.canvas.height;
+            const exportCtx = exportCanvas.getContext('2d');
+
+            // White background
+            exportCtx.fillStyle = '#FFFFFF';
+            exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+            // Optional: Include source at low opacity
+            // exportCtx.globalAlpha = 0.2;
+            // exportCtx.drawImage(state.sourceImage, 0, 0, exportCanvas.width, exportCanvas.height);
+            // exportCtx.globalAlpha = 1.0;
+
+            // Paint layer only
+            exportCtx.drawImage(state.paintLayer, 0, 0);
+
+            // Download
+            const dataURL = exportCanvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            link.download = `sickollage-${timestamp}.png`;
+            link.href = dataURL;
+            link.click();
+
+            console.log('💾 Exported successfully');
+        }
+
+        // ============================================
+        // PRESET SYSTEM INTEGRATION
+        // ============================================
+        window.extractToolParams = function() {
+            return {
+                // Brush parameters
+                sampleWidth: state.sampleWidth,
+                sampleHeight: state.sampleHeight,
+                opacity: state.opacity,
+                rotation: state.rotation,
+
+                // Spacing
+                horizontalSpacing: state.horizontalSpacing,
+                verticalSpacing: state.verticalSpacing,
+
+                // Grid
+                gridEnabled: state.gridEnabled,
+                gridSize: state.gridSize,
+                snapToGrid: state.snapToGrid,
+
+                // Canvas
+                sourceVisible: state.sourceVisible,
+
+                // Modes
+                autoCycleMode: state.autoCycleMode,
+                randomMode: state.randomMode,
+                blendAllMode: state.blendAllMode
+            };
+        };
+
+        window.applyToolPreset = function(params) {
+            // Brush parameters
+            if (params.sampleWidth !== undefined) {
+                state.sampleWidth = params.sampleWidth;
+                document.getElementById('sampleWidth').value = params.sampleWidth;
+                document.getElementById('sampleWidthValue').textContent = params.sampleWidth + 'px';
+            }
+
+            if (params.sampleHeight !== undefined) {
+                state.sampleHeight = params.sampleHeight;
+                document.getElementById('sampleHeight').value = params.sampleHeight;
+                document.getElementById('sampleHeightValue').textContent = params.sampleHeight + 'px';
+            }
+
+            if (params.opacity !== undefined) {
+                state.opacity = params.opacity;
+                document.getElementById('opacity').value = Math.round(params.opacity * 100);
+                document.getElementById('opacityValue').textContent = Math.round(params.opacity * 100) + '%';
+            }
+
+            if (params.rotation !== undefined) {
+                state.rotation = params.rotation;
+                document.getElementById('rotation').value = params.rotation;
+                document.getElementById('rotationValue').textContent = params.rotation + '°';
+            }
+
+            // Spacing
+            if (params.horizontalSpacing !== undefined) {
+                state.horizontalSpacing = params.horizontalSpacing;
+                document.getElementById('hSpacing').value = params.horizontalSpacing;
+                document.getElementById('hSpacingValue').textContent = params.horizontalSpacing + 'px';
+            }
+
+            if (params.verticalSpacing !== undefined) {
+                state.verticalSpacing = params.verticalSpacing;
+                document.getElementById('vSpacing').value = params.verticalSpacing;
+                document.getElementById('vSpacingValue').textContent = params.verticalSpacing + 'px';
+            }
+
+            // Grid
+            if (params.gridEnabled !== undefined) {
+                state.gridEnabled = params.gridEnabled;
+                document.getElementById('gridEnabled').checked = params.gridEnabled;
+            }
+
+            if (params.gridSize !== undefined) {
+                state.gridSize = params.gridSize;
+                document.getElementById('gridSize').value = params.gridSize;
+                document.getElementById('gridSizeValue').textContent = params.gridSize + 'px';
+            }
+
+            if (params.snapToGrid !== undefined) {
+                state.snapToGrid = params.snapToGrid;
+                document.getElementById('snapToGrid').checked = params.snapToGrid;
+            }
+
+            // Canvas
+            if (params.sourceVisible !== undefined) {
+                state.sourceVisible = params.sourceVisible;
+                document.getElementById('sourceVisible').checked = params.sourceVisible;
+            }
+
+            // Modes
+            if (params.autoCycleMode !== undefined) {
+                state.autoCycleMode = params.autoCycleMode;
+                document.getElementById('autoCycleMode').checked = params.autoCycleMode;
+            }
+
+            if (params.randomMode !== undefined) {
+                state.randomMode = params.randomMode;
+                document.getElementById('randomMode').checked = params.randomMode;
+            }
+
+            if (params.blendAllMode !== undefined) {
+                state.blendAllMode = params.blendAllMode;
+                document.getElementById('blendAllMode').checked = params.blendAllMode;
+            }
+
+            // Re-render
+            render();
+
+            console.log('✨ Preset applied successfully');
+        };
+
+        // ============================================
+        // START
+        // ============================================
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <!-- Preset System Scripts -->
+    <script type="module">
+        import { PresetManager } from '../../shared/preset-manager.js';
+        import { PresetUIComponent } from '../../shared/preset-ui-component.js';
+
+        // Initialize preset manager for sickollage
+        const presetManager = new PresetManager('sickollage');
+        const presetUI = new PresetUIComponent(presetManager, window.extractToolParams);
+
+        // Wait for a short delay to ensure everything is initialized
+        setTimeout(async () => {
+            // Create preset UI
+            presetUI.create('presetContainer');
+
+            // Initialize with random preset
+            await presetManager.initialize(window.applyToolPreset);
+        }, 100);
+
+        // Make preset manager available globally for debugging
+        window.sickollagePresetManager = presetManager;
+    </script>
+</body>
+</html>
