@@ -244,10 +244,6 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
-        .tool-card:hover .tool-preview {
-            filter: none;
-        }
-
         .tool-card:hover .card-cross {
             color: var(--ys-red);
         }
@@ -260,8 +256,6 @@
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid var(--ys-black);
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
         }
 
         .tool-preview img {
@@ -374,20 +368,6 @@
             padding: 4px 8px;
             border: 1px solid var(--ys-black);
             text-transform: uppercase;
-        }
-
-        /* Status Badge */
-        .status-badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: var(--ys-red);
-            color: var(--ys-white);
-            padding: 4px 12px;
-            font-size: 10px;
-            letter-spacing: 0.2px;
-            text-transform: uppercase;
-            z-index: 1;
         }
 
         /* Cross Decoration */
@@ -535,46 +515,20 @@
                 <div class="card-cross bottom-left">+</div>
                 <div class="card-cross bottom-right">+</div>
 
-                <div class="status-badge">Live</div>
                 <div class="tool-preview">
-                    <div class="ascii-preview">
-     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     @@@@@@@@@@@@@@@%#*+=:.........:=+*#%@@@@@@@@@@@@@
-     @@@@@@@@@@%*=:.....................:=*%@@@@@@@@@@
-     @@@@@@@#=:..............................:=#@@@@@@@
-     @@@@@+:....................................:+@@@@@
-     @@@+.........................................:+@@@
-     @@:............................................:@@
-     @:..............................................@:
-     :................................................:
-     .................................................
-     .................................................
-     :................................................:
-     @:..............................................@:
-     @@:............................................:@@
-     @@@+.........................................:+@@@
-     @@@@@+:....................................:+@@@@@
-     @@@@@@@#=:..............................:=#@@@@@@@
-     @@@@@@@@@@%*=:.....................:=*%@@@@@@@@@@
-     @@@@@@@@@@@@@@@%#*+=:.........:=+*#%@@@@@@@@@@@@@
-     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-           A S C I I   I N T E R P R E T E R
-                    </div>
+                    <img src="thumbnails/ascii-creator.png" alt="ASCII Creator preview">
                 </div>
                 <div class="tool-info">
                     <div class="tool-number">001</div>
-                    <h2 class="tool-title">ASCII Interpreter<span class="cross-small"></span></h2>
+                    <h2 class="tool-title">vid-to-ASCII<span class="cross-small"></span></h2>
                     <p class="tool-description">
-                        Advanced image-to-ASCII art converter with multiple character sets,
-                        brightness algorithms, and alpha channel support.
+                        Advanced video and image to ASCII art converter with keyframe extraction,
+                        real-time playback, multiple character sets, and color correction.
                     </p>
                     <div class="tool-tags">
+                        <span class="tool-tag">Video Processing</span>
                         <span class="tool-tag">Image Processing</span>
                         <span class="tool-tag">Text Art</span>
-                        <span class="tool-tag">Creative</span>
                     </div>
                 </div>
             </a>
@@ -587,55 +541,12 @@
                 <div class="card-cross bottom-left">+</div>
                 <div class="card-cross bottom-right">+</div>
 
-                <div class="status-badge">New</div>
                 <div class="tool-preview">
-                    <div class="text-preview">
-                        <div class="text-pattern">
-                            <!-- Spiral/Orbital pattern with "YAMBOSTUDIO" - Advanced Mode showcase -->
-                            <!-- Inner ring -->
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(0deg) translateY(-60px) rotate(0deg); opacity: 0.9;">Y</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(30deg) translateY(-60px) rotate(-30deg); opacity: 0.9;">A</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(60deg) translateY(-60px) rotate(-60deg); opacity: 0.9;">M</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(90deg) translateY(-60px) rotate(-90deg); opacity: 0.9;">B</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(120deg) translateY(-60px) rotate(-120deg); opacity: 0.9;">O</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(150deg) translateY(-60px) rotate(-150deg); opacity: 0.9;">S</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(180deg) translateY(-60px) rotate(-180deg); opacity: 0.9;">T</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(210deg) translateY(-60px) rotate(-210deg); opacity: 0.9;">U</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(240deg) translateY(-60px) rotate(-240deg); opacity: 0.9;">D</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(270deg) translateY(-60px) rotate(-270deg); opacity: 0.9;">I</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(300deg) translateY(-60px) rotate(-300deg); opacity: 0.9;">O</span>
-
-                            <!-- Middle ring -->
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(15deg) translateY(-100px) rotate(-15deg); opacity: 0.7;">Y</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(48deg) translateY(-100px) rotate(-48deg); opacity: 0.7;">A</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(81deg) translateY(-100px) rotate(-81deg); opacity: 0.7;">M</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(114deg) translateY(-100px) rotate(-114deg); opacity: 0.7;">B</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(147deg) translateY(-100px) rotate(-147deg); opacity: 0.7;">O</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(180deg) translateY(-100px) rotate(-180deg); opacity: 0.7;">S</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(213deg) translateY(-100px) rotate(-213deg); opacity: 0.7;">T</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(246deg) translateY(-100px) rotate(-246deg); opacity: 0.7;">U</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(279deg) translateY(-100px) rotate(-279deg); opacity: 0.7;">D</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(312deg) translateY(-100px) rotate(-312deg); opacity: 0.7;">I</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(345deg) translateY(-100px) rotate(-345deg); opacity: 0.7;">O</span>
-
-                            <!-- Outer ring -->
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(8deg) translateY(-130px) rotate(-8deg); opacity: 0.5;">Y</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(40deg) translateY(-130px) rotate(-40deg); opacity: 0.5;">A</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(72deg) translateY(-130px) rotate(-72deg); opacity: 0.5;">M</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(104deg) translateY(-130px) rotate(-104deg); opacity: 0.5;">B</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(136deg) translateY(-130px) rotate(-136deg); opacity: 0.5;">O</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(168deg) translateY(-130px) rotate(-168deg); opacity: 0.5;">S</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(200deg) translateY(-130px) rotate(-200deg); opacity: 0.5;">T</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(232deg) translateY(-130px) rotate(-232deg); opacity: 0.5;">U</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(264deg) translateY(-130px) rotate(-264deg); opacity: 0.5;">D</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(296deg) translateY(-130px) rotate(-296deg); opacity: 0.5;">I</span>
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(328deg) translateY(-130px) rotate(-328deg); opacity: 0.5;">O</span>
-                        </div>
-                    </div>
+                    <img src="thumbnails/text-visualizer.png" alt="Text Visualizer preview">
                 </div>
                 <div class="tool-info">
                     <div class="tool-number">002</div>
-                    <h2 class="tool-title">Text Visualizer<span class="cross-small"></span></h2>
+                    <h2 class="tool-title">xytype<span class="cross-small"></span></h2>
                     <p class="tool-description">
                         Transform typography into artistic patterns with grid, circular, wave,
                         spiral, and random distributions. Real-time preview and PNG export.
@@ -656,9 +567,8 @@
                 <div class="card-cross bottom-left">+</div>
                 <div class="card-cross bottom-right">+</div>
 
-                <div class="status-badge">New</div>
                 <div class="tool-preview">
-                    <img src="assets/sickollage-preview.png" alt="sickollage preview">
+                    <img src="thumbnails/sickollage.png" alt="sickollage preview">
                 </div>
                 <div class="tool-info">
                     <div class="tool-number">003</div>
@@ -683,13 +593,12 @@
                 <div class="card-cross bottom-left">+</div>
                 <div class="card-cross bottom-right">+</div>
 
-                <div class="status-badge">New</div>
                 <div class="tool-preview">
-                    <img src="tools/displacement-mapper/covers/cover.png" alt="displacement mapper preview">
+                    <img src="thumbnails/displacement-mapper.png" alt="displacement mapper preview">
                 </div>
                 <div class="tool-info">
                     <div class="tool-number">004</div>
-                    <h2 class="tool-title">Displacement Mapper<span class="cross-small"></span></h2>
+                    <h2 class="tool-title">diss mapper<span class="cross-small"></span></h2>
                     <p class="tool-description">
                         Advanced pixel displacement tool with 8+ procedural pattern generators,
                         soft falloff controls, and real-time preview. Create liquid, glitch, and wave effects with precision.

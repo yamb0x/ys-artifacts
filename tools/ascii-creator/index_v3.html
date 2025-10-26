@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Interpreter - YS Studio Artifacts</title>
+    <title>vid-to-ASCII - YS Studio Artifacts</title>
     <link rel="stylesheet" href="../../shared/preset-ui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         /* Font Imports */
         @font-face {
@@ -305,6 +306,242 @@
             min-height: 400px;
         }
 
+        /* Video Processing Indicator */
+        #videoProcessing {
+            display: none;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            margin-bottom: 24px;
+        }
+
+        .processing-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .processing-bar {
+            width: 100%;
+            height: 2px;
+            background: var(--ys-gray);
+            position: relative;
+        }
+
+        .processing-bar-fill {
+            height: 100%;
+            background: var(--ys-black);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Video Keyframe Grid */
+        #videoKeyframeSection {
+            display: none;
+            margin-bottom: 24px;
+        }
+
+        .video-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .video-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .video-meta-item {
+            display: flex;
+            gap: 6px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .video-meta-label {
+            color: #666;
+        }
+
+        .video-meta-value {
+            color: var(--ys-black);
+        }
+
+        .playback-controls {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--ys-black);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--ys-white);
+        }
+
+        .playback-btn {
+            background: var(--ys-white);
+            color: var(--ys-black);
+            border: 1px solid var(--ys-black);
+            padding: 8px 16px;
+            font-family: var(--font-suisse);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 80px;
+        }
+
+        .playback-btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .playback-btn.playing {
+            background: var(--ys-red);
+            color: var(--ys-white);
+            border-color: var(--ys-red);
+        }
+
+        .fps-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fps-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            min-width: 50px;
+            color: #666;
+        }
+
+        .fps-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 1px;
+            background: var(--ys-black);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .fps-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+        }
+
+        .fps-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        .export-all-btn {
+            background: var(--ys-black);
+            color: var(--ys-white);
+            border: none;
+            padding: 6px 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .export-all-btn:hover {
+            opacity: 0.8;
+        }
+
+        .export-all-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+
+        .keyframe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            padding: 12px;
+        }
+
+        .keyframe-card {
+            border: 1px solid var(--ys-black);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--ys-white);
+        }
+
+        .keyframe-card:hover {
+            transform: scale(1.02);
+        }
+
+        .keyframe-card.selected {
+            border-width: 2px;
+            border-color: var(--ys-red);
+        }
+
+        .keyframe-thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            display: block;
+            border-bottom: 1px solid var(--ys-black);
+            image-rendering: crisp-edges;
+        }
+
+        .keyframe-info {
+            padding: 6px;
+        }
+
+        .keyframe-timestamp {
+            font-size: 10px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .keyframe-frame-num {
+            font-size: 8px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .keyframe-export-btn {
+            width: 100%;
+            padding: 4px;
+            margin-top: 4px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .keyframe-export-btn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
         /* Upload Area */
         .upload-section {
             margin-bottom: 16px;
@@ -448,30 +685,6 @@
             background: var(--ys-black);
         }
 
-        /* Color Presets */
-        .color-presets {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-top: 6px;
-        }
-
-        .preset-btn {
-            width: 100%;
-            height: 24px;
-            border: 1px solid var(--ys-black);
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .preset-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .preset-btn.active {
-            border-width: 2px;
-        }
 
         /* ASCII Output */
         .ascii-output {
@@ -503,7 +716,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            margin-top: 16px;
+            margin-top: 4px;
         }
 
         .export-btn {
@@ -629,7 +842,7 @@
             <span>—</span>
             <span class="project-type">Artifacts</span>
         </a>
-        <div class="header-center">ASCII Interpreter</div>
+        <div class="header-center">vid-to-ASCII</div>
         <nav class="header-right">
             <a href="/about.html">About</a>
             <a href="/">Tools</a>
@@ -661,9 +874,9 @@
                         </div>
                         <div class="preview-container" id="previewContainer" style="display: none;">
                             <img id="previewImage" class="preview-img">
-                            <button class="replace-btn" onclick="replaceImage()">Replace</button>
+                            <button class="replace-btn" id="replaceBtn" onclick="replaceMedia()">Replace</button>
                         </div>
-                        <input type="file" id="fileInput" accept="image/*">
+                        <input type="file" id="fileInput" accept="image/*,video/mp4,video/webm">
                     </div>
                     <div class="cross-row">
                         <span class="cross-small"></span>
@@ -674,228 +887,59 @@
                 <!-- Preset Section -->
                 <div id="presetContainer"></div>
 
-                <!-- Animation Section -->
-                <div class="ys-cross-wrapper" id="animationSection">
+                <!-- Video Settings Section -->
+                <div class="ys-cross-wrapper" id="videoSettingsSection">
                     <div class="cross-row">
                         <span class="cross-small"></span>
                         <span class="cross-small"></span>
                     </div>
                     <div class="wrapper-content">
                         <div class="controls-section">
-                            <!-- Enable Animation Checkbox -->
+                            <!-- Keyframe Count Selection -->
                             <div class="control-item">
-                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                                    <input type="checkbox" id="enableAnimation" style="width: 16px; height: 16px;">
-                                    <label for="enableAnimation" style="text-transform: none; font-weight: 500; cursor: pointer; font-size: 10px; letter-spacing: 0.3px; text-transform: uppercase;">
-                                        Enable Animation Mode
-                                    </label>
+                                <label>Keyframe Count</label>
+                                <select id="keyframeCount">
+                                    <option value="5">5 frames (fast)</option>
+                                    <option value="10" selected>10 frames (balanced)</option>
+                                    <option value="15">15 frames (detailed)</option>
+                                    <option value="20">20 frames (very detailed)</option>
+                                </select>
+                            </div>
+
+                            <!-- Extraction Range Presets -->
+                            <div class="control-item">
+                                <label>Extraction Range</label>
+                                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                                    <button class="range-preset-btn active" data-range="full"
+                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-black); color: var(--ys-white); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
+                                        Full
+                                    </button>
+                                    <button class="range-preset-btn" data-range="start"
+                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-white); color: var(--ys-black); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
+                                        Start
+                                    </button>
+                                    <button class="range-preset-btn" data-range="middle"
+                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-white); color: var(--ys-black); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
+                                        Middle
+                                    </button>
+                                    <button class="range-preset-btn" data-range="end"
+                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-white); color: var(--ys-black); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
+                                        End
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- Animation Controls (shown when enabled) -->
-                            <div id="animationControls" style="display: none;">
-                                <!-- Mode Selection -->
-                                <div class="control-item">
-                                    <label>Animation Mode</label>
-                                    <select id="animationMode">
-                                        <option value="Threshold" selected>Threshold</option>
-                                        <option value="ScanlineSweep">Scanline Sweep</option>
-                                        <option value="WaveDistortion">Wave Distortion</option>
-                                        <option value="Breathing">Breathing</option>
-                                        <option value="RegionFlicker">Region Flicker</option>
-                                    </select>
-                                </div>
+                            <!-- Custom Time Range -->
+                            <div class="control-item" id="customRangeControls" style="display: none;">
+                                <label>Start Time <span class="range-value" id="startTimeValue">0.0s</span></label>
+                                <input type="range" id="startTime" min="0" max="30" step="0.5" value="0">
 
-                                <!-- Playback Controls -->
-                                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                                    <button id="animPlayBtn" style="flex: 0 0 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--ys-black); background: var(--ys-white); cursor: pointer; font-size: 16px; transition: all 0.2s;">
-                                        ⏸
-                                    </button>
-                                    <button id="animResetBtn" style="flex: 1; padding: 8px; border: 1px solid var(--ys-black); background: var(--ys-white); cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s;">
-                                        Reset
-                                    </button>
-                                </div>
+                                <label style="margin-top: 8px;">Duration <span class="range-value" id="durationValue">Full</span></label>
+                                <input type="range" id="duration" min="1" max="30" step="0.5" value="30">
+                            </div>
 
-                                <!-- Speed Control -->
-                                <div class="control-item">
-                                    <label>Speed <span class="range-value" id="animSpeedValue">1.0x</span></label>
-                                    <input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1.0">
-                                </div>
-
-                                <!-- Intensity Control -->
-                                <div class="control-item">
-                                    <label>Intensity <span class="range-value" id="animIntensityValue">50%</span></label>
-                                    <input type="range" id="animIntensity" min="0" max="100" step="5" value="50">
-                                </div>
-
-                                <!-- FPS Display -->
-                                <div style="font-size: 10px; opacity: 0.7; margin-top: 8px;">
-                                    FPS: <span id="animationFPS">60</span>
-                                </div>
-
-                                <!-- Mode-Specific Parameters (Dynamic) -->
-                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--ys-gray);">
-
-                                    <!-- Threshold Options -->
-                                    <div id="modeParams_Threshold" class="mode-params" style="display: block;">
-                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Threshold Options</label>
-                                        <div class="control-item">
-                                            <label>Mode</label>
-                                            <select id="thresholdMode">
-                                                <option value="size">Small Characters</option>
-                                                <option value="variant">Specific Character</option>
-                                            </select>
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Speed <span class="range-value" id="thresholdSpeedValue">3.0x</span></label>
-                                            <input type="range" id="thresholdSpeed" min="1.0" max="5.0" step="0.5" value="3.0">
-                                        </div>
-                                        <div class="control-item" id="thresholdCharControl" style="display: none;">
-                                            <label>Target Character</label>
-                                            <input type="text" id="thresholdTargetChar" value="." maxlength="1" style="width: 50px; padding: 4px; border: 1px solid var(--ys-black); text-align: center;">
-                                        </div>
-                                    </div>
-
-                                    <!-- Scanline Sweep Options -->
-                                    <div id="modeParams_ScanlineSweep" class="mode-params" style="display: none;">
-                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Scanline Options</label>
-                                        <div class="control-item">
-                                            <label>Color</label>
-                                            <input type="color" id="scanlineColor" value="#00FFFF">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Falloff <span class="range-value" id="scanlineFalloffValue">0.5s</span></label>
-                                            <input type="range" id="scanlineFalloff" min="0.1" max="2.0" step="0.1" value="0.5">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Direction</label>
-                                            <select id="scanlineDirection">
-                                                <option value="down">Down</option>
-                                                <option value="up">Up</option>
-                                                <option value="oscillate">Oscillate</option>
-                                            </select>
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Width <span class="range-value" id="scanlineWidthValue">3</span></label>
-                                            <input type="range" id="scanlineWidth" min="1" max="10" step="1" value="3">
-                                        </div>
-                                    </div>
-
-                                    <!-- Wave Distortion Options -->
-                                    <div id="modeParams_WaveDistortion" class="mode-params" style="display: none;">
-                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Wave Options</label>
-                                        <div class="control-item">
-                                            <label>Frequency <span class="range-value" id="waveFrequencyValue">2.0</span></label>
-                                            <input type="range" id="waveFrequency" min="1" max="10" step="0.5" value="2.0">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Amplitude <span class="range-value" id="waveAmplitudeValue">2.0</span></label>
-                                            <input type="range" id="waveAmplitude" min="1" max="10" step="0.5" value="2.0">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Direction</label>
-                                            <select id="waveDirection">
-                                                <option value="horizontal">Horizontal</option>
-                                                <option value="vertical">Vertical</option>
-                                                <option value="radial">Radial</option>
-                                                <option value="both">Both</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Breathing Options -->
-                                    <div id="modeParams_Breathing" class="mode-params" style="display: none;">
-                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Breathing Options</label>
-                                        <div class="control-item">
-                                            <label>Min Scale <span class="range-value" id="breathMinScaleValue">0.95</span></label>
-                                            <input type="range" id="breathMinScale" min="0" max="1.0" step="0.01" value="0.5">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Max Scale <span class="range-value" id="breathMaxScaleValue">1.05</span></label>
-                                            <input type="range" id="breathMaxScale" min="0.5" max="2.0" step="0.01" value="1.2">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Sync Mode</label>
-                                            <select id="breathSyncMode">
-                                                <option value="unified">Unified</option>
-                                                <option value="wave">Wave</option>
-                                                <option value="random">Random</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-
-                                    <!-- Region Flicker Options -->
-                                    <div id="modeParams_RegionFlicker" class="mode-params" style="display: none;">
-                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Region Options</label>
-                                        <div class="control-item">
-                                            <label>Region X <span class="range-value" id="regionXValue">0.30</span></label>
-                                            <input type="range" id="regionX" min="0" max="1" step="0.05" value="0.3">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Region Y <span class="range-value" id="regionYValue">0.30</span></label>
-                                            <input type="range" id="regionY" min="0" max="1" step="0.05" value="0.3">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Width <span class="range-value" id="regionWidthValue">0.40</span></label>
-                                            <input type="range" id="regionWidth" min="0.1" max="1.0" step="0.05" value="0.4">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Height <span class="range-value" id="regionHeightValue">0.40</span></label>
-                                            <input type="range" id="regionHeight" min="0.1" max="1.0" step="0.05" value="0.4">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Falloff <span class="range-value" id="regionFalloffValue">0.20</span></label>
-                                            <input type="range" id="regionFalloff" min="0" max="0.5" step="0.05" value="0.2">
-                                        </div>
-                                        <div class="control-item">
-                                            <label>Effect Type</label>
-                                            <select id="regionEffectType">
-                                                <option value="opacity">Opacity</option>
-                                                <option value="character">Character Switch</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <!-- Export Animation Section -->
-                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--ys-gray);">
-                                    <label style="display: block; margin-bottom: 8px;">Export Animation</label>
-
-                                    <!-- Format Toggle -->
-                                    <div style="display: flex; gap: 0; border: 1px solid var(--ys-black); margin-bottom: 12px; overflow: hidden;">
-                                        <button class="anim-format-toggle active" data-export-format="mp4" style="flex: 1; padding: 8px; background: var(--ys-black); color: var(--ys-white); border: none; font-size: 11px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">MP4</button>
-                                        <button class="anim-format-toggle" data-export-format="gif" style="flex: 1; padding: 8px; background: var(--ys-white); color: var(--ys-black); border-left: 1px solid var(--ys-black); font-size: 11px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">GIF</button>
-                                    </div>
-
-                                    <!-- Duration Control -->
-                                    <div class="control-item">
-                                        <label>Duration <span class="range-value" id="exportDurationValue">5s</span></label>
-                                        <input type="range" id="exportDuration" min="1" max="30" step="1" value="5">
-                                    </div>
-
-                                    <!-- Auto Loop Info -->
-                                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 12px;">
-                                        Auto loop: <span id="autoLoopDuration">6.28</span>s
-                                    </div>
-
-                                    <!-- Export Button -->
-                                    <button id="exportAnimationBtn" class="export-btn" style="width: 100%; padding: 10px; background: var(--ys-black); color: var(--ys-white); border: 1px solid var(--ys-black); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s;">
-                                        Export Animation ↓
-                                    </button>
-
-                                    <!-- Recording Indicator -->
-                                    <div id="animRecordingIndicator" style="display: none; margin-top: 12px; padding: 12px; border: 1px solid var(--ys-red); background: rgba(255,0,0,0.05);">
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                            <div id="animRecordingDot" style="width: 8px; height: 8px; background: var(--ys-red); border-radius: 50%;"></div>
-                                            <span style="font-size: 11px; font-weight: 500; text-transform: uppercase;">RECORDING</span>
-                                        </div>
-                                        <div style="font-size: 11px;">
-                                            Progress: <span id="animRecordingProgress">0</span>%
-                                        </div>
-                                    </div>
-                                </div>
+                            <div style="font-size: 9px; opacity: 0.7; margin-top: 8px; line-height: 1.4;">
+                                <strong>Full:</strong> Entire video | <strong>Start:</strong> First 5s | <strong>Middle:</strong> Center 5s | <strong>End:</strong> Last 5s
                             </div>
                         </div>
                     </div>
@@ -932,16 +976,17 @@
                                 <input type="text" id="customChars" placeholder=" .:-=+*#%@" disabled>
                             </div>
 
-                            <!-- Width Control -->
-                            <div class="control-item">
+                            <!-- Width Control (only for image mode) -->
+                            <div class="control-item" id="widthControl">
                                 <label>Width <span class="range-value" id="widthValue">100</span></label>
                                 <input type="range" id="width" value="100" min="40" max="200" step="10">
                             </div>
 
                             <!-- Font Size -->
                             <div class="control-item">
-                                <label>Font Size <span class="range-value" id="fontSizeValue">12px</span></label>
-                                <input type="range" id="fontSize" value="12" min="8" max="20" step="1">
+                                <label><span id="fontSizeLabel">Font Size</span> <span class="range-value" id="fontSizeValue">12px</span></label>
+                                <input type="range" id="fontSize" value="12" min="5" max="24" step="1">
+                                <div class="control-hint" id="fontSizeHint" style="display: none; font-size: 9px; opacity: 0.7; margin-top: 4px;">Smaller = more detail, Larger = blockier</div>
                             </div>
 
                             <!-- Letter Spacing -->
@@ -1012,43 +1057,43 @@
                                 <input type="color" id="bgColor" value="#FFFFFF">
                             </div>
 
-                            <!-- Color Presets -->
-                            <div class="control-item">
-                                <label>Color Presets</label>
-                                <div class="color-presets">
-                                    <button class="preset-btn active" style="background: linear-gradient(45deg, #000 50%, #FFF 50%);"
-                                            onclick="applyPreset('#000000', '#FFFFFF', 'mono')" title="Classic"></button>
-                                    <button class="preset-btn" style="background: linear-gradient(45deg, #FFF 50%, #000 50%);"
-                                            onclick="applyPreset('#FFFFFF', '#000000', 'mono')" title="Inverted"></button>
-                                    <button class="preset-btn" style="background: linear-gradient(45deg, #FF006E 50%, #8338EC 50%);"
-                                            onclick="applyPreset('#FF006E', '#8338EC', 'duotone')" title="Vapor"></button>
-                                    <button class="preset-btn" style="background: linear-gradient(45deg, #00F5FF 50%, #FF00F5 50%);"
-                                            onclick="applyPreset('#00F5FF', '#FF00F5', 'gradient')" title="Neon"></button>
-                                    <button class="preset-btn" style="background: linear-gradient(45deg, #00FF41 50%, #000 50%);"
-                                            onclick="applyPreset('#00FF41', '#000000', 'matrix')" title="Matrix"></button>
-                                    <button class="preset-btn" style="background: linear-gradient(45deg, #FFB700 50%, #1A1A2E 50%);"
-                                            onclick="applyPreset('#FFB700', '#1A1A2E', 'retro')" title="Retro"></button>
-                                    <button class="preset-btn" style="background: linear-gradient(45deg, #F72585 50%, #7209B7 50%);"
-                                            onclick="applyPreset('#F72585', '#7209B7', 'cyberpunk')" title="Cyber"></button>
-                                    <button class="preset-btn custom-preset" id="customPresetBtn" style="background: linear-gradient(45deg, var(--custom-col1, #666) 50%, var(--custom-col2, #999) 50%);"
-                                            onclick="applyCustomPreset()" title="Custom">
-                                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: white; text-shadow: 0 0 2px black;">✎</span>
-                                    </button>
-                                </div>
-                            </div>
+                            <!-- Color Correction (for Original Colors mode) -->
+                            <div class="control-item" id="colorCorrectionSection" style="display: none;">
+                                <label>Color Correction</label>
 
-                            <!-- Custom Color Inputs (hidden by default) -->
-                            <div class="control-item" id="customColorInputs" style="display: none;">
-                                <label>Custom Preset Colors</label>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                    <div>
-                                        <label style="font-size: 9px;">Color 1</label>
-                                        <input type="color" id="customColor1" value="#666666" onchange="updateCustomPreset()">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 9px;">Color 2</label>
-                                        <input type="color" id="customColor2" value="#999999" onchange="updateCustomPreset()">
-                                    </div>
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Exposure <span class="range-value" id="exposureValue">1.0</span></label>
+                                    <input type="range" id="exposure" value="1" min="0.1" max="3.0" step="0.1">
+                                </div>
+
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Contrast <span class="range-value" id="contrastValue">1.0</span></label>
+                                    <input type="range" id="contrast" value="1" min="0" max="5" step="0.1">
+                                </div>
+
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Saturation <span class="range-value" id="saturationValue">1.0</span></label>
+                                    <input type="range" id="saturation" value="1" min="0" max="5" step="0.1">
+                                </div>
+
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Vibrance <span class="range-value" id="vibranceValue">0</span></label>
+                                    <input type="range" id="vibrance" value="0" min="-1" max="2" step="0.1">
+                                </div>
+
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Hue Shift <span class="range-value" id="hueShiftValue">0°</span></label>
+                                    <input type="range" id="hueShift" value="0" min="-180" max="180" step="5">
+                                </div>
+
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Gamma <span class="range-value" id="gammaValue">1.0</span></label>
+                                    <input type="range" id="gamma" value="1" min="0.1" max="3.0" step="0.1">
+                                </div>
+
+                                <div style="margin-top: 8px;">
+                                    <label style="font-size: 9px;">Brightness <span class="range-value" id="brightnessValue">0</span></label>
+                                    <input type="range" id="brightness" value="0" min="-100" max="100" step="5">
                                 </div>
                             </div>
                         </div>
@@ -1062,29 +1107,82 @@
 
             <!-- Right Panel - Output -->
             <div class="output-panel">
+                <!-- Video Processing Indicator -->
+                <div id="videoProcessing">
+                    <div class="processing-text">Loading video...</div>
+                    <div class="processing-bar">
+                        <div class="processing-bar-fill" id="processingBarFill"></div>
+                    </div>
+                </div>
+
+                <!-- Video Keyframe Grid -->
+                <div id="videoKeyframeSection" class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+
+                    <!-- Video Header with Info -->
+                    <div class="video-header">
+                        <div class="video-title" id="keyframeGridTitle">VIDEO KEYFRAMES (10 frames)</div>
+                        <div class="video-meta">
+                            <div class="video-meta-item">
+                                <span class="video-meta-label">Video:</span>
+                                <span class="video-meta-value" id="videoResolution">1920×1080px</span>
+                            </div>
+                            <div class="video-meta-item">
+                                <span class="video-meta-label">ASCII Grid:</span>
+                                <span class="video-meta-value" id="asciiGridSize">192×108 chars</span>
+                            </div>
+                            <div class="video-meta-item">
+                                <span class="video-meta-label">Density:</span>
+                                <span class="video-meta-value" id="densityInfo">10×10px/char</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Playback Controls -->
+                    <div class="playback-controls">
+                        <button class="playback-btn" onclick="toggleKeyframePlayback()" id="playbackBtn">
+                            ▶ Play
+                        </button>
+                        <div class="fps-control">
+                            <label class="fps-label" id="fpsLabel">10 FPS</label>
+                            <input type="range" class="fps-slider" id="fpsSlider"
+                                   min="1" max="30" value="10" step="1"
+                                   oninput="updatePlaybackFPS(parseInt(this.value))">
+                        </div>
+                    </div>
+
+                    <!-- Keyframe Grid -->
+                    <div class="keyframe-grid" id="keyframeGrid">
+                        <!-- Keyframe cards will be dynamically inserted here -->
+                    </div>
+
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
                 <div class="ys-cross-wrapper">
                     <div class="cross-row">
                         <span class="cross-small"></span>
                         <span class="cross-small"></span>
                     </div>
                     <div class="wrapper-content">
-                        <pre id="asciiOutput" class="ascii-output"><span class="ascii-output-inner">// ascii interpreter
+                        <div id="asciiOutputWrapper" style="display: inline-block;">
+                            <pre id="asciiOutput" class="ascii-output"><span class="ascii-output-inner">// ascii interpreter
 // waiting for image input...
 // drop or select an image to begin</span></pre>
-
-                        <!-- Animation Canvas (hidden by default) -->
-                        <div id="asciiAnimationWrapper" style="display: none; padding: 24px; border: 1px solid var(--ys-black); min-height: 200px; overflow: auto; justify-content: center; align-items: center;">
-                            <canvas id="asciiAnimationCanvas" style="font-family: var(--font-mono); image-rendering: crisp-edges; display: block; margin: 0 auto;"></canvas>
                         </div>
 
                         <!-- Export Buttons -->
                         <div class="export-row">
-                            <button class="export-btn" onclick="exportText()">TXT</button>
-                            <button class="export-btn" onclick="exportHTML()">HTML</button>
-                            <button class="export-btn red" onclick="exportImage2K()">2K</button>
-                            <button class="export-btn red" onclick="exportImage4K()">4K</button>
-                            <button class="export-btn" onclick="exportImageAlpha2K()">2K+α</button>
-                            <button class="export-btn" onclick="exportImageAlpha4K()">4K+α</button>
+                            <button class="export-btn" onclick="exportText()">Export TXT</button>
+                            <button class="export-btn" onclick="exportHTML()">Export HTML</button>
+                            <button class="export-btn" onclick="exportPNG()">Export PNG</button>
+                            <button class="export-btn" id="exportAllZipBtn" onclick="exportAllKeyframes()" style="display: none;">Export All (ZIP)</button>
                             <button class="export-btn" onclick="copyToClipboard()">Copy</button>
                             <button class="export-btn" onclick="resetAll()">Reset</button>
                         </div>
@@ -1121,6 +1219,17 @@
         let currentAsciiData = '';
         let currentColorData = null;  // Store color data for animation
 
+        // Video state
+        let currentVideo = null;
+        let videoKeyframes = [];
+        let selectedKeyframeIndex = 0;
+        let isVideoMode = false;
+
+        // Playback state
+        let isPlayingKeyframes = false;
+        let playbackInterval = null;
+        let playbackFPS = 10; // Frames per second for playback
+
         // File input handling
         const fileInput = document.getElementById('fileInput');
         const uploadArea = document.getElementById('uploadArea');
@@ -1143,20 +1252,20 @@
             e.preventDefault();
             uploadArea.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                handleImage(file);
+            if (file) {
+                handleFile(file);
             }
         });
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                handleImage(file);
+                handleFile(file);
             }
         });
 
-        // Replace image function
-        function replaceImage() {
+        // Replace media function (works for both images and videos)
+        function replaceMedia() {
             fileInput.click();
         }
 
@@ -1177,6 +1286,45 @@
             document.getElementById('lineHeightValue').textContent = e.target.value;
         });
 
+        // Color correction range inputs
+        document.getElementById('exposure').addEventListener('input', (e) => {
+            document.getElementById('exposureValue').textContent = e.target.value;
+        });
+
+        document.getElementById('contrast').addEventListener('input', (e) => {
+            document.getElementById('contrastValue').textContent = e.target.value;
+        });
+
+        document.getElementById('saturation').addEventListener('input', (e) => {
+            document.getElementById('saturationValue').textContent = e.target.value;
+        });
+
+        document.getElementById('vibrance').addEventListener('input', (e) => {
+            document.getElementById('vibranceValue').textContent = e.target.value;
+        });
+
+        document.getElementById('hueShift').addEventListener('input', (e) => {
+            document.getElementById('hueShiftValue').textContent = e.target.value + '°';
+        });
+
+        document.getElementById('gamma').addEventListener('input', (e) => {
+            document.getElementById('gammaValue').textContent = e.target.value;
+        });
+
+        document.getElementById('brightness').addEventListener('input', (e) => {
+            document.getElementById('brightnessValue').textContent = e.target.value;
+        });
+
+        // Show/hide color correction section based on color mode
+        document.getElementById('colorMode').addEventListener('change', (e) => {
+            const colorCorrectionSection = document.getElementById('colorCorrectionSection');
+            if (e.target.value === 'html') {
+                colorCorrectionSection.style.display = 'block';
+            } else {
+                colorCorrectionSection.style.display = 'none';
+            }
+        });
+
         // Control listeners
         document.getElementById('charSet').addEventListener('change', () => {
             const customInput = document.getElementById('customChars');
@@ -1189,21 +1337,88 @@
             if (currentImage) processImage();
         });
 
+        // Range preset button handlers
+        document.querySelectorAll('.range-preset-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update button states
+                document.querySelectorAll('.range-preset-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'var(--ys-white)';
+                    b.style.color = 'var(--ys-black)';
+                });
+                this.classList.add('active');
+                this.style.background = 'var(--ys-black)';
+                this.style.color = 'var(--ys-white)';
+            });
+        });
+
         // Add listeners for all controls
         ['width', 'algorithm', 'colorMode', 'textColor', 'bgColor', 'invert',
-         'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'customChars'].forEach(id => {
+         'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'customChars',
+         'exposure', 'contrast', 'saturation', 'vibrance', 'hueShift', 'gamma', 'brightness'].forEach(id => {
             const element = document.getElementById(id);
             if (element) {
                 element.addEventListener('change', () => {
-                    if (currentImage) processImage();
+                    if (currentImage) {
+                        processImage();
+                    } else if (isVideoMode && videoKeyframes.length > 0) {
+                        // Update video info bar if font settings changed (affects density)
+                        if (id === 'fontSize' || id === 'letterSpacing' || id === 'lineHeight') {
+                            updateVideoInfo();
+                        }
+                        // Update current frame display with new settings in real-time
+                        displayKeyframeASCII(videoKeyframes[selectedKeyframeIndex]);
+                    }
                 });
                 if (element.type === 'range') {
                     element.addEventListener('input', () => {
-                        if (currentImage) processImage();
+                        if (currentImage) {
+                            processImage();
+                        } else if (isVideoMode && videoKeyframes.length > 0) {
+                            // Update video info bar if font settings changed (affects density)
+                            if (id === 'fontSize' || id === 'letterSpacing' || id === 'lineHeight') {
+                                updateVideoInfo();
+                            }
+                            // Update current frame display with new settings in real-time
+                            displayKeyframeASCII(videoKeyframes[selectedKeyframeIndex]);
+                        }
                     });
                 }
             }
         });
+
+        // File type router
+        function handleFile(file) {
+            if (file.type.startsWith('image/')) {
+                isVideoMode = false;
+                updateUIForImageMode();
+                handleImage(file);
+            } else if (file.type.startsWith('video/')) {
+                isVideoMode = true;
+                updateUIForVideoMode();
+                handleVideo(file);
+            } else {
+                alert('Unsupported file type. Please upload an image (PNG, JPG) or video (MP4, WebM).');
+            }
+        }
+
+        // Update UI for image mode
+        function updateUIForImageMode() {
+            document.getElementById('widthControl').style.display = 'block';
+            document.getElementById('fontSizeLabel').textContent = 'Font Size';
+            document.getElementById('fontSizeHint').style.display = 'none';
+            document.getElementById('exportAllZipBtn').style.display = 'none';
+            document.getElementById('replaceBtn').textContent = 'Replace Image';
+        }
+
+        // Update UI for video mode
+        function updateUIForVideoMode() {
+            document.getElementById('widthControl').style.display = 'none';
+            document.getElementById('fontSizeLabel').textContent = 'ASCII Density (Font Size)';
+            document.getElementById('fontSizeHint').style.display = 'block';
+            document.getElementById('exportAllZipBtn').style.display = 'inline-block';
+            document.getElementById('replaceBtn').textContent = 'Replace Video';
+        }
 
         function handleImage(file) {
             const reader = new FileReader();
@@ -1213,11 +1428,739 @@
                     previewImage.src = currentImage.src;
                     uploadArea.style.display = 'none';
                     previewContainer.style.display = 'block';
+                    hideVideoGrid();
                     processImage();
                 };
                 currentImage.src = e.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        // Calculate ASCII dimensions based on FIXED canvas size and font metrics
+        function calculateASCIIDimensions(canvasWidth, canvasHeight) {
+            // Get font parameters
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const letterSpacing = parseFloat(document.getElementById('letterSpacing').value);
+            const lineHeight = parseFloat(document.getElementById('lineHeight').value);
+
+            // Character dimensions in pixels
+            // Monospace characters are approximately 0.6x as wide as they are tall
+            const charAspectRatio = 0.6;
+            const charWidth = (fontSize * charAspectRatio) + letterSpacing;
+            const charHeight = fontSize * lineHeight;
+
+            // Calculate how many characters FIT in the fixed canvas
+            const asciiWidth = Math.floor(canvasWidth / charWidth);
+            const asciiHeight = Math.floor(canvasHeight / charHeight);
+
+            // Validate minimum dimensions
+            if (asciiWidth < 10 || asciiHeight < 10) {
+                console.warn('ASCII dimensions too small. Increase font size or reduce spacing.');
+                return null;
+            }
+
+            return {
+                asciiWidth,
+                asciiHeight,
+                charWidth,
+                charHeight,
+                canvasWidth,
+                canvasHeight
+            };
+        }
+
+        // Resample ImageData from source dimensions to target dimensions
+        function resampleImageData(sourceImageData, sourceWidth, sourceHeight, targetWidth, targetHeight) {
+            // Create temporary canvases for resampling
+            const sourceCanvas = document.createElement('canvas');
+            const targetCanvas = document.createElement('canvas');
+            const sourceCtx = sourceCanvas.getContext('2d');
+            const targetCtx = targetCanvas.getContext('2d');
+
+            // Set up source canvas
+            sourceCanvas.width = sourceWidth;
+            sourceCanvas.height = sourceHeight;
+            sourceCtx.putImageData(sourceImageData, 0, 0);
+
+            // Set up target canvas
+            targetCanvas.width = targetWidth;
+            targetCanvas.height = targetHeight;
+
+            // Draw source to target with resampling
+            targetCtx.drawImage(sourceCanvas, 0, 0, sourceWidth, sourceHeight, 0, 0, targetWidth, targetHeight);
+
+            // Get resampled ImageData
+            return targetCtx.getImageData(0, 0, targetWidth, targetHeight);
+        }
+
+        async function handleVideo(file) {
+            // Check file size (max 50MB)
+            const maxSize = 50 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('Video file is too large. Maximum size is 50MB.');
+                return;
+            }
+
+            // Hide image preview, show video processing
+            uploadArea.style.display = 'none';
+            previewContainer.style.display = 'none';
+
+            // Show processing indicator
+            showVideoProcessing('Loading video...');
+
+            try {
+                // Load video
+                currentVideo = document.createElement('video');
+                currentVideo.preload = 'metadata';
+
+                await new Promise((resolve, reject) => {
+                    currentVideo.onloadedmetadata = resolve;
+                    currentVideo.onerror = reject;
+                    currentVideo.src = URL.createObjectURL(file);
+                });
+
+                // Check duration (max 30 seconds)
+                if (currentVideo.duration > 30) {
+                    alert('Video is too long. Maximum duration is 30 seconds.');
+                    resetUpload();
+                    return;
+                }
+
+                // Extract metadata
+                const metadata = {
+                    duration: currentVideo.duration,
+                    width: currentVideo.videoWidth,
+                    height: currentVideo.videoHeight,
+                    fps: 30 // Default, hard to detect actual FPS
+                };
+
+                // Extract keyframes
+                await extractKeyframes(metadata);
+
+            } catch (error) {
+                console.error('Video loading error:', error);
+                alert('Failed to load video. Please try a different file.');
+                resetUpload();
+            }
+        }
+
+        async function extractKeyframes(metadata) {
+            const keyframeCount = parseInt(document.getElementById('keyframeCount').value);
+
+            // Get extraction range based on selected preset
+            const activeBtn = document.querySelector('.range-preset-btn.active');
+            const rangePreset = activeBtn ? activeBtn.dataset.range : 'full';
+            const { startTime, duration } = calculateExtractionRange(metadata.duration, rangePreset);
+
+            const interval = duration / (keyframeCount + 1);
+            videoKeyframes = [];
+
+            showVideoProcessing(`Extracting ${keyframeCount} frames...`);
+
+            // Create offscreen canvas for frame extraction
+            const extractionCanvas = document.createElement('canvas');
+            const extractionCtx = extractionCanvas.getContext('2d');
+
+            for (let i = 1; i <= keyframeCount; i++) {
+                const timestamp = startTime + (i * interval);
+
+                // Update progress
+                const progress = Math.round((i / keyframeCount) * 100);
+                showVideoProcessing(`Extracting frames... ${progress}%`);
+
+                try {
+                    // Seek to timestamp
+                    await seekToTime(currentVideo, timestamp);
+
+                    // ALWAYS extract at full video resolution
+                    // This allows font settings to change later without re-extraction
+                    extractionCanvas.width = currentVideo.videoWidth;
+                    extractionCanvas.height = currentVideo.videoHeight;
+                    extractionCtx.drawImage(currentVideo, 0, 0, currentVideo.videoWidth, currentVideo.videoHeight);
+
+                    // Get FULL RESOLUTION ImageData for this frame
+                    const fullResImageData = extractionCtx.getImageData(0, 0, currentVideo.videoWidth, currentVideo.videoHeight);
+
+                    // Calculate ASCII dimensions with current font settings
+                    const dimensions = calculateASCIIDimensions(
+                        currentVideo.videoWidth,
+                        currentVideo.videoHeight
+                    );
+
+                    if (!dimensions) {
+                        alert('Font settings create too small ASCII grid. Please adjust font size, letter spacing, or line height.');
+                        return;
+                    }
+
+                    // Resample to ASCII dimensions
+                    const resampledImageData = resampleImageData(fullResImageData, currentVideo.videoWidth, currentVideo.videoHeight, dimensions.asciiWidth, dimensions.asciiHeight);
+
+                    // Convert to ASCII (initial conversion)
+                    const asciiResult = convertImageDataToASCII(resampledImageData);
+
+                    // Create thumbnail
+                    const thumbnail = extractionCanvas.toDataURL('image/jpeg', 0.7);
+
+                    // Store keyframe WITH FULL RES imageData for re-processing with different settings
+                    videoKeyframes.push({
+                        index: i - 1,
+                        timestamp: timestamp,
+                        fullResImageData: fullResImageData, // Store FULL resolution for flexibility!
+                        videoWidth: currentVideo.videoWidth,
+                        videoHeight: currentVideo.videoHeight,
+                        asciiData: asciiResult.ascii,
+                        htmlAscii: asciiResult.htmlAscii,
+                        colorData: asciiResult.colorData,
+                        thumbnail: thumbnail,
+                        frameNumber: Math.floor(timestamp * metadata.fps)
+                    });
+
+                } catch (error) {
+                    console.error(`Failed to extract frame at ${timestamp}s:`, error);
+                }
+            }
+
+            // Show keyframe grid
+            hideVideoProcessing();
+            displayKeyframeGrid();
+
+            // Select first frame by default
+            selectKeyframe(0);
+        }
+
+        function seekToTime(video, time) {
+            return new Promise((resolve) => {
+                video.onseeked = () => resolve();
+                video.currentTime = time;
+            });
+        }
+
+        // Calculate extraction range based on preset
+        function calculateExtractionRange(videoDuration, preset) {
+            const extractDuration = 5; // Fixed 5 seconds for start/middle/end presets
+
+            switch(preset) {
+                case 'start':
+                    return {
+                        startTime: 0,
+                        duration: Math.min(extractDuration, videoDuration)
+                    };
+
+                case 'middle':
+                    const middleStart = Math.max(0, (videoDuration / 2) - (extractDuration / 2));
+                    return {
+                        startTime: middleStart,
+                        duration: Math.min(extractDuration, videoDuration)
+                    };
+
+                case 'end':
+                    const endStart = Math.max(0, videoDuration - extractDuration);
+                    return {
+                        startTime: endStart,
+                        duration: Math.min(extractDuration, videoDuration)
+                    };
+
+                case 'full':
+                default:
+                    return {
+                        startTime: 0,
+                        duration: videoDuration
+                    };
+            }
+        }
+
+        function convertImageDataToASCII(imageData) {
+            const width = imageData.width;
+            const height = imageData.height;
+            const pixels = imageData.data;
+
+            const charSetType = document.getElementById('charSet').value;
+            const chars = charSetType === 'custom' ?
+                document.getElementById('customChars').value || charSets.standard :
+                charSets[charSetType];
+
+            const algorithm = document.getElementById('algorithm').value;
+            const colorMode = document.getElementById('colorMode').value;
+            const invert = document.getElementById('invert').value === 'true';
+
+            let ascii = '';
+            let htmlAscii = '';
+            let colorData = [];
+
+            for (let y = 0; y < height; y++) {
+                let rowColorData = [];
+                for (let x = 0; x < width; x++) {
+                    const i = (y * width + x) * 4;
+                    const r = pixels[i];
+                    const g = pixels[i + 1];
+                    const b = pixels[i + 2];
+                    const a = pixels[i + 3];
+
+                    let brightness = getBrightness(r, g, b, algorithm);
+                    if (invert) brightness = 255 - brightness;
+
+                    const charIndex = Math.floor((brightness / 255) * (chars.length - 1));
+                    const char = chars[charIndex] || chars[0];
+
+                    let color = null;
+                    switch(colorMode) {
+                        case 'html':
+                            // Apply color correction if in Original Colors mode
+                            // Get color correction values
+                            const exposureVal = parseFloat(document.getElementById('exposure').value);
+                            const contrastVal = parseFloat(document.getElementById('contrast').value);
+                            const saturationVal = parseFloat(document.getElementById('saturation').value);
+                            const vibranceVal = parseFloat(document.getElementById('vibrance').value);
+                            const hueShiftVal = parseFloat(document.getElementById('hueShift').value);
+                            const gammaVal = parseFloat(document.getElementById('gamma').value);
+                            const brightnessVal = parseFloat(document.getElementById('brightness').value);
+
+                            // Apply color corrections
+                            const correctedColor = applyColorCorrection(r, g, b, exposureVal, contrastVal, saturationVal, vibranceVal, hueShiftVal, gammaVal, brightnessVal);
+
+                            color = `rgb(${correctedColor.r},${correctedColor.g},${correctedColor.b})`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'duotone':
+                            const mix = brightness / 255;
+                            const textCol = hexToRgb(document.getElementById('textColor').value);
+                            const bgCol = hexToRgb(document.getElementById('bgColor').value);
+                            const mixedR = Math.floor(textCol.r * (1 - mix) + bgCol.r * mix);
+                            const mixedG = Math.floor(textCol.g * (1 - mix) + bgCol.g * mix);
+                            const mixedB = Math.floor(textCol.b * (1 - mix) + bgCol.b * mix);
+                            color = `rgb(${mixedR},${mixedG},${mixedB})`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'gradient':
+                            const gradPos = brightness / 255;
+                            const col1 = hexToRgb(document.getElementById('textColor').value);
+                            const col2 = hexToRgb(document.getElementById('bgColor').value);
+                            const gradR = Math.floor(col1.r * (1 - gradPos) + col2.r * gradPos);
+                            const gradG = Math.floor(col1.g * (1 - gradPos) + col2.g * gradPos);
+                            const gradB = Math.floor(col1.b * (1 - gradPos) + col2.b * gradPos);
+                            color = `rgb(${gradR},${gradG},${gradB})`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'matrix':
+                            const greenShade = Math.floor(100 + brightness * 0.6);
+                            color = `rgb(0,${greenShade},0)`;
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'retro':
+                            const retroColors = ['#FFB700', '#FF6B6B', '#4ECDC4', '#95E77E'];
+                            const retroIndex = Math.floor((brightness / 255) * retroColors.length);
+                            color = retroColors[Math.min(retroIndex, retroColors.length - 1)];
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        case 'cyberpunk':
+                            const cyberColors = ['#F72585', '#B5179E', '#7209B7', '#560BAD', '#480CA8'];
+                            const cyberIndex = Math.floor((brightness / 255) * cyberColors.length);
+                            color = cyberColors[Math.min(cyberIndex, cyberColors.length - 1)];
+                            htmlAscii += `<span style="color:${color}">${char}</span>`;
+                            ascii += char;
+                            break;
+                        default: // mono
+                            ascii += char;
+                            color = null;
+                    }
+
+                    rowColorData.push(color);
+                }
+                colorData.push(rowColorData);
+                ascii += '\n';
+                if (colorMode !== 'mono') htmlAscii += '<br>';
+            }
+
+            return { ascii, htmlAscii, colorData };
+        }
+
+        // Reset upload helper
+        function resetUpload() {
+            stopKeyframePlayback(); // Stop playback if active
+            uploadArea.style.display = 'block';
+            hideVideoProcessing();
+            hideVideoGrid();
+            currentVideo = null;
+            videoKeyframes = [];
+            isVideoMode = false;
+            updateUIForImageMode(); // Reset UI to image mode
+        }
+
+        // Video UI Helper Functions
+        function showVideoProcessing(message) {
+            const processing = document.getElementById('videoProcessing');
+            const textEl = processing.querySelector('.processing-text');
+            textEl.textContent = message;
+            processing.style.display = 'block';
+        }
+
+        function hideVideoProcessing() {
+            document.getElementById('videoProcessing').style.display = 'none';
+        }
+
+        function hideVideoGrid() {
+            stopKeyframePlayback(); // Stop playback when hiding grid
+            document.getElementById('videoKeyframeSection').style.display = 'none';
+        }
+
+        // Update video info with current dimensions and density
+        function updateVideoInfo() {
+            if (!isVideoMode || videoKeyframes.length === 0) return;
+
+            const frame = videoKeyframes[0];
+            const dimensions = calculateASCIIDimensions(frame.videoWidth, frame.videoHeight);
+
+            if (!dimensions) return;
+
+            // Update values
+            document.getElementById('videoResolution').textContent = `${frame.videoWidth}×${frame.videoHeight}px`;
+            document.getElementById('asciiGridSize').textContent = `${dimensions.asciiWidth}×${dimensions.asciiHeight} chars`;
+            document.getElementById('densityInfo').textContent = `${dimensions.charWidth.toFixed(1)}×${dimensions.charHeight.toFixed(1)}px/char`;
+        }
+
+        function displayKeyframeGrid() {
+            const section = document.getElementById('videoKeyframeSection');
+            const grid = document.getElementById('keyframeGrid');
+            const title = document.getElementById('keyframeGridTitle');
+
+            section.style.display = 'block';
+            title.textContent = `VIDEO KEYFRAMES (${videoKeyframes.length} frames)`;
+
+            // Update video info bar
+            updateVideoInfo();
+
+            // Clear existing cards
+            grid.innerHTML = '';
+
+            // Create cards for each keyframe
+            videoKeyframes.forEach((frame, index) => {
+                const card = document.createElement('div');
+                card.className = 'keyframe-card';
+                card.dataset.index = index;
+
+                card.innerHTML = `
+                    <img src="${frame.thumbnail}" alt="Frame ${index + 1}" class="keyframe-thumbnail">
+                    <div class="keyframe-info">
+                        <div class="keyframe-timestamp">${frame.timestamp.toFixed(2)}s</div>
+                        <div class="keyframe-frame-num">Frame ${frame.frameNumber}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    // Stop playback when manually selecting a frame
+                    if (isPlayingKeyframes) {
+                        stopKeyframePlayback();
+                    }
+                    selectKeyframe(index);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        function selectKeyframe(index) {
+            if (index < 0 || index >= videoKeyframes.length) return;
+
+            selectedKeyframeIndex = index;
+            const frame = videoKeyframes[index];
+
+            // Update current ASCII data for export
+            currentAsciiData = frame.asciiData;
+            currentColorData = frame.colorData;
+
+            // Update visual selection
+            document.querySelectorAll('.keyframe-card').forEach((card, i) => {
+                if (i === index) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+
+            // Display ASCII in main output
+            displayKeyframeASCII(frame);
+
+            // Update title to show current frame when playing
+            if (isPlayingKeyframes) {
+                const title = document.getElementById('keyframeGridTitle');
+                title.textContent = `VIDEO KEYFRAMES (${videoKeyframes.length} frames) - Playing ${index + 1}/${videoKeyframes.length}`;
+            }
+        }
+
+        function displayKeyframeASCII(frame) {
+            const asciiOutput = document.getElementById('asciiOutput');
+            const colorMode = document.getElementById('colorMode').value;
+
+            // Calculate ASCII dimensions with CURRENT font settings
+            const dimensions = calculateASCIIDimensions(frame.videoWidth, frame.videoHeight);
+
+            if (!dimensions) {
+                alert('Current font settings create too small ASCII grid. Please adjust font size, letter spacing, or line height.');
+                return;
+            }
+
+            // Resample full-res image to current ASCII dimensions
+            const resampledImageData = resampleImageData(
+                frame.fullResImageData,
+                frame.videoWidth,
+                frame.videoHeight,
+                dimensions.asciiWidth,
+                dimensions.asciiHeight
+            );
+
+            // RE-CONVERT the resampled frame with current parameters!
+            // This allows real-time parameter changes to work
+            const asciiResult = convertImageDataToASCII(resampledImageData);
+
+            // Update the frame's stored data (so exports use current settings)
+            frame.asciiData = asciiResult.ascii;
+            frame.htmlAscii = asciiResult.htmlAscii;
+            frame.colorData = asciiResult.colorData;
+
+            // Update currentAsciiData for exports
+            currentAsciiData = asciiResult.ascii;
+            currentColorData = asciiResult.colorData;
+
+            // Apply styling
+            const fontSize = document.getElementById('fontSize').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = document.getElementById('letterSpacing').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const textColor = document.getElementById('textColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+
+            asciiOutput.style.fontSize = fontSize + 'px';
+            asciiOutput.style.fontWeight = fontWeight === 'bold' ? '700' : '400';
+            asciiOutput.style.letterSpacing = letterSpacing + 'px';
+            asciiOutput.style.lineHeight = lineHeight;
+
+            // Auto-scale to fit viewport in video mode
+            // Calculate the actual pixel dimensions the ASCII will take
+            const estimatedWidth = dimensions.asciiWidth * dimensions.charWidth;
+            const estimatedHeight = dimensions.asciiHeight * dimensions.charHeight;
+
+            // Get available viewport space (rough estimate)
+            const maxViewportWidth = window.innerWidth * 0.6; // Right panel is ~60% of window
+            const maxViewportHeight = window.innerHeight * 0.8;
+
+            // Calculate scale to fit
+            const scaleX = maxViewportWidth / estimatedWidth;
+            const scaleY = maxViewportHeight / estimatedHeight;
+            const scale = Math.min(scaleX, scaleY, 1.0); // Never scale UP, only down
+
+            // Apply scale transform
+            if (scale < 1.0) {
+                asciiOutput.style.transform = `scale(${scale})`;
+                asciiOutput.style.transformOrigin = 'top left';
+
+                // Pull up the content below by the amount we scaled down
+                // This eliminates the gap without cropping
+                requestAnimationFrame(() => {
+                    const actualHeight = asciiOutput.scrollHeight;
+                    const scaledHeight = actualHeight * scale;
+                    const gapToRemove = actualHeight - scaledHeight;
+                    asciiOutput.style.marginBottom = `-${gapToRemove}px`;
+                });
+            } else {
+                asciiOutput.style.transform = 'none';
+                asciiOutput.style.marginBottom = '0';
+            }
+
+            // Display based on color mode
+            if (colorMode !== 'mono' && asciiResult.htmlAscii) {
+                asciiOutput.innerHTML = `<span class="ascii-output-inner">${asciiResult.htmlAscii}</span>`;
+            } else {
+                asciiOutput.style.color = textColor;
+                asciiOutput.innerHTML = `<span class="ascii-output-inner">${asciiResult.ascii.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`;
+            }
+
+            // Set background
+            if (colorMode === 'matrix') {
+                asciiOutput.style.backgroundColor = '#0a0a0a';
+            } else if (colorMode === 'retro') {
+                asciiOutput.style.backgroundColor = '#1A1A2E';
+            } else if (colorMode === 'cyberpunk') {
+                asciiOutput.style.backgroundColor = '#0D0221';
+            } else {
+                asciiOutput.style.backgroundColor = bgColor;
+            }
+        }
+
+        // Keyframe Playback Functions
+        function toggleKeyframePlayback() {
+            if (isPlayingKeyframes) {
+                stopKeyframePlayback();
+            } else {
+                startKeyframePlayback();
+            }
+        }
+
+        function startKeyframePlayback() {
+            if (!videoKeyframes || videoKeyframes.length === 0) return;
+
+            isPlayingKeyframes = true;
+            const playbackBtn = document.getElementById('playbackBtn');
+            playbackBtn.textContent = '⏸ Pause';
+            playbackBtn.classList.add('playing');
+
+            // Calculate frame delay based on FPS
+            const frameDelay = 1000 / playbackFPS;
+
+            // Start from current frame or beginning
+            let currentFrame = selectedKeyframeIndex;
+
+            playbackInterval = setInterval(() => {
+                // Select and display next frame
+                selectKeyframe(currentFrame);
+
+                // Move to next frame
+                currentFrame++;
+
+                // Loop back to start when reaching the end
+                if (currentFrame >= videoKeyframes.length) {
+                    currentFrame = 0;
+                }
+            }, frameDelay);
+        }
+
+        function stopKeyframePlayback() {
+            isPlayingKeyframes = false;
+            const playbackBtn = document.getElementById('playbackBtn');
+            playbackBtn.textContent = '▶ Play';
+            playbackBtn.classList.remove('playing');
+
+            if (playbackInterval) {
+                clearInterval(playbackInterval);
+                playbackInterval = null;
+            }
+
+            // Reset title to default
+            const title = document.getElementById('keyframeGridTitle');
+            if (videoKeyframes.length > 0) {
+                title.textContent = `VIDEO KEYFRAMES (${videoKeyframes.length} frames)`;
+            }
+        }
+
+        function updatePlaybackFPS(fps) {
+            playbackFPS = fps;
+            document.getElementById('fpsLabel').textContent = `${fps} FPS`;
+            document.getElementById('fpsSlider').value = fps;
+
+            // If currently playing, restart with new FPS
+            if (isPlayingKeyframes) {
+                stopKeyframePlayback();
+                startKeyframePlayback();
+            }
+        }
+
+        // Export Functions for Video Keyframes
+        async function exportAllKeyframes() {
+            if (!videoKeyframes || videoKeyframes.length === 0) {
+                alert('No keyframes to export');
+                return;
+            }
+
+            const exportBtn = document.getElementById('exportAllZipBtn');
+            exportBtn.disabled = true;
+            exportBtn.textContent = 'Exporting...';
+
+            try {
+                const zip = new JSZip();
+                const folder = zip.folder('video-keyframes');
+
+                for (let i = 0; i < videoKeyframes.length; i++) {
+                    const frame = videoKeyframes[i];
+                    const timestamp = frame.timestamp.toFixed(1);
+                    const paddedIndex = String(i + 1).padStart(2, '0');
+
+                    // Add ASCII text file
+                    folder.file(`frame_${paddedIndex}_${timestamp}s.txt`, frame.asciiData);
+
+                    // Add PNG thumbnail
+                    const thumbnailBlob = await dataURLtoBlob(frame.thumbnail);
+                    folder.file(`frame_${paddedIndex}_${timestamp}s.png`, thumbnailBlob);
+
+                    // Add HTML version if colored
+                    if (frame.htmlAscii) {
+                        const htmlContent = generateHTMLExport(frame);
+                        folder.file(`frame_${paddedIndex}_${timestamp}s.html`, htmlContent);
+                    }
+                }
+
+                // Generate and download ZIP
+                const blob = await zip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `video-keyframes-${Date.now()}.zip`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Failed to export keyframes: ' + error.message);
+            } finally {
+                exportBtn.disabled = false;
+                exportBtn.textContent = 'Export All (ZIP)';
+            }
+        }
+
+        function dataURLtoBlob(dataURL) {
+            return new Promise((resolve) => {
+                fetch(dataURL)
+                    .then(res => res.blob())
+                    .then(blob => resolve(blob));
+            });
+        }
+
+        function generateHTMLExport(frame) {
+            const colorMode = document.getElementById('colorMode').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = document.getElementById('letterSpacing').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const bgColor = document.getElementById('bgColor').value;
+
+            const htmlContent = frame.htmlAscii || frame.asciiData.replace(/\n/g, '<br>');
+
+            return `<!DOCTYPE html>
+<html><head><title>ASCII Art Frame ${frame.timestamp.toFixed(1)}s - YS Studio</title>
+<meta charset="UTF-8">
+<style>
+@font-face {
+    font-family: 'Courier Prime';
+    src: local('Courier Prime'), local('Courier New'), monospace;
+}
+body {
+    margin: 0;
+    padding: 20px;
+    background: ${bgColor};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+pre {
+    font-family: 'Courier Prime', monospace;
+    font-size: ${fontSize}px;
+    font-weight: ${fontWeight === 'bold' ? '700' : '400'};
+    letter-spacing: ${letterSpacing}px;
+    line-height: ${lineHeight};
+    margin: 0;
+    white-space: pre;
+    display: inline-block;
+}
+</style></head>
+<body><pre>${htmlContent}</pre></body></html>`;
         }
 
         function processImage() {
@@ -1271,7 +2214,20 @@
                     let color = null;  // Track the color for animation
                     switch(colorMode) {
                         case 'html':
-                            color = `rgb(${r},${g},${b})`;
+                            // Apply color correction if in Original Colors mode
+                            // Get color correction values
+                            const exposureVal = parseFloat(document.getElementById('exposure').value);
+                            const contrastVal = parseFloat(document.getElementById('contrast').value);
+                            const saturationVal = parseFloat(document.getElementById('saturation').value);
+                            const vibranceVal = parseFloat(document.getElementById('vibrance').value);
+                            const hueShiftVal = parseFloat(document.getElementById('hueShift').value);
+                            const gammaVal = parseFloat(document.getElementById('gamma').value);
+                            const brightnessVal = parseFloat(document.getElementById('brightness').value);
+
+                            // Apply color corrections
+                            const correctedColor = applyColorCorrection(r, g, b, exposureVal, contrastVal, saturationVal, vibranceVal, hueShiftVal, gammaVal, brightnessVal);
+
+                            color = `rgb(${correctedColor.r},${correctedColor.g},${correctedColor.b})`;
                             htmlAscii += `<span style="color:${color}">${char}</span>`;
                             ascii += char;
                             break;
@@ -1355,6 +2311,8 @@
             asciiOutput.style.fontWeight = fontWeight === 'bold' ? '700' : '400';
             asciiOutput.style.letterSpacing = letterSpacing + 'px';
             asciiOutput.style.lineHeight = lineHeight;
+            asciiOutput.style.transform = 'none'; // Reset any video mode scaling
+            asciiOutput.style.marginBottom = '0'; // Reset negative margin from video mode
 
             if (colorMode === 'mono') {
                 asciiOutput.style.color = textColor;
@@ -1370,6 +2328,138 @@
             } else {
                 asciiOutput.style.backgroundColor = bgColor;
             }
+        }
+
+        // Apply color correction with extreme ranges
+        // Order: exposure → gamma → brightness → contrast → saturation → vibrance → hue
+        function applyColorCorrection(r, g, b, exposure, contrast, saturation, vibrance, hueShift, gamma, brightness) {
+            // Normalize RGB to 0-1 range
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            // 1. Apply exposure (multiplicative brightness)
+            r *= exposure;
+            g *= exposure;
+            b *= exposure;
+
+            // 2. Apply gamma correction (affects midtones)
+            r = Math.pow(r, 1 / gamma);
+            g = Math.pow(g, 1 / gamma);
+            b = Math.pow(b, 1 / gamma);
+
+            // 3. Apply brightness (additive, -100 to +100 range)
+            const brightnessFactor = brightness / 255; // Convert to 0-1 range
+            r += brightnessFactor;
+            g += brightnessFactor;
+            b += brightnessFactor;
+
+            // 4. Apply contrast (around midpoint 0.5)
+            r = ((r - 0.5) * contrast + 0.5);
+            g = ((g - 0.5) * contrast + 0.5);
+            b = ((b - 0.5) * contrast + 0.5);
+
+            // Convert back to 0-255 for HSL operations
+            r = Math.max(0, Math.min(1, r)) * 255;
+            g = Math.max(0, Math.min(1, g)) * 255;
+            b = Math.max(0, Math.min(1, b)) * 255;
+
+            // 5. Apply saturation
+            if (saturation !== 1) {
+                const hsl = rgbToHsl(r, g, b);
+                hsl.s = Math.max(0, Math.min(100, hsl.s * saturation));
+                const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+                r = rgb.r;
+                g = rgb.g;
+                b = rgb.b;
+            }
+
+            // 6. Apply vibrance (boost low-saturation colors more)
+            if (vibrance !== 0) {
+                const hsl = rgbToHsl(r, g, b);
+                const currentSat = hsl.s / 100; // 0-1
+                // Vibrance boosts low-saturation colors more than high-saturation
+                const boostAmount = vibrance * (1 - currentSat) * 50; // Adaptive boost
+                hsl.s = Math.max(0, Math.min(100, hsl.s + boostAmount));
+                const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+                r = rgb.r;
+                g = rgb.g;
+                b = rgb.b;
+            }
+
+            // 7. Apply hue shift
+            if (hueShift !== 0) {
+                const hsl = rgbToHsl(r, g, b);
+                hsl.h = (hsl.h + hueShift + 360) % 360;
+                const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+                r = rgb.r;
+                g = rgb.g;
+                b = rgb.b;
+            }
+
+            // Final clamp to 0-255
+            r = Math.max(0, Math.min(255, Math.round(r)));
+            g = Math.max(0, Math.min(255, Math.round(g)));
+            b = Math.max(0, Math.min(255, Math.round(b)));
+
+            return { r, g, b };
+        }
+
+        // Convert RGB to HSL
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            return { h: h * 360, s: s * 100, l: l * 100 };
+        }
+
+        // Convert HSL to RGB
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l; // achromatic
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return { r: r * 255, g: g * 255, b: b * 255 };
         }
 
         function getBrightness(r, g, b, algorithm) {
@@ -1399,69 +2489,23 @@
             } : { r: 0, g: 0, b: 0 };
         }
 
-        // Color Presets
-        function applyPreset(textColor, bgColor, mode) {
-            document.getElementById('textColor').value = textColor;
-            document.getElementById('bgColor').value = bgColor;
-            if (mode) {
-                document.getElementById('colorMode').value = mode;
-            }
-
-            // Update active preset
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // Hide custom color inputs when selecting other presets
-            document.getElementById('customColorInputs').style.display = 'none';
-
-            if (currentImage) processImage();
-        }
-
-        // Custom Preset Functions
-        function applyCustomPreset() {
-            // Toggle custom color inputs
-            const customInputs = document.getElementById('customColorInputs');
-            customInputs.style.display = customInputs.style.display === 'none' ? 'block' : 'none';
-
-            // Apply custom colors
-            const color1 = document.getElementById('customColor1').value;
-            const color2 = document.getElementById('customColor2').value;
-
-            document.getElementById('textColor').value = color1;
-            document.getElementById('bgColor').value = color2;
-            document.getElementById('colorMode').value = 'gradient';
-
-            // Update active preset
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById('customPresetBtn').classList.add('active');
-
-            if (currentImage) processImage();
-        }
-
-        function updateCustomPreset() {
-            const color1 = document.getElementById('customColor1').value;
-            const color2 = document.getElementById('customColor2').value;
-
-            // Update the custom preset button's gradient
-            const customBtn = document.getElementById('customPresetBtn');
-            customBtn.style.background = `linear-gradient(45deg, ${color1} 50%, ${color2} 50%)`;
-
-            // Apply colors if custom preset is active
-            if (customBtn.classList.contains('active')) {
-                document.getElementById('textColor').value = color1;
-                document.getElementById('bgColor').value = color2;
-                if (currentImage) processImage();
-            }
-        }
-
         // Export functions
-        function exportText() {
+        function exportText(customFilename) {
+            let filename = 'ascii-art.txt';
+
+            // Add frame info for video mode
+            if (isVideoMode && videoKeyframes.length > 0) {
+                const frame = videoKeyframes[selectedKeyframeIndex];
+                const timestamp = frame.timestamp.toFixed(1);
+                filename = `ascii_frame_${selectedKeyframeIndex + 1}_${timestamp}s.txt`;
+            }
+
+            if (customFilename) {
+                filename = `${customFilename}.txt`;
+            }
+
             const blob = new Blob([currentAsciiData], { type: 'text/plain' });
-            downloadFile(blob, 'ascii-art.txt');
+            downloadFile(blob, filename);
         }
 
         function exportHTML() {
@@ -1511,24 +2555,40 @@ span {
 </style>
 </head><body>${htmlContent}</body></html>`;
 
+            let filename = 'ascii-art.html';
+
+            // Add frame info for video mode
+            if (isVideoMode && videoKeyframes.length > 0) {
+                const frame = videoKeyframes[selectedKeyframeIndex];
+                const timestamp = frame.timestamp.toFixed(1);
+                filename = `ascii_frame_${selectedKeyframeIndex + 1}_${timestamp}s.html`;
+            }
+
             const blob = new Blob([html], { type: 'text/html' });
-            downloadFile(blob, 'ascii-art.html');
+            downloadFile(blob, filename);
         }
 
-        function exportImage2K() {
-            exportImageWithResolution(1920, 1080, false);
-        }
+        // New unified PNG export function
+        function exportPNG() {
+            // In video mode, calculate dimensions based on current frame
+            if (isVideoMode && videoKeyframes.length > 0) {
+                const frame = videoKeyframes[selectedKeyframeIndex];
+                const dimensions = calculateASCIIDimensions(frame.videoWidth, frame.videoHeight);
 
-        function exportImage4K() {
-            exportImageWithResolution(3840, 2160, false);
-        }
+                if (!dimensions) {
+                    alert('Cannot export with current font settings. Please adjust font size, letter spacing, or line height.');
+                    return;
+                }
 
-        function exportImageAlpha2K() {
-            exportImageWithResolution(1920, 1080, true);
-        }
+                // Calculate actual output dimensions
+                const outputWidth = Math.ceil(dimensions.asciiWidth * dimensions.charWidth);
+                const outputHeight = Math.ceil(dimensions.asciiHeight * dimensions.charHeight);
 
-        function exportImageAlpha4K() {
-            exportImageWithResolution(3840, 2160, true);
+                exportImageWithResolution(outputWidth, outputHeight, false);
+            } else {
+                // For images, use default 2K resolution
+                exportImageWithResolution(1920, 1080, false);
+            }
         }
 
         function exportImageWithResolution(targetWidth, targetHeight, withAlpha) {
@@ -1659,8 +2719,18 @@ span {
                 });
             }
 
+            // Generate filename
+            let filename = `ascii-art-${targetWidth}x${targetHeight}${withAlpha ? '-alpha' : ''}.png`;
+
+            // Add frame info for video mode
+            if (isVideoMode && videoKeyframes.length > 0) {
+                const frame = videoKeyframes[selectedKeyframeIndex];
+                const timestamp = frame.timestamp.toFixed(1);
+                filename = `ascii_frame_${selectedKeyframeIndex + 1}_${timestamp}s_${targetWidth}x${targetHeight}.png`;
+            }
+
             exportCanvas.toBlob((blob) => {
-                downloadFile(blob, `ascii-art-${targetWidth}x${targetHeight}${withAlpha ? '-alpha' : ''}.png`);
+                downloadFile(blob, filename);
             }, 'image/png');
         }
 
@@ -1687,10 +2757,19 @@ span {
         }
 
         function resetAll() {
+            stopKeyframePlayback(); // Stop playback if active
             currentImage = null;
             currentAsciiData = '';
+            currentVideo = null;
+            isVideoMode = false;
+            videoKeyframes = [];
+            selectedKeyframeIndex = 0;
+
             previewContainer.style.display = 'none';
             uploadArea.style.display = 'block';
+            hideVideoGrid();
+            hideVideoProcessing();
+
             asciiOutput.innerHTML = '<span class="ascii-output-inner">// ascii interpreter\n// waiting for image input...\n// drop or select an image to begin</span>';
             fileInput.value = '';
 
@@ -1726,7 +2805,7 @@ span {
             URL.revokeObjectURL(url);
         }
 
-        // ASCII Creator Preset Integration
+        // vid-to-ASCII Preset Integration
         // Extract all current parameters
         window.extractASCIIParams = function() {
             return {
@@ -1742,15 +2821,14 @@ span {
                 lineHeight: parseFloat(document.getElementById('lineHeight').value),
                 textColor: document.getElementById('textColor').value,
                 bgColor: document.getElementById('bgColor').value,
-                customColor1: document.getElementById('customColor1').value,
-                customColor2: document.getElementById('customColor2').value,
-                // Animation parameters
-                enableAnimation: document.getElementById('enableAnimation')?.checked || false,
-                animationMode: document.getElementById('animationMode')?.value || 'Threshold',
-                animSpeed: parseFloat(document.getElementById('animSpeed')?.value || 1.0),
-                animIntensity: parseInt(document.getElementById('animIntensity')?.value || 50),
-                exportDuration: parseInt(document.getElementById('exportDuration')?.value || 5),
-                exportFormat: document.querySelector('.anim-format-toggle.active')?.dataset.exportFormat || 'mp4'
+                // Color correction parameters
+                exposure: parseFloat(document.getElementById('exposure').value),
+                contrast: parseFloat(document.getElementById('contrast').value),
+                saturation: parseFloat(document.getElementById('saturation').value),
+                vibrance: parseFloat(document.getElementById('vibrance').value),
+                hueShift: parseFloat(document.getElementById('hueShift').value),
+                gamma: parseFloat(document.getElementById('gamma').value),
+                brightness: parseFloat(document.getElementById('brightness').value)
             };
         }
 
@@ -1799,81 +2877,51 @@ span {
             if (params.bgColor !== undefined) {
                 document.getElementById('bgColor').value = params.bgColor;
             }
-            if (params.customColor1 !== undefined) {
-                document.getElementById('customColor1').value = params.customColor1;
-            }
-            if (params.customColor2 !== undefined) {
-                document.getElementById('customColor2').value = params.customColor2;
-                // Update custom preset button gradient
-                const customBtn = document.getElementById('customPresetBtn');
-                if (customBtn) {
-                    customBtn.style.background = `linear-gradient(45deg, ${params.customColor1} 50%, ${params.customColor2} 50%)`;
-                }
-            }
 
-            // Animation parameters (set UI state but DON'T toggle animation yet)
-            if (params.enableAnimation !== undefined) {
-                document.getElementById('enableAnimation').checked = params.enableAnimation;
-                // Store desired animation state for after processImage completes
-                window._pendingAnimationState = params.enableAnimation;
+            // Apply color correction parameters (with defaults for old presets)
+            if (params.exposure !== undefined) {
+                document.getElementById('exposure').value = params.exposure;
+                document.getElementById('exposureValue').textContent = params.exposure;
             }
-
-            if (params.animationMode !== undefined) {
-                document.getElementById('animationMode').value = params.animationMode;
+            if (params.contrast !== undefined) {
+                document.getElementById('contrast').value = params.contrast;
+                document.getElementById('contrastValue').textContent = params.contrast;
             }
-
-            if (params.animSpeed !== undefined) {
-                document.getElementById('animSpeed').value = params.animSpeed;
-                document.getElementById('animSpeedValue').textContent = params.animSpeed.toFixed(1) + 'x';
+            if (params.saturation !== undefined) {
+                document.getElementById('saturation').value = params.saturation;
+                document.getElementById('saturationValue').textContent = params.saturation;
             }
-
-            if (params.animIntensity !== undefined) {
-                document.getElementById('animIntensity').value = params.animIntensity;
-                document.getElementById('animIntensityValue').textContent = params.animIntensity + '%';
+            if (params.vibrance !== undefined) {
+                document.getElementById('vibrance').value = params.vibrance;
+                document.getElementById('vibranceValue').textContent = params.vibrance;
+            }
+            if (params.hueShift !== undefined) {
+                document.getElementById('hueShift').value = params.hueShift;
+                document.getElementById('hueShiftValue').textContent = params.hueShift + '°';
+            }
+            if (params.gamma !== undefined) {
+                document.getElementById('gamma').value = params.gamma;
+                document.getElementById('gammaValue').textContent = params.gamma;
+            }
+            if (params.brightness !== undefined) {
+                document.getElementById('brightness').value = params.brightness;
+                document.getElementById('brightnessValue').textContent = params.brightness;
             }
 
-            if (params.exportDuration !== undefined) {
-                document.getElementById('exportDuration').value = params.exportDuration;
-                document.getElementById('exportDurationValue').textContent = params.exportDuration + 's';
-            }
-
-            if (params.exportFormat !== undefined) {
-                document.querySelectorAll('.anim-format-toggle').forEach(btn => {
-                    if (btn.dataset.exportFormat === params.exportFormat) {
-                        btn.classList.add('active');
-                        btn.style.background = 'var(--ys-black)';
-                        btn.style.color = 'var(--ys-white)';
-                    } else {
-                        btn.classList.remove('active');
-                        btn.style.background = 'var(--ys-white)';
-                        btn.style.color = 'var(--ys-black)';
-                    }
-                });
-            }
-
-            // Update preset button states if colorMode matches a preset
-            if (params.colorMode) {
-                document.querySelectorAll('.preset-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-
-                // Try to find matching preset button
-                if (params.colorMode === 'mono' && params.textColor === '#000000' && params.bgColor === '#FFFFFF') {
-                    document.querySelectorAll('.preset-btn')[0]?.classList.add('active');
-                } else if (params.colorMode === 'mono' && params.textColor === '#FFFFFF' && params.bgColor === '#000000') {
-                    document.querySelectorAll('.preset-btn')[1]?.classList.add('active');
-                } else if (params.colorMode === 'matrix') {
-                    document.querySelectorAll('.preset-btn')[4]?.classList.add('active');
-                } else if (params.colorMode === 'retro') {
-                    document.querySelectorAll('.preset-btn')[5]?.classList.add('active');
-                } else if (params.colorMode === 'cyberpunk') {
-                    document.querySelectorAll('.preset-btn')[6]?.classList.add('active');
-                }
+            // Show/hide color correction section based on colorMode
+            const colorCorrectionSection = document.getElementById('colorCorrectionSection');
+            if (params.colorMode === 'html') {
+                colorCorrectionSection.style.display = 'block';
+            } else {
+                colorCorrectionSection.style.display = 'none';
             }
 
             // Re-process image if one is loaded
             if (typeof currentImage !== 'undefined' && currentImage) {
                 processImage();
+            } else if (isVideoMode && videoKeyframes.length > 0) {
+                // If in video mode, update current frame display with new settings
+                displayKeyframeASCII(videoKeyframes[selectedKeyframeIndex]);
             }
         }
     </script>
@@ -1881,474 +2929,12 @@ span {
     <!-- GIF.js Library -->
     <script src="../../shared/gif.js"></script>
 
-    <!-- Animation Engine Scripts -->
-    <script type="module" src="animation-engine.js"></script>
-    <script src="animation-modes.js"></script>
-    <script type="module">
-        import { ASCIIAnimationEngine } from './animation-engine.js';
-
-        // Animation Engine Instance (use window.animationEngine throughout)
-        window.animationEngine = null;
-        let isAnimationMode = false;
-
-        // Animation Toggle
-        document.getElementById('enableAnimation').addEventListener('change', function(e) {
-            toggleAnimationMode(e.target.checked);
-        });
-
-        // Helper function to extract clean ASCII from DOM
-        function extractCleanASCII() {
-            const asciiOutput = document.getElementById('asciiOutput');
-            // Get text content, which strips all HTML tags
-            const extracted = asciiOutput.textContent || asciiOutput.innerText || '';
-            return extracted;
-        }
-
-        // Helper function to validate ASCII data
-        function validateASCIIData(data) {
-            if (!data || typeof data !== 'string') return false;
-            if (data.length < 50) return false;  // Too short to be real ASCII
-            if (data.trim() === '') return false;
-            // Check if it's not just placeholder text
-            if (data.includes('Upload an image') || data.includes('drag & drop')) return false;
-            return true;
-        }
-
-        function toggleAnimationMode(enable) {
-            isAnimationMode = enable;
-            const animControls = document.getElementById('animationControls');
-            const asciiOutput = document.getElementById('asciiOutput');
-            const animWrapper = document.getElementById('asciiAnimationWrapper');
-            const animCanvas = document.getElementById('asciiAnimationCanvas');
-
-            // FIXED: Add fallback ASCII extraction if needed
-            if (enable) {
-                // Ensure we have valid ASCII data
-                if (!validateASCIIData(currentAsciiData)) {
-                    currentAsciiData = extractCleanASCII();
-
-                    if (!validateASCIIData(currentAsciiData)) {
-                        alert("Please load an image first before enabling animation.");
-                        document.getElementById('enableAnimation').checked = false;
-                        return;
-                    }
-                }
-            }
-
-            if (enable && currentAsciiData) {
-                // Show animation controls and canvas wrapper
-                animControls.style.display = 'block';
-                asciiOutput.style.display = 'none';
-                animWrapper.style.display = 'flex';  // Show wrapper with flex display for centering
-
-                // Apply current background color to wrapper
-                const bgColor = document.getElementById('bgColor').value;
-                const colorMode = document.getElementById('colorMode').value;
-
-                // Use appropriate background based on color mode
-                if (colorMode === 'matrix') {
-                    animWrapper.style.backgroundColor = '#0a0a0a';
-                } else if (colorMode === 'retro') {
-                    animWrapper.style.backgroundColor = '#1A1A2E';
-                } else if (colorMode === 'cyberpunk') {
-                    animWrapper.style.backgroundColor = '#0D0221';
-                } else {
-                    animWrapper.style.backgroundColor = bgColor;
-                }
-
-                // Initialize animation engine
-                initializeAnimationEngine();
-            } else {
-                // Show static ASCII output
-                animControls.style.display = 'none';
-                asciiOutput.style.display = 'block';
-                animWrapper.style.display = 'none';  // Hide wrapper, not canvas directly
-
-                // Stop and cleanup animation engine
-                if (window.animationEngine) {
-                    window.animationEngine.stop();
-                    window.animationEngine = null;
-                }
-            }
-        }
-
-        function initializeAnimationEngine() {
-            if (!currentAsciiData) return;
-
-            const canvas = document.getElementById('asciiAnimationCanvas');
-            const fontSize = parseInt(document.getElementById('fontSize').value);
-            const fontWeight = document.getElementById('fontWeight').value;
-            const letterSpacing = parseFloat(document.getElementById('letterSpacing').value);
-            const lineHeight = parseFloat(document.getElementById('lineHeight').value);
-            const textColor = document.getElementById('textColor').value;
-            const bgColor = document.getElementById('bgColor').value;
-
-            // Create engine with color data if available
-            window.animationEngine = new ASCIIAnimationEngine(currentAsciiData, canvas, currentColorData);
-
-            // Apply current style settings
-            window.animationEngine.updateStyle(fontSize, fontWeight, letterSpacing, lineHeight, textColor, bgColor);
-
-            // Set initial animation mode with mode-specific parameters
-            const selectedMode = document.getElementById('animationMode').value;
-            const modeParams = getModeSpecificParams(selectedMode);
-            window.animationEngine.setAnimationMode(selectedMode, modeParams);
-
-            // Show the appropriate mode parameter panel
-            document.querySelectorAll('.mode-params').forEach(panel => {
-                panel.style.display = 'none';
-            });
-            const selectedPanel = document.getElementById(`modeParams_${selectedMode}`);
-            if (selectedPanel) {
-                selectedPanel.style.display = 'block';
-            }
-
-            // Start animation loop
-            window.animationEngine.animate();
-
-            // Update auto loop duration
-            updateAutoLoopDuration();
-        }
-
-        // Playback Controls
-        document.getElementById('animPlayBtn').addEventListener('click', function() {
-            if (!window.animationEngine) return;
-
-            if (window.animationEngine.isPlaying) {
-                window.animationEngine.pause();
-                this.textContent = '▶';
-                this.classList.remove('playing');
-            } else {
-                window.animationEngine.play();
-                this.textContent = '⏸';
-                this.classList.add('playing');
-            }
-        });
-
-        document.getElementById('animResetBtn').addEventListener('click', function() {
-            if (!window.animationEngine) return;
-            window.animationEngine.reset();
-            window.animationEngine.time = 0;
-        });
-
-        // Speed Control
-        document.getElementById('animSpeed').addEventListener('input', function(e) {
-            const speed = parseFloat(e.target.value);
-            document.getElementById('animSpeedValue').textContent = speed.toFixed(1) + 'x';
-
-            if (window.animationEngine) {
-                window.animationEngine.animationSpeed = speed;
-            }
-
-            updateAutoLoopDuration();
-        });
-
-        // Intensity Control
-        document.getElementById('animIntensity').addEventListener('input', function(e) {
-            const intensity = parseInt(e.target.value);
-            document.getElementById('animIntensityValue').textContent = intensity + '%';
-
-            if (window.animationEngine && window.animationEngine.modeInstance) {
-                window.animationEngine.modeInstance.updateParams({ intensity: intensity / 100 });
-            }
-
-            updateAutoLoopDuration();
-        });
-
-        // Mode Selection
-        document.getElementById('animationMode').addEventListener('change', function(e) {
-            if (!window.animationEngine) return;
-
-            const mode = e.target.value;
-
-            // Hide all mode parameter panels
-            document.querySelectorAll('.mode-params').forEach(panel => {
-                panel.style.display = 'none';
-            });
-
-            // Show selected mode's panel
-            const selectedPanel = document.getElementById(`modeParams_${mode}`);
-            if (selectedPanel) {
-                selectedPanel.style.display = 'block';
-            }
-
-            // Get mode-specific parameters and reinitialize
-            const modeParams = getModeSpecificParams(mode);
-            window.animationEngine.setAnimationMode(mode, modeParams);
-
-            updateAutoLoopDuration();
-        });
-
-        // Function to get mode-specific parameters
-        function getModeSpecificParams(modeName) {
-            const intensity = parseInt(document.getElementById('animIntensity').value) / 100;
-            const baseParams = { intensity };
-
-            switch(modeName) {
-                case 'Threshold':
-                    return {
-                        ...baseParams,
-                        mode: document.getElementById('thresholdMode').value,
-                        cycleSpeed: parseFloat(document.getElementById('thresholdSpeed').value),
-                        targetChar: document.getElementById('thresholdTargetChar').value
-                    };
-
-                case 'ScanlineSweep':
-                    return {
-                        ...baseParams,
-                        scanColor: document.getElementById('scanlineColor').value,
-                        falloff: parseFloat(document.getElementById('scanlineFalloff').value),
-                        direction: document.getElementById('scanlineDirection').value,
-                        scanWidth: parseInt(document.getElementById('scanlineWidth').value)
-                    };
-
-                case 'WaveDistortion':
-                    return {
-                        ...baseParams,
-                        waveFrequency: parseFloat(document.getElementById('waveFrequency').value),
-                        amplitude: parseFloat(document.getElementById('waveAmplitude').value),
-                        direction: document.getElementById('waveDirection').value
-                    };
-
-                case 'Breathing':
-                    return {
-                        ...baseParams,
-                        minScale: parseFloat(document.getElementById('breathMinScale').value),
-                        maxScale: parseFloat(document.getElementById('breathMaxScale').value),
-                        syncMode: document.getElementById('breathSyncMode').value
-                    };
-
-
-                case 'RegionFlicker':
-                    return {
-                        ...baseParams,
-                        regionX: parseFloat(document.getElementById('regionX').value),
-                        regionY: parseFloat(document.getElementById('regionY').value),
-                        regionWidth: parseFloat(document.getElementById('regionWidth').value),
-                        regionHeight: parseFloat(document.getElementById('regionHeight').value),
-                        falloff: parseFloat(document.getElementById('regionFalloff').value),
-                        affectOpacity: document.getElementById('regionEffectType').value === 'opacity',
-                        affectChar: document.getElementById('regionEffectType').value === 'character'
-                    };
-
-                default:
-                    return baseParams;
-            }
-        }
-
-        // Function to update mode parameters in real-time
-        function updateModeParams() {
-            if (window.animationEngine && window.animationEngine.modeInstance) {
-                const mode = document.getElementById('animationMode').value;
-                const params = getModeSpecificParams(mode);
-                window.animationEngine.modeInstance.updateParams(params);
-            }
-        }
-
-        // Wire up Threshold parameters
-        document.getElementById('thresholdMode').addEventListener('change', (e) => {
-            const charControl = document.getElementById('thresholdCharControl');
-            charControl.style.display = e.target.value === 'variant' ? 'block' : 'none';
-            updateModeParams();
-        });
-
-        document.getElementById('thresholdSpeed').addEventListener('input', (e) => {
-            document.getElementById('thresholdSpeedValue').textContent = e.target.value + 'x';
-            updateModeParams();
-        });
-
-        document.getElementById('thresholdTargetChar').addEventListener('input', updateModeParams);
-
-        // Wire up Scanline Sweep parameters
-        document.getElementById('scanlineColor').addEventListener('change', updateModeParams);
-        document.getElementById('scanlineFalloff').addEventListener('input', (e) => {
-            document.getElementById('scanlineFalloffValue').textContent = e.target.value + 's';
-            updateModeParams();
-        });
-        document.getElementById('scanlineDirection').addEventListener('change', updateModeParams);
-        document.getElementById('scanlineWidth').addEventListener('input', (e) => {
-            document.getElementById('scanlineWidthValue').textContent = e.target.value;
-            updateModeParams();
-        });
-
-        // Wire up Wave Distortion parameters
-        document.getElementById('waveFrequency').addEventListener('input', (e) => {
-            document.getElementById('waveFrequencyValue').textContent = e.target.value;
-            updateModeParams();
-        });
-        document.getElementById('waveAmplitude').addEventListener('input', (e) => {
-            document.getElementById('waveAmplitudeValue').textContent = e.target.value;
-            updateModeParams();
-        });
-        document.getElementById('waveDirection').addEventListener('change', updateModeParams);
-
-        // Wire up Breathing parameters
-        document.getElementById('breathMinScale').addEventListener('input', (e) => {
-            document.getElementById('breathMinScaleValue').textContent = e.target.value;
-            updateModeParams();
-        });
-        document.getElementById('breathMaxScale').addEventListener('input', (e) => {
-            document.getElementById('breathMaxScaleValue').textContent = e.target.value;
-            updateModeParams();
-        });
-        document.getElementById('breathSyncMode').addEventListener('change', updateModeParams);
-
-
-        // Wire up Region Flicker parameters
-        document.getElementById('regionX').addEventListener('input', (e) => {
-            document.getElementById('regionXValue').textContent = parseFloat(e.target.value).toFixed(2);
-            updateModeParams();
-        });
-        document.getElementById('regionY').addEventListener('input', (e) => {
-            document.getElementById('regionYValue').textContent = parseFloat(e.target.value).toFixed(2);
-            updateModeParams();
-        });
-        document.getElementById('regionWidth').addEventListener('input', (e) => {
-            document.getElementById('regionWidthValue').textContent = parseFloat(e.target.value).toFixed(2);
-            updateModeParams();
-        });
-        document.getElementById('regionHeight').addEventListener('input', (e) => {
-            document.getElementById('regionHeightValue').textContent = parseFloat(e.target.value).toFixed(2);
-            updateModeParams();
-        });
-        document.getElementById('regionFalloff').addEventListener('input', (e) => {
-            document.getElementById('regionFalloffValue').textContent = parseFloat(e.target.value).toFixed(2);
-            updateModeParams();
-        });
-        document.getElementById('regionEffectType').addEventListener('change', updateModeParams);
-
-        // Export Format Toggle
-        document.querySelectorAll('.anim-format-toggle').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.anim-format-toggle').forEach(b => {
-                    b.classList.remove('active');
-                    b.style.background = 'var(--ys-white)';
-                    b.style.color = 'var(--ys-black)';
-                });
-                this.classList.add('active');
-                this.style.background = 'var(--ys-black)';
-                this.style.color = 'var(--ys-white)';
-            });
-        });
-
-        // Duration Control
-        document.getElementById('exportDuration').addEventListener('input', function(e) {
-            const duration = parseInt(e.target.value);
-            document.getElementById('exportDurationValue').textContent = duration + 's';
-        });
-
-        // Export Animation Button
-        document.getElementById('exportAnimationBtn').addEventListener('click', async function() {
-            if (!window.animationEngine) {
-                alert('Please enable animation mode first');
-                return;
-            }
-
-            const format = document.querySelector('.anim-format-toggle.active').dataset.exportFormat;
-            const duration = parseInt(document.getElementById('exportDuration').value);
-
-            // Show recording indicator
-            const indicator = document.getElementById('animRecordingIndicator');
-            const progressSpan = document.getElementById('animRecordingProgress');
-            indicator.style.display = 'block';
-            this.disabled = true;
-            this.style.opacity = '0.5';
-
-            try {
-                if (format === 'mp4') {
-                    await window.animationEngine.startMP4Recording(duration, (progress) => {
-                        progressSpan.textContent = Math.round(progress * 100);
-                    });
-                } else if (format === 'gif') {
-                    await window.animationEngine.startGIFRecording(duration, (progress) => {
-                        progressSpan.textContent = Math.round(progress * 100);
-                    });
-                }
-            } catch (error) {
-                console.error('Export failed:', error);
-                alert('Export failed: ' + error.message);
-            } finally {
-                // Hide recording indicator
-                setTimeout(() => {
-                    indicator.style.display = 'none';
-                    this.disabled = false;
-                    this.style.opacity = '1';
-                    progressSpan.textContent = '0';
-                }, 500);
-            }
-        });
-
-        // Update auto loop duration display
-        function updateAutoLoopDuration() {
-            if (window.animationEngine) {
-                const duration = window.animationEngine.calculateLoopDuration();
-                document.getElementById('autoLoopDuration').textContent = duration.toFixed(2);
-            }
-        }
-
-        // Update animation engine when style changes
-        const originalProcessImage = processImage;
-        processImage = function() {
-            originalProcessImage();
-
-            // FIXED: Remove arbitrary timeout, use proper validation
-            // The ASCII data is already set synchronously in processImage
-
-            // Check if there's a pending animation state from preset loading
-            if (window._pendingAnimationState !== undefined) {
-                const shouldEnable = window._pendingAnimationState;
-                window._pendingAnimationState = undefined; // Clear the flag
-
-                // Only enable if we have valid ASCII data
-                if (shouldEnable && validateASCIIData(currentAsciiData)) {
-                    toggleAnimationMode(true);
-                } else if (shouldEnable) {
-                    // Try extracting from DOM as fallback
-                    currentAsciiData = extractCleanASCII();
-                    if (validateASCIIData(currentAsciiData)) {
-                        toggleAnimationMode(true);
-                    }
-                }
-            }
-            // Otherwise, if animation is currently active, reinitialize with new ASCII
-            else if (isAnimationMode) {
-                // Ensure we have valid data before reinitializing
-                if (!validateASCIIData(currentAsciiData)) {
-                    currentAsciiData = extractCleanASCII();
-                }
-                if (validateASCIIData(currentAsciiData)) {
-                    // Update wrapper background color if animation is active
-                    const animWrapper = document.getElementById('asciiAnimationWrapper');
-                    if (animWrapper) {
-                        const bgColor = document.getElementById('bgColor').value;
-                        const colorMode = document.getElementById('colorMode').value;
-
-                        if (colorMode === 'matrix') {
-                            animWrapper.style.backgroundColor = '#0a0a0a';
-                        } else if (colorMode === 'retro') {
-                            animWrapper.style.backgroundColor = '#1A1A2E';
-                        } else if (colorMode === 'cyberpunk') {
-                            animWrapper.style.backgroundColor = '#0D0221';
-                        } else {
-                            animWrapper.style.backgroundColor = bgColor;
-                        }
-                    }
-
-                    toggleAnimationMode(true);
-                }
-            }
-        };
-
-        // Make animation functions global for preset integration
-        window.toggleAnimationMode = toggleAnimationMode;
-    </script>
-
     <!-- Preset System Scripts -->
     <script type="module">
         import { PresetManager } from '../../shared/preset-manager.js';
         import { PresetUIComponent } from '../../shared/preset-ui-component.js';
 
-        // Initialize preset manager for ASCII Creator
+        // Initialize preset manager for vid-to-ASCII
         const presetManager = new PresetManager('ascii-creator');
         const presetUI = new PresetUIComponent(presetManager, window.extractASCIIParams);
 
