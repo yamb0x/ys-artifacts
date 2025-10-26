@@ -28,6 +28,18 @@ Create animated typographic patterns with real-time effects:
 
 **Status**: ✅ Live | **Presets**: ✅ Integrated
 
+### 3. [Displacement Mapper](tools/displacement-mapper/)
+Advanced pixel displacement tool for creating glitch and liquid effects:
+- 8+ procedural pattern generators (Perlin noise, sine waves, radial, turbulence, etc.)
+- Soft falloff controls for smooth organic shapes
+- Real-time displacement preview with bilinear interpolation
+- Dual displacement maps (separate X/Y control)
+- Advanced preprocessing (blur, gamma, contrast, levels)
+- 6 blend modes for creative compositing
+- Export to PNG, JPEG, WebP with resolution scaling
+
+**Status**: ✅ Live | **Presets**: 🔄 Coming Soon
+
 
 ## 🎯 Features
 
