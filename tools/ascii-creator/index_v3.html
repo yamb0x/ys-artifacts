@@ -451,7 +451,7 @@
         .ascii-output {
             font-family: var(--font-mono);
             white-space: pre;
-            overflow-x: auto;
+            overflow: auto;
             padding: 24px;
             background: var(--ys-white);
             border: 1px solid var(--ys-black);
@@ -459,6 +459,13 @@
             line-height: 1;
             min-height: 200px;
             font-weight: 400;
+            text-align: center;
+            display: block;
+        }
+
+        .ascii-output-inner {
+            display: inline-block;
+            text-align: left;
         }
 
         .ascii-output.bold {
@@ -523,6 +530,41 @@
             font-size: 10px;
             color: var(--ys-black);
             margin-left: 4px;
+        }
+
+        /* Animation Controls */
+        #animPlayBtn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        #animPlayBtn.playing {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        #animResetBtn:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .anim-format-toggle:hover:not(.active) {
+            background: var(--ys-gray);
+        }
+
+        #exportAnimationBtn:hover {
+            background: var(--ys-white);
+            color: var(--ys-black);
+        }
+
+        /* Recording pulse animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        #animRecordingDot {
+            animation: pulse 1s infinite;
         }
 
         /* Responsive */
@@ -605,6 +647,237 @@
 
                 <!-- Preset Section -->
                 <div id="presetContainer"></div>
+
+                <!-- Animation Section -->
+                <div class="ys-cross-wrapper" id="animationSection">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <!-- Enable Animation Checkbox -->
+                            <div class="control-item">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                    <input type="checkbox" id="enableAnimation" style="width: 16px; height: 16px;">
+                                    <label for="enableAnimation" style="text-transform: none; font-weight: 500; cursor: pointer; font-size: 10px; letter-spacing: 0.3px; text-transform: uppercase;">
+                                        Enable Animation Mode
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Animation Controls (shown when enabled) -->
+                            <div id="animationControls" style="display: none;">
+                                <!-- Mode Selection -->
+                                <div class="control-item">
+                                    <label>Animation Mode</label>
+                                    <select id="animationMode">
+                                        <option value="Threshold" selected>Threshold</option>
+                                        <option value="ScanlineSweep">Scanline Sweep</option>
+                                        <option value="WaveDistortion">Wave Distortion</option>
+                                        <option value="Breathing">Breathing</option>
+                                        <option value="RegionFlicker">Region Flicker</option>
+                                    </select>
+                                </div>
+
+                                <!-- Playback Controls -->
+                                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                    <button id="animPlayBtn" style="flex: 0 0 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--ys-black); background: var(--ys-white); cursor: pointer; font-size: 16px; transition: all 0.2s;">
+                                        ⏸
+                                    </button>
+                                    <button id="animResetBtn" style="flex: 1; padding: 8px; border: 1px solid var(--ys-black); background: var(--ys-white); cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s;">
+                                        Reset
+                                    </button>
+                                </div>
+
+                                <!-- Speed Control -->
+                                <div class="control-item">
+                                    <label>Speed <span class="range-value" id="animSpeedValue">1.0x</span></label>
+                                    <input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1.0">
+                                </div>
+
+                                <!-- Intensity Control -->
+                                <div class="control-item">
+                                    <label>Intensity <span class="range-value" id="animIntensityValue">50%</span></label>
+                                    <input type="range" id="animIntensity" min="0" max="100" step="5" value="50">
+                                </div>
+
+                                <!-- FPS Display -->
+                                <div style="font-size: 10px; opacity: 0.7; margin-top: 8px;">
+                                    FPS: <span id="animationFPS">60</span>
+                                </div>
+
+                                <!-- Mode-Specific Parameters (Dynamic) -->
+                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--ys-gray);">
+
+                                    <!-- Threshold Options -->
+                                    <div id="modeParams_Threshold" class="mode-params" style="display: block;">
+                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Threshold Options</label>
+                                        <div class="control-item">
+                                            <label>Mode</label>
+                                            <select id="thresholdMode">
+                                                <option value="size">Small Characters</option>
+                                                <option value="variant">Specific Character</option>
+                                            </select>
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Speed <span class="range-value" id="thresholdSpeedValue">3.0x</span></label>
+                                            <input type="range" id="thresholdSpeed" min="1.0" max="5.0" step="0.5" value="3.0">
+                                        </div>
+                                        <div class="control-item" id="thresholdCharControl" style="display: none;">
+                                            <label>Target Character</label>
+                                            <input type="text" id="thresholdTargetChar" value="." maxlength="1" style="width: 50px; padding: 4px; border: 1px solid var(--ys-black); text-align: center;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Scanline Sweep Options -->
+                                    <div id="modeParams_ScanlineSweep" class="mode-params" style="display: none;">
+                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Scanline Options</label>
+                                        <div class="control-item">
+                                            <label>Color</label>
+                                            <input type="color" id="scanlineColor" value="#00FFFF">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Falloff <span class="range-value" id="scanlineFalloffValue">0.5s</span></label>
+                                            <input type="range" id="scanlineFalloff" min="0.1" max="2.0" step="0.1" value="0.5">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Direction</label>
+                                            <select id="scanlineDirection">
+                                                <option value="down">Down</option>
+                                                <option value="up">Up</option>
+                                                <option value="oscillate">Oscillate</option>
+                                            </select>
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Width <span class="range-value" id="scanlineWidthValue">3</span></label>
+                                            <input type="range" id="scanlineWidth" min="1" max="10" step="1" value="3">
+                                        </div>
+                                    </div>
+
+                                    <!-- Wave Distortion Options -->
+                                    <div id="modeParams_WaveDistortion" class="mode-params" style="display: none;">
+                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Wave Options</label>
+                                        <div class="control-item">
+                                            <label>Frequency <span class="range-value" id="waveFrequencyValue">2.0</span></label>
+                                            <input type="range" id="waveFrequency" min="1" max="10" step="0.5" value="2.0">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Amplitude <span class="range-value" id="waveAmplitudeValue">2.0</span></label>
+                                            <input type="range" id="waveAmplitude" min="1" max="10" step="0.5" value="2.0">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Direction</label>
+                                            <select id="waveDirection">
+                                                <option value="horizontal">Horizontal</option>
+                                                <option value="vertical">Vertical</option>
+                                                <option value="radial">Radial</option>
+                                                <option value="both">Both</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Breathing Options -->
+                                    <div id="modeParams_Breathing" class="mode-params" style="display: none;">
+                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Breathing Options</label>
+                                        <div class="control-item">
+                                            <label>Min Scale <span class="range-value" id="breathMinScaleValue">0.95</span></label>
+                                            <input type="range" id="breathMinScale" min="0" max="1.0" step="0.01" value="0.5">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Max Scale <span class="range-value" id="breathMaxScaleValue">1.05</span></label>
+                                            <input type="range" id="breathMaxScale" min="0.5" max="2.0" step="0.01" value="1.2">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Sync Mode</label>
+                                            <select id="breathSyncMode">
+                                                <option value="unified">Unified</option>
+                                                <option value="wave">Wave</option>
+                                                <option value="random">Random</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Region Flicker Options -->
+                                    <div id="modeParams_RegionFlicker" class="mode-params" style="display: none;">
+                                        <label style="display: block; margin-bottom: 8px; font-size: 10px; text-transform: uppercase;">Region Options</label>
+                                        <div class="control-item">
+                                            <label>Region X <span class="range-value" id="regionXValue">0.30</span></label>
+                                            <input type="range" id="regionX" min="0" max="1" step="0.05" value="0.3">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Region Y <span class="range-value" id="regionYValue">0.30</span></label>
+                                            <input type="range" id="regionY" min="0" max="1" step="0.05" value="0.3">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Width <span class="range-value" id="regionWidthValue">0.40</span></label>
+                                            <input type="range" id="regionWidth" min="0.1" max="1.0" step="0.05" value="0.4">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Height <span class="range-value" id="regionHeightValue">0.40</span></label>
+                                            <input type="range" id="regionHeight" min="0.1" max="1.0" step="0.05" value="0.4">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Falloff <span class="range-value" id="regionFalloffValue">0.20</span></label>
+                                            <input type="range" id="regionFalloff" min="0" max="0.5" step="0.05" value="0.2">
+                                        </div>
+                                        <div class="control-item">
+                                            <label>Effect Type</label>
+                                            <select id="regionEffectType">
+                                                <option value="opacity">Opacity</option>
+                                                <option value="character">Character Switch</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Export Animation Section -->
+                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--ys-gray);">
+                                    <label style="display: block; margin-bottom: 8px;">Export Animation</label>
+
+                                    <!-- Format Toggle -->
+                                    <div style="display: flex; gap: 0; border: 1px solid var(--ys-black); margin-bottom: 12px; overflow: hidden;">
+                                        <button class="anim-format-toggle active" data-export-format="mp4" style="flex: 1; padding: 8px; background: var(--ys-black); color: var(--ys-white); border: none; font-size: 11px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">MP4</button>
+                                        <button class="anim-format-toggle" data-export-format="gif" style="flex: 1; padding: 8px; background: var(--ys-white); color: var(--ys-black); border-left: 1px solid var(--ys-black); font-size: 11px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">GIF</button>
+                                    </div>
+
+                                    <!-- Duration Control -->
+                                    <div class="control-item">
+                                        <label>Duration <span class="range-value" id="exportDurationValue">5s</span></label>
+                                        <input type="range" id="exportDuration" min="1" max="30" step="1" value="5">
+                                    </div>
+
+                                    <!-- Auto Loop Info -->
+                                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 12px;">
+                                        Auto loop: <span id="autoLoopDuration">6.28</span>s
+                                    </div>
+
+                                    <!-- Export Button -->
+                                    <button id="exportAnimationBtn" class="export-btn" style="width: 100%; padding: 10px; background: var(--ys-black); color: var(--ys-white); border: 1px solid var(--ys-black); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s;">
+                                        Export Animation ↓
+                                    </button>
+
+                                    <!-- Recording Indicator -->
+                                    <div id="animRecordingIndicator" style="display: none; margin-top: 12px; padding: 12px; border: 1px solid var(--ys-red); background: rgba(255,0,0,0.05);">
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                            <div id="animRecordingDot" style="width: 8px; height: 8px; background: var(--ys-red); border-radius: 50%;"></div>
+                                            <span style="font-size: 11px; font-weight: 500; text-transform: uppercase;">RECORDING</span>
+                                        </div>
+                                        <div style="font-size: 11px;">
+                                            Progress: <span id="animRecordingProgress">0</span>%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
 
                 <!-- Controls -->
                 <div class="ys-cross-wrapper">
@@ -769,9 +1042,14 @@
                         <span class="cross-small"></span>
                     </div>
                     <div class="wrapper-content">
-                        <pre id="asciiOutput" class="ascii-output">// ascii interpreter
+                        <pre id="asciiOutput" class="ascii-output"><span class="ascii-output-inner">// ascii interpreter
 // waiting for image input...
-// drop or select an image to begin</pre>
+// drop or select an image to begin</span></pre>
+
+                        <!-- Animation Canvas (hidden by default) -->
+                        <div id="asciiAnimationWrapper" style="display: none; padding: 24px; border: 1px solid var(--ys-black); min-height: 200px; overflow: auto; justify-content: center; align-items: center;">
+                            <canvas id="asciiAnimationCanvas" style="font-family: var(--font-mono); image-rendering: crisp-edges; display: block; margin: 0 auto;"></canvas>
+                        </div>
 
                         <!-- Export Buttons -->
                         <div class="export-row">
@@ -815,6 +1093,7 @@
 
         let currentImage = null;
         let currentAsciiData = '';
+        let currentColorData = null;  // Store color data for animation
 
         // File input handling
         const fileInput = document.getElementById('fileInput');
@@ -945,8 +1224,10 @@
 
             let ascii = '';
             let htmlAscii = '';
+            let colorData = [];  // Store color information for animation
 
             for (let y = 0; y < height; y++) {
+                let rowColorData = [];  // Store colors for this row
                 for (let x = 0; x < width; x++) {
                     const i = (y * width + x) * 4;
                     const r = pixels[i];
@@ -961,7 +1242,7 @@
                     const char = chars[charIndex] || chars[0];
 
                     // Apply different color modes
-                    let color;
+                    let color = null;  // Track the color for animation
                     switch(colorMode) {
                         case 'html':
                             color = `rgb(${r},${g},${b})`;
@@ -1012,19 +1293,28 @@
                             break;
                         default: // mono
                             ascii += char;
+                            color = null;  // No color for mono mode
                     }
+
+                    // Store the color for this character position
+                    rowColorData.push(color);
                 }
+                colorData.push(rowColorData);  // Store this row's colors
                 ascii += '\n';
                 if (colorMode !== 'mono') htmlAscii += '<br>';
             }
 
-            currentAsciiData = ascii;
+            // FIXED: Store clean ASCII data regardless of color mode
+            currentAsciiData = ascii;  // This is always plain text
+            currentColorData = colorData;  // Store color data for animation
 
-            // Update output
+            // Update output with centered wrapper
             if (colorMode !== 'mono') {
-                asciiOutput.innerHTML = htmlAscii;
+                asciiOutput.innerHTML = `<span class="ascii-output-inner">${htmlAscii}</span>`;
+                // Store HTML version separately if needed
+                window.currentHtmlAscii = htmlAscii;
             } else {
-                asciiOutput.textContent = ascii;
+                asciiOutput.innerHTML = `<span class="ascii-output-inner">${ascii.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`;
             }
 
             // Apply styling
@@ -1375,7 +1665,7 @@ span {
             currentAsciiData = '';
             previewContainer.style.display = 'none';
             uploadArea.style.display = 'block';
-            asciiOutput.innerHTML = '// ascii interpreter\n// waiting for image input...\n// drop or select an image to begin';
+            asciiOutput.innerHTML = '<span class="ascii-output-inner">// ascii interpreter\n// waiting for image input...\n// drop or select an image to begin</span>';
             fileInput.value = '';
 
             // Reset controls to defaults
@@ -1427,7 +1717,14 @@ span {
                 textColor: document.getElementById('textColor').value,
                 bgColor: document.getElementById('bgColor').value,
                 customColor1: document.getElementById('customColor1').value,
-                customColor2: document.getElementById('customColor2').value
+                customColor2: document.getElementById('customColor2').value,
+                // Animation parameters
+                enableAnimation: document.getElementById('enableAnimation')?.checked || false,
+                animationMode: document.getElementById('animationMode')?.value || 'Threshold',
+                animSpeed: parseFloat(document.getElementById('animSpeed')?.value || 1.0),
+                animIntensity: parseInt(document.getElementById('animIntensity')?.value || 50),
+                exportDuration: parseInt(document.getElementById('exportDuration')?.value || 5),
+                exportFormat: document.querySelector('.anim-format-toggle.active')?.dataset.exportFormat || 'mp4'
             };
         }
 
@@ -1488,6 +1785,46 @@ span {
                 }
             }
 
+            // Animation parameters (set UI state but DON'T toggle animation yet)
+            if (params.enableAnimation !== undefined) {
+                document.getElementById('enableAnimation').checked = params.enableAnimation;
+                // Store desired animation state for after processImage completes
+                window._pendingAnimationState = params.enableAnimation;
+            }
+
+            if (params.animationMode !== undefined) {
+                document.getElementById('animationMode').value = params.animationMode;
+            }
+
+            if (params.animSpeed !== undefined) {
+                document.getElementById('animSpeed').value = params.animSpeed;
+                document.getElementById('animSpeedValue').textContent = params.animSpeed.toFixed(1) + 'x';
+            }
+
+            if (params.animIntensity !== undefined) {
+                document.getElementById('animIntensity').value = params.animIntensity;
+                document.getElementById('animIntensityValue').textContent = params.animIntensity + '%';
+            }
+
+            if (params.exportDuration !== undefined) {
+                document.getElementById('exportDuration').value = params.exportDuration;
+                document.getElementById('exportDurationValue').textContent = params.exportDuration + 's';
+            }
+
+            if (params.exportFormat !== undefined) {
+                document.querySelectorAll('.anim-format-toggle').forEach(btn => {
+                    if (btn.dataset.exportFormat === params.exportFormat) {
+                        btn.classList.add('active');
+                        btn.style.background = 'var(--ys-black)';
+                        btn.style.color = 'var(--ys-white)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = 'var(--ys-white)';
+                        btn.style.color = 'var(--ys-black)';
+                    }
+                });
+            }
+
             // Update preset button states if colorMode matches a preset
             if (params.colorMode) {
                 document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -1513,6 +1850,471 @@ span {
                 processImage();
             }
         }
+    </script>
+
+    <!-- GIF.js Library -->
+    <script src="../../shared/gif.js"></script>
+
+    <!-- Animation Engine Scripts -->
+    <script type="module" src="animation-engine.js"></script>
+    <script src="animation-modes.js"></script>
+    <script type="module">
+        import { ASCIIAnimationEngine } from './animation-engine.js';
+
+        // Animation Engine Instance (use window.animationEngine throughout)
+        window.animationEngine = null;
+        let isAnimationMode = false;
+
+        // Animation Toggle
+        document.getElementById('enableAnimation').addEventListener('change', function(e) {
+            toggleAnimationMode(e.target.checked);
+        });
+
+        // Helper function to extract clean ASCII from DOM
+        function extractCleanASCII() {
+            const asciiOutput = document.getElementById('asciiOutput');
+            // Get text content, which strips all HTML tags
+            const extracted = asciiOutput.textContent || asciiOutput.innerText || '';
+            return extracted;
+        }
+
+        // Helper function to validate ASCII data
+        function validateASCIIData(data) {
+            if (!data || typeof data !== 'string') return false;
+            if (data.length < 50) return false;  // Too short to be real ASCII
+            if (data.trim() === '') return false;
+            // Check if it's not just placeholder text
+            if (data.includes('Upload an image') || data.includes('drag & drop')) return false;
+            return true;
+        }
+
+        function toggleAnimationMode(enable) {
+            isAnimationMode = enable;
+            const animControls = document.getElementById('animationControls');
+            const asciiOutput = document.getElementById('asciiOutput');
+            const animWrapper = document.getElementById('asciiAnimationWrapper');
+            const animCanvas = document.getElementById('asciiAnimationCanvas');
+
+            // FIXED: Add fallback ASCII extraction if needed
+            if (enable) {
+                // Ensure we have valid ASCII data
+                if (!validateASCIIData(currentAsciiData)) {
+                    currentAsciiData = extractCleanASCII();
+
+                    if (!validateASCIIData(currentAsciiData)) {
+                        alert("Please load an image first before enabling animation.");
+                        document.getElementById('enableAnimation').checked = false;
+                        return;
+                    }
+                }
+            }
+
+            if (enable && currentAsciiData) {
+                // Show animation controls and canvas wrapper
+                animControls.style.display = 'block';
+                asciiOutput.style.display = 'none';
+                animWrapper.style.display = 'flex';  // Show wrapper with flex display for centering
+
+                // Apply current background color to wrapper
+                const bgColor = document.getElementById('bgColor').value;
+                const colorMode = document.getElementById('colorMode').value;
+
+                // Use appropriate background based on color mode
+                if (colorMode === 'matrix') {
+                    animWrapper.style.backgroundColor = '#0a0a0a';
+                } else if (colorMode === 'retro') {
+                    animWrapper.style.backgroundColor = '#1A1A2E';
+                } else if (colorMode === 'cyberpunk') {
+                    animWrapper.style.backgroundColor = '#0D0221';
+                } else {
+                    animWrapper.style.backgroundColor = bgColor;
+                }
+
+                // Initialize animation engine
+                initializeAnimationEngine();
+            } else {
+                // Show static ASCII output
+                animControls.style.display = 'none';
+                asciiOutput.style.display = 'block';
+                animWrapper.style.display = 'none';  // Hide wrapper, not canvas directly
+
+                // Stop and cleanup animation engine
+                if (window.animationEngine) {
+                    window.animationEngine.stop();
+                    window.animationEngine = null;
+                }
+            }
+        }
+
+        function initializeAnimationEngine() {
+            if (!currentAsciiData) return;
+
+            const canvas = document.getElementById('asciiAnimationCanvas');
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = parseFloat(document.getElementById('letterSpacing').value);
+            const lineHeight = parseFloat(document.getElementById('lineHeight').value);
+            const textColor = document.getElementById('textColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+
+            // Create engine with color data if available
+            window.animationEngine = new ASCIIAnimationEngine(currentAsciiData, canvas, currentColorData);
+
+            // Apply current style settings
+            window.animationEngine.updateStyle(fontSize, fontWeight, letterSpacing, lineHeight, textColor, bgColor);
+
+            // Set initial animation mode with mode-specific parameters
+            const selectedMode = document.getElementById('animationMode').value;
+            const modeParams = getModeSpecificParams(selectedMode);
+            window.animationEngine.setAnimationMode(selectedMode, modeParams);
+
+            // Show the appropriate mode parameter panel
+            document.querySelectorAll('.mode-params').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            const selectedPanel = document.getElementById(`modeParams_${selectedMode}`);
+            if (selectedPanel) {
+                selectedPanel.style.display = 'block';
+            }
+
+            // Start animation loop
+            window.animationEngine.animate();
+
+            // Update auto loop duration
+            updateAutoLoopDuration();
+        }
+
+        // Playback Controls
+        document.getElementById('animPlayBtn').addEventListener('click', function() {
+            if (!window.animationEngine) return;
+
+            if (window.animationEngine.isPlaying) {
+                window.animationEngine.pause();
+                this.textContent = '▶';
+                this.classList.remove('playing');
+            } else {
+                window.animationEngine.play();
+                this.textContent = '⏸';
+                this.classList.add('playing');
+            }
+        });
+
+        document.getElementById('animResetBtn').addEventListener('click', function() {
+            if (!window.animationEngine) return;
+            window.animationEngine.reset();
+            window.animationEngine.time = 0;
+        });
+
+        // Speed Control
+        document.getElementById('animSpeed').addEventListener('input', function(e) {
+            const speed = parseFloat(e.target.value);
+            document.getElementById('animSpeedValue').textContent = speed.toFixed(1) + 'x';
+
+            if (window.animationEngine) {
+                window.animationEngine.animationSpeed = speed;
+            }
+
+            updateAutoLoopDuration();
+        });
+
+        // Intensity Control
+        document.getElementById('animIntensity').addEventListener('input', function(e) {
+            const intensity = parseInt(e.target.value);
+            document.getElementById('animIntensityValue').textContent = intensity + '%';
+
+            if (window.animationEngine && window.animationEngine.modeInstance) {
+                window.animationEngine.modeInstance.updateParams({ intensity: intensity / 100 });
+            }
+
+            updateAutoLoopDuration();
+        });
+
+        // Mode Selection
+        document.getElementById('animationMode').addEventListener('change', function(e) {
+            if (!window.animationEngine) return;
+
+            const mode = e.target.value;
+
+            // Hide all mode parameter panels
+            document.querySelectorAll('.mode-params').forEach(panel => {
+                panel.style.display = 'none';
+            });
+
+            // Show selected mode's panel
+            const selectedPanel = document.getElementById(`modeParams_${mode}`);
+            if (selectedPanel) {
+                selectedPanel.style.display = 'block';
+            }
+
+            // Get mode-specific parameters and reinitialize
+            const modeParams = getModeSpecificParams(mode);
+            window.animationEngine.setAnimationMode(mode, modeParams);
+
+            updateAutoLoopDuration();
+        });
+
+        // Function to get mode-specific parameters
+        function getModeSpecificParams(modeName) {
+            const intensity = parseInt(document.getElementById('animIntensity').value) / 100;
+            const baseParams = { intensity };
+
+            switch(modeName) {
+                case 'Threshold':
+                    return {
+                        ...baseParams,
+                        mode: document.getElementById('thresholdMode').value,
+                        cycleSpeed: parseFloat(document.getElementById('thresholdSpeed').value),
+                        targetChar: document.getElementById('thresholdTargetChar').value
+                    };
+
+                case 'ScanlineSweep':
+                    return {
+                        ...baseParams,
+                        scanColor: document.getElementById('scanlineColor').value,
+                        falloff: parseFloat(document.getElementById('scanlineFalloff').value),
+                        direction: document.getElementById('scanlineDirection').value,
+                        scanWidth: parseInt(document.getElementById('scanlineWidth').value)
+                    };
+
+                case 'WaveDistortion':
+                    return {
+                        ...baseParams,
+                        waveFrequency: parseFloat(document.getElementById('waveFrequency').value),
+                        amplitude: parseFloat(document.getElementById('waveAmplitude').value),
+                        direction: document.getElementById('waveDirection').value
+                    };
+
+                case 'Breathing':
+                    return {
+                        ...baseParams,
+                        minScale: parseFloat(document.getElementById('breathMinScale').value),
+                        maxScale: parseFloat(document.getElementById('breathMaxScale').value),
+                        syncMode: document.getElementById('breathSyncMode').value
+                    };
+
+
+                case 'RegionFlicker':
+                    return {
+                        ...baseParams,
+                        regionX: parseFloat(document.getElementById('regionX').value),
+                        regionY: parseFloat(document.getElementById('regionY').value),
+                        regionWidth: parseFloat(document.getElementById('regionWidth').value),
+                        regionHeight: parseFloat(document.getElementById('regionHeight').value),
+                        falloff: parseFloat(document.getElementById('regionFalloff').value),
+                        affectOpacity: document.getElementById('regionEffectType').value === 'opacity',
+                        affectChar: document.getElementById('regionEffectType').value === 'character'
+                    };
+
+                default:
+                    return baseParams;
+            }
+        }
+
+        // Function to update mode parameters in real-time
+        function updateModeParams() {
+            if (window.animationEngine && window.animationEngine.modeInstance) {
+                const mode = document.getElementById('animationMode').value;
+                const params = getModeSpecificParams(mode);
+                window.animationEngine.modeInstance.updateParams(params);
+            }
+        }
+
+        // Wire up Threshold parameters
+        document.getElementById('thresholdMode').addEventListener('change', (e) => {
+            const charControl = document.getElementById('thresholdCharControl');
+            charControl.style.display = e.target.value === 'variant' ? 'block' : 'none';
+            updateModeParams();
+        });
+
+        document.getElementById('thresholdSpeed').addEventListener('input', (e) => {
+            document.getElementById('thresholdSpeedValue').textContent = e.target.value + 'x';
+            updateModeParams();
+        });
+
+        document.getElementById('thresholdTargetChar').addEventListener('input', updateModeParams);
+
+        // Wire up Scanline Sweep parameters
+        document.getElementById('scanlineColor').addEventListener('change', updateModeParams);
+        document.getElementById('scanlineFalloff').addEventListener('input', (e) => {
+            document.getElementById('scanlineFalloffValue').textContent = e.target.value + 's';
+            updateModeParams();
+        });
+        document.getElementById('scanlineDirection').addEventListener('change', updateModeParams);
+        document.getElementById('scanlineWidth').addEventListener('input', (e) => {
+            document.getElementById('scanlineWidthValue').textContent = e.target.value;
+            updateModeParams();
+        });
+
+        // Wire up Wave Distortion parameters
+        document.getElementById('waveFrequency').addEventListener('input', (e) => {
+            document.getElementById('waveFrequencyValue').textContent = e.target.value;
+            updateModeParams();
+        });
+        document.getElementById('waveAmplitude').addEventListener('input', (e) => {
+            document.getElementById('waveAmplitudeValue').textContent = e.target.value;
+            updateModeParams();
+        });
+        document.getElementById('waveDirection').addEventListener('change', updateModeParams);
+
+        // Wire up Breathing parameters
+        document.getElementById('breathMinScale').addEventListener('input', (e) => {
+            document.getElementById('breathMinScaleValue').textContent = e.target.value;
+            updateModeParams();
+        });
+        document.getElementById('breathMaxScale').addEventListener('input', (e) => {
+            document.getElementById('breathMaxScaleValue').textContent = e.target.value;
+            updateModeParams();
+        });
+        document.getElementById('breathSyncMode').addEventListener('change', updateModeParams);
+
+
+        // Wire up Region Flicker parameters
+        document.getElementById('regionX').addEventListener('input', (e) => {
+            document.getElementById('regionXValue').textContent = parseFloat(e.target.value).toFixed(2);
+            updateModeParams();
+        });
+        document.getElementById('regionY').addEventListener('input', (e) => {
+            document.getElementById('regionYValue').textContent = parseFloat(e.target.value).toFixed(2);
+            updateModeParams();
+        });
+        document.getElementById('regionWidth').addEventListener('input', (e) => {
+            document.getElementById('regionWidthValue').textContent = parseFloat(e.target.value).toFixed(2);
+            updateModeParams();
+        });
+        document.getElementById('regionHeight').addEventListener('input', (e) => {
+            document.getElementById('regionHeightValue').textContent = parseFloat(e.target.value).toFixed(2);
+            updateModeParams();
+        });
+        document.getElementById('regionFalloff').addEventListener('input', (e) => {
+            document.getElementById('regionFalloffValue').textContent = parseFloat(e.target.value).toFixed(2);
+            updateModeParams();
+        });
+        document.getElementById('regionEffectType').addEventListener('change', updateModeParams);
+
+        // Export Format Toggle
+        document.querySelectorAll('.anim-format-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.anim-format-toggle').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'var(--ys-white)';
+                    b.style.color = 'var(--ys-black)';
+                });
+                this.classList.add('active');
+                this.style.background = 'var(--ys-black)';
+                this.style.color = 'var(--ys-white)';
+            });
+        });
+
+        // Duration Control
+        document.getElementById('exportDuration').addEventListener('input', function(e) {
+            const duration = parseInt(e.target.value);
+            document.getElementById('exportDurationValue').textContent = duration + 's';
+        });
+
+        // Export Animation Button
+        document.getElementById('exportAnimationBtn').addEventListener('click', async function() {
+            if (!window.animationEngine) {
+                alert('Please enable animation mode first');
+                return;
+            }
+
+            const format = document.querySelector('.anim-format-toggle.active').dataset.exportFormat;
+            const duration = parseInt(document.getElementById('exportDuration').value);
+
+            // Show recording indicator
+            const indicator = document.getElementById('animRecordingIndicator');
+            const progressSpan = document.getElementById('animRecordingProgress');
+            indicator.style.display = 'block';
+            this.disabled = true;
+            this.style.opacity = '0.5';
+
+            try {
+                if (format === 'mp4') {
+                    await window.animationEngine.startMP4Recording(duration, (progress) => {
+                        progressSpan.textContent = Math.round(progress * 100);
+                    });
+                } else if (format === 'gif') {
+                    await window.animationEngine.startGIFRecording(duration, (progress) => {
+                        progressSpan.textContent = Math.round(progress * 100);
+                    });
+                }
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Export failed: ' + error.message);
+            } finally {
+                // Hide recording indicator
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                    this.disabled = false;
+                    this.style.opacity = '1';
+                    progressSpan.textContent = '0';
+                }, 500);
+            }
+        });
+
+        // Update auto loop duration display
+        function updateAutoLoopDuration() {
+            if (window.animationEngine) {
+                const duration = window.animationEngine.calculateLoopDuration();
+                document.getElementById('autoLoopDuration').textContent = duration.toFixed(2);
+            }
+        }
+
+        // Update animation engine when style changes
+        const originalProcessImage = processImage;
+        processImage = function() {
+            originalProcessImage();
+
+            // FIXED: Remove arbitrary timeout, use proper validation
+            // The ASCII data is already set synchronously in processImage
+
+            // Check if there's a pending animation state from preset loading
+            if (window._pendingAnimationState !== undefined) {
+                const shouldEnable = window._pendingAnimationState;
+                window._pendingAnimationState = undefined; // Clear the flag
+
+                // Only enable if we have valid ASCII data
+                if (shouldEnable && validateASCIIData(currentAsciiData)) {
+                    toggleAnimationMode(true);
+                } else if (shouldEnable) {
+                    // Try extracting from DOM as fallback
+                    currentAsciiData = extractCleanASCII();
+                    if (validateASCIIData(currentAsciiData)) {
+                        toggleAnimationMode(true);
+                    }
+                }
+            }
+            // Otherwise, if animation is currently active, reinitialize with new ASCII
+            else if (isAnimationMode) {
+                // Ensure we have valid data before reinitializing
+                if (!validateASCIIData(currentAsciiData)) {
+                    currentAsciiData = extractCleanASCII();
+                }
+                if (validateASCIIData(currentAsciiData)) {
+                    // Update wrapper background color if animation is active
+                    const animWrapper = document.getElementById('asciiAnimationWrapper');
+                    if (animWrapper) {
+                        const bgColor = document.getElementById('bgColor').value;
+                        const colorMode = document.getElementById('colorMode').value;
+
+                        if (colorMode === 'matrix') {
+                            animWrapper.style.backgroundColor = '#0a0a0a';
+                        } else if (colorMode === 'retro') {
+                            animWrapper.style.backgroundColor = '#1A1A2E';
+                        } else if (colorMode === 'cyberpunk') {
+                            animWrapper.style.backgroundColor = '#0D0221';
+                        } else {
+                            animWrapper.style.backgroundColor = bgColor;
+                        }
+                    }
+
+                    toggleAnimationMode(true);
+                }
+            }
+        };
+
+        // Make animation functions global for preset integration
+        window.toggleAnimationMode = toggleAnimationMode;
     </script>
 
     <!-- Preset System Scripts -->
