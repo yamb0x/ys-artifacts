@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Visualizer (Animated) - YS Studio Artifacts</title>
+    <title>xytype (Animated) - YS Studio Artifacts</title>
     <link rel="stylesheet" href="../../shared/preset-ui.css">
     <style>
         /* Font Imports */
@@ -356,6 +356,28 @@
             font-family: var(--font-suisse);
         }
 
+        /* Color Input */
+        input[type="color"] {
+            width: 100%;
+            height: 36px;
+            padding: 4px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            cursor: pointer;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
+
+        input[type="color"]::-moz-color-swatch {
+            border: none;
+        }
+
         /* Custom Slider */
         .slider-container {
             display: flex;
@@ -429,6 +451,13 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
             font-weight: 400;
+        }
+
+        /* Text style buttons need to preserve case for visual examples */
+        .text-style-btn {
+            text-transform: none;
+            font-size: 12px;
+            font-weight: 500;
         }
 
         .toggle-btn:last-child {
@@ -634,7 +663,7 @@
             <span>—</span>
             <span class="project-type">Artifacts</span>
         </a>
-        <div class="header-center">Text Visualizer (Animated)</div>
+        <div class="header-center">xytype (Animated)</div>
         <nav class="header-right">
             <a href="/about.html">About</a>
             <a href="/" class="active">Tools</a>
@@ -669,11 +698,34 @@
                     <div class="char-counter"><span id="charCount">12</span> characters</div>
                 </div>
                 <div class="control-group">
+                    <label>Text Style</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn text-style-btn active" data-style="none">—</button>
+                        <button class="toggle-btn text-style-btn" data-style="uppercase">AG</button>
+                        <button class="toggle-btn text-style-btn" data-style="lowercase">ag</button>
+                        <button class="toggle-btn text-style-btn" data-style="titlecase">Ag</button>
+                        <button class="toggle-btn text-style-btn" data-style="ascii-noise">@#</button>
+                    </div>
+                </div>
+                <div class="control-group">
                     <label>Mode</label>
                     <div class="toggle-group">
                         <button class="toggle-btn" data-mode="words">Words</button>
                         <button class="toggle-btn active" data-mode="characters">Characters</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Colors Section -->
+            <div class="control-section">
+                <h3 class="section-title">Colors</h3>
+                <div class="control-group">
+                    <label>Text Color</label>
+                    <input type="color" id="textColor" value="#000000">
+                </div>
+                <div class="control-group">
+                    <label>Background Color</label>
+                    <input type="color" id="bgColor" value="#FFFFFF">
                 </div>
             </div>
 
@@ -1093,7 +1145,7 @@
     <script src="../../shared/gif.js"></script>
 
     <script>
-        // Animated Text Visualizer Engine
+        // Animated xytype Engine
         class AnimatedTextEngine {
             constructor(canvas) {
                 this.canvas = canvas;
@@ -1104,6 +1156,13 @@
                 this.mode = 'characters';
                 this.pattern = 'grid';
                 this.isPlaying = true;
+
+                // Color properties
+                this.textColor = '#000000';
+                this.bgColor = '#FFFFFF';
+
+                // Text transformation
+                this.textStyle = 'none'; // 'none', 'uppercase', 'lowercase', 'titlecase', 'ascii-noise'
 
                 // Animation properties
                 this.time = 0;
@@ -1284,11 +1343,14 @@
             getElements() {
                 let base;
 
+                // Apply text transformation (non-destructive)
+                const transformedText = this.applyTextTransformation(this.text, this.textStyle);
+
                 // Get base elements based on mode
                 if (this.mode === 'words') {
-                    base = this.text.trim().split(/\s+/).filter(w => w.length > 0);
+                    base = transformedText.trim().split(/\s+/).filter(w => w.length > 0);
                 } else {
-                    base = this.text.split('');
+                    base = transformedText.split('');
                 }
 
                 // Apply advanced mode multiplication
@@ -1301,17 +1363,17 @@
                             elements.push(...base);
                         } else if (this.advancedParams.fragmentMode === 'words') {
                             // Fragment into words even if in char mode
-                            const words = this.text.trim().split(/\s+/);
+                            const words = transformedText.trim().split(/\s+/);
                             elements.push(...words);
                         } else if (this.advancedParams.fragmentMode === 'characters') {
                             // Fragment into characters even if in word mode
-                            elements.push(...this.text.split(''));
+                            elements.push(...transformedText.split(''));
                         } else if (this.advancedParams.fragmentMode === 'mixed') {
                             // Mix words and characters
                             if (i % 2 === 0) {
-                                elements.push(...this.text.trim().split(/\s+/));
+                                elements.push(...transformedText.trim().split(/\s+/));
                             } else {
-                                elements.push(...this.text.split(''));
+                                elements.push(...transformedText.split(''));
                             }
                         }
                     }
@@ -2162,15 +2224,15 @@
             }
 
             render() {
-                // Clear canvas
-                this.ctx.fillStyle = '#FFFFFF';
+                // Clear canvas with background color
+                this.ctx.fillStyle = this.bgColor;
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
                 if (this.basePositions.length === 0) return;
 
                 // Set up font
                 this.ctx.font = `${this.font.weight} ${this.font.size}px ${this.font.family}`;
-                this.ctx.fillStyle = '#000000';
+                this.ctx.fillStyle = this.textColor;
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
 
@@ -2244,6 +2306,77 @@
             updatePattern(pattern) {
                 this.pattern = pattern;
                 this.calculateBasePositions();
+            }
+
+            // ASCII Noise Character Map (decorative replacements)
+            asciiNoiseMap = {
+                'a': ['@', '∆', 'Λ', 'ᗩ', '₳', 'ⱥ', 'ɑ'],
+                'b': ['ß', '฿', 'ᗷ', '♭', '♝', 'ɓ', 'ҍ'],
+                'c': ['©', '¢', 'ć', '₡', '⊂', 'ċ', 'ç'],
+                'd': ['∂', 'Ð', 'ď', 'đ', '₫', 'ժ', 'ɗ'],
+                'e': ['€', '℮', 'ę', 'ė', '∃', 'ɛ', 'ə'],
+                'f': ['ƒ', 'Ϝ', 'ϝ', '₣', 'ℱ', 'ғ', 'f'],
+                'g': ['₲', 'ɠ', 'ǥ', 'ց', 'ℊ', '❡', 'ğ'],
+                'h': ['ℎ', 'ℏ', 'ħ', 'н', 'ɦ', 'ђ', 'ӈ'],
+                'i': ['ї', 'ɨ', 'í', 'ì', 'ï', '!', '¡'],
+                'j': ['ʝ', 'ј', 'ʲ', 'ĵ', '⨍', 'נ', 'ɉ'],
+                'k': ['₭', 'ķ', 'ƙ', 'κ', 'ҝ', 'ĸ', 'к'],
+                'l': ['ℓ', 'Ł', '₤', '∟', 'ʅ', 'ł', '└'],
+                'm': ['₥', 'ℳ', 'м', 'ɱ', 'ɯ', 'ʍ', '₼'],
+                'n': ['η', 'ñ', 'ń', 'ŋ', 'ɳ', 'и', 'ո'],
+                'o': ['◎', '⊙', 'ø', 'ό', 'ő', 'ѳ', '⊗'],
+                'p': ['₱', 'ρ', 'þ', 'ƿ', 'ք', 'ρ', 'ℙ'],
+                'q': ['զ', 'ǭ', 'ɋ', 'զ', 'ϙ', '☭', 'գ'],
+                'r': ['ř', 'ŗ', 'ȑ', 'я', 'ɾ', 'ʀ', 'ɍ'],
+                's': ['$', 'ś', 'ş', 'š', 'ѕ', 'ƨ', '§'],
+                't': ['†', 'ţ', 'ť', 'ʈ', 'τ', '⊤', '⊢'],
+                'u': ['ü', 'ū', 'ų', 'ű', 'ʉ', 'մ', '∪'],
+                'v': ['ν', 'ѵ', 'ʋ', 'ѷ', '∨', '√', 'ṽ'],
+                'w': ['ω', 'ш', 'щ', 'ɯ', 'ώ', 'ѡ', '₩'],
+                'x': ['×', 'χ', 'ҳ', 'ж', '✗', '✕', 'ӿ'],
+                'y': ['¥', 'ý', 'ÿ', 'ყ', 'ʏ', 'ұ', 'ɏ'],
+                'z': ['ž', 'ź', 'ʐ', 'ż', 'ʑ', 'ȥ', 'ẓ'],
+                ' ': [' '], // Keep spaces as spaces
+                '0': ['⓪', '０', '⁰', '₀', '◯', 'ʘ', 'Ø'],
+                '1': ['①', '１', '¹', '₁', '⑴', 'I', '|'],
+                '2': ['②', '２', '²', '₂', '⑵', 'Z', '⧉'],
+                '3': ['③', '３', '³', '₃', '⑶', 'Ʒ', 'ε'],
+                '4': ['④', '４', '⁴', '₄', '⑷', 'Ч', '⧄'],
+                '5': ['⑤', '５', '⁵', '₅', '⑸', 'Ϛ', 'ƽ'],
+                '6': ['⑥', '６', '⁶', '₆', '⑹', 'ϭ', 'б'],
+                '7': ['⑦', '７', '⁷', '₇', '⑺', '⁊', '⊢'],
+                '8': ['⑧', '８', '⁸', '₈', '⑻', '∞', 'ȣ'],
+                '9': ['⑨', '９', '⁹', '₉', '⑼', 'Ϥ', 'ϫ']
+            };
+
+            // Apply text transformation (non-destructive)
+            applyTextTransformation(text, style) {
+                switch(style) {
+                    case 'uppercase':
+                        return text.toUpperCase();
+
+                    case 'lowercase':
+                        return text.toLowerCase();
+
+                    case 'titlecase':
+                        return text.replace(/\w\S*/g, (word) =>
+                            word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+                        );
+
+                    case 'ascii-noise':
+                        return text.split('').map(char => {
+                            const lower = char.toLowerCase();
+                            if (this.asciiNoiseMap[lower]) {
+                                // Deterministic selection (first option)
+                                const options = this.asciiNoiseMap[lower];
+                                return options[0];
+                            }
+                            return char; // Keep punctuation and other characters
+                        }).join('');
+
+                    default:
+                        return text;
+                }
             }
 
             exportFrame() {
@@ -2479,10 +2612,158 @@
         const canvas = document.getElementById('visualCanvas');
         const engine = new AnimatedTextEngine(canvas);
 
+        // History Manager for Undo/Redo
+        class HistoryManager {
+            constructor() {
+                this.states = [];
+                this.currentIndex = -1;
+                this.maxStates = 50;
+                this.isApplyingState = false; // Prevent capturing during state application
+            }
+
+            captureState() {
+                if (this.isApplyingState) return; // Don't capture while applying state
+
+                const state = {
+                    // Text and styling
+                    text: engine.text,
+                    textStyle: engine.textStyle,
+                    textColor: engine.textColor,
+                    bgColor: engine.bgColor,
+                    mode: engine.mode,
+
+                    // Typography
+                    font: { ...engine.font },
+
+                    // Pattern
+                    pattern: engine.pattern,
+                    patternParams: { ...engine.patternParams },
+
+                    // Animation
+                    animationSpeed: engine.animationSpeed,
+                    animParams: { ...engine.animParams },
+                    effects: { ...engine.effects },
+
+                    // Advanced mode
+                    advancedMode: engine.advancedMode,
+                    advancedParams: { ...engine.advancedParams },
+
+                    // Organic distribution
+                    organicParams: { ...engine.organicParams },
+
+                    // Position and scale influence
+                    positionInfluence: JSON.parse(JSON.stringify(engine.positionInfluence)),
+                    scaleInfluence: { ...engine.scaleInfluence },
+
+                    // Distribution
+                    distribution: { ...engine.distribution },
+
+                    timestamp: Date.now()
+                };
+
+                // Remove states after current index (branching timeline)
+                this.states = this.states.slice(0, this.currentIndex + 1);
+
+                // Add new state
+                this.states.push(state);
+
+                // Limit history size
+                if (this.states.length > this.maxStates) {
+                    this.states.shift();
+                } else {
+                    this.currentIndex++;
+                }
+            }
+
+            undo() {
+                if (!this.canUndo()) return null;
+                this.currentIndex--;
+                return this.states[this.currentIndex];
+            }
+
+            redo() {
+                if (!this.canRedo()) return null;
+                this.currentIndex++;
+                return this.states[this.currentIndex];
+            }
+
+            canUndo() {
+                return this.currentIndex > 0;
+            }
+
+            canRedo() {
+                return this.currentIndex < this.states.length - 1;
+            }
+
+            applyState(state) {
+                if (!state) return;
+
+                this.isApplyingState = true;
+
+                // Apply text and styling
+                engine.text = state.text;
+                engine.textStyle = state.textStyle;
+                engine.textColor = state.textColor;
+                engine.bgColor = state.bgColor;
+                engine.mode = state.mode;
+
+                // Apply typography
+                engine.font = { ...state.font };
+
+                // Apply pattern
+                engine.pattern = state.pattern;
+                engine.patternParams = { ...state.patternParams };
+
+                // Apply animation
+                engine.animationSpeed = state.animationSpeed;
+                engine.animParams = { ...state.animParams };
+                engine.effects = { ...state.effects };
+
+                // Apply advanced mode
+                engine.advancedMode = state.advancedMode;
+                engine.advancedParams = { ...state.advancedParams };
+
+                // Apply organic distribution
+                engine.organicParams = { ...state.organicParams };
+
+                // Apply position and scale influence
+                engine.positionInfluence = JSON.parse(JSON.stringify(state.positionInfluence));
+                engine.scaleInfluence = { ...state.scaleInfluence };
+
+                // Apply distribution
+                engine.distribution = { ...state.distribution };
+
+                // Update UI to reflect state
+                updateUIFromState(state);
+
+                // Recalculate and render
+                engine.calculateBasePositions();
+
+                this.isApplyingState = false;
+            }
+        }
+
+        const historyManager = new HistoryManager();
+
+        // Capture initial state
+        historyManager.captureState();
+
+        // Debounced state capture for text input (avoid excessive history entries)
+        let textInputTimeout;
+        function captureStateDebounced(delay = 500) {
+            clearTimeout(textInputTimeout);
+            textInputTimeout = setTimeout(() => {
+                historyManager.captureState();
+            }, delay);
+        }
+
         // UI Controls
         const controls = {
             textInput: document.getElementById('textInput'),
             charCount: document.getElementById('charCount'),
+            textStyleButtons: document.querySelectorAll('.text-style-btn'),
+            textColor: document.getElementById('textColor'),
+            bgColor: document.getElementById('bgColor'),
             modeButtons: document.querySelectorAll('.toggle-btn[data-mode]'),
             fontSelect: document.getElementById('fontSelect'),
             fontSize: document.getElementById('fontSize'),
@@ -2703,12 +2984,134 @@
             }
         }
 
+        // Update UI controls from state (for undo/redo)
+        function updateUIFromState(state) {
+            // Text input
+            controls.textInput.value = state.text;
+            controls.charCount.textContent = state.text.length;
+
+            // Text style buttons
+            controls.textStyleButtons.forEach(btn => {
+                if (btn.dataset.style === state.textStyle) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Colors
+            controls.textColor.value = state.textColor;
+            controls.bgColor.value = state.bgColor;
+
+            // Mode
+            controls.modeButtons.forEach(btn => {
+                if (btn.dataset.mode === state.mode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Typography
+            controls.fontSelect.value = state.font.family;
+            controls.fontSize.value = state.font.size;
+            controls.fontWeight.value = state.font.weight;
+            updateSliderDisplay(controls.fontSize, document.getElementById('sizeValue'), 'px');
+            updateSliderDisplay(controls.fontWeight, document.getElementById('weightValue'));
+
+            // Pattern
+            controls.patternSelect.value = state.pattern;
+
+            // Animation speed
+            controls.animSpeed.value = state.animationSpeed;
+            updateSliderDisplay(controls.animSpeed, document.getElementById('speedValue'), 'x');
+
+            // Animation params
+            controls.phaseX.value = state.animParams.phaseX;
+            controls.phaseY.value = state.animParams.phaseY;
+            controls.rotAmount.value = state.animParams.rotationAmount;
+            controls.waveFreq.value = state.animParams.waveFrequency;
+            controls.stagger.value = state.animParams.stagger;
+            updateSliderDisplay(controls.phaseX, document.getElementById('phaseXValue'), 'px');
+            updateSliderDisplay(controls.phaseY, document.getElementById('phaseYValue'), 'px');
+            updateSliderDisplay(controls.rotAmount, document.getElementById('rotAmountValue'), '°');
+            updateSliderDisplay(controls.waveFreq, document.getElementById('waveFreqValue'));
+            updateSliderDisplay(controls.stagger, document.getElementById('staggerValue'));
+
+            // Effects
+            controls.effectOscillate.checked = state.effects.oscillate;
+            controls.effectRotate.checked = state.effects.rotate;
+            controls.effectBreathe.checked = state.effects.breathe;
+            controls.effectWave.checked = state.effects.wave;
+
+            // Advanced mode
+            controls.advancedMode.checked = state.advancedMode;
+            controls.advancedControls.style.display = state.advancedMode ? 'block' : 'none';
+            if (state.advancedMode) {
+                controls.repetitions.value = state.advancedParams.repetitions;
+                controls.fragmentMode.value = state.advancedParams.fragmentMode;
+                controls.density.value = state.advancedParams.density;
+                controls.overlap.value = state.advancedParams.overlap;
+                controls.sizeVariation.value = state.advancedParams.sizeVariation;
+                controls.opacityVariation.value = state.advancedParams.opacityVariation;
+                updateSliderDisplay(controls.repetitions, document.getElementById('repetitionsValue'), 'x');
+                updateSliderDisplay(controls.density, document.getElementById('densityValue'));
+                updateSliderDisplay(controls.overlap, document.getElementById('overlapValue'));
+                updateSliderDisplay(controls.sizeVariation, document.getElementById('sizeVariationValue'));
+                updateSliderDisplay(controls.opacityVariation, document.getElementById('opacityVariationValue'));
+            }
+        }
+
+        // Keyboard shortcuts for undo/redo
+        document.addEventListener('keydown', (e) => {
+            // Undo: Cmd/Ctrl + Z (without Shift)
+            if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                const state = historyManager.undo();
+                if (state) {
+                    historyManager.applyState(state);
+                }
+            }
+
+            // Redo: Cmd/Ctrl + Shift + Z
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'z') {
+                e.preventDefault();
+                const state = historyManager.redo();
+                if (state) {
+                    historyManager.applyState(state);
+                }
+            }
+        });
+
         // Event Listeners
 
         // Text input
         controls.textInput.addEventListener('input', (e) => {
             engine.updateText(e.target.value);
             controls.charCount.textContent = e.target.value.length;
+            captureStateDebounced(); // Debounced to avoid excessive history entries
+        });
+
+        // Text style transformation buttons
+        controls.textStyleButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                controls.textStyleButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                engine.textStyle = btn.dataset.style;
+                engine.calculateBasePositions();
+                historyManager.captureState(); // Capture state after transformation
+            });
+        });
+
+        // Color controls
+        controls.textColor.addEventListener('input', (e) => {
+            engine.textColor = e.target.value;
+            historyManager.captureState(); // Capture state after color change
+        });
+
+        controls.bgColor.addEventListener('input', (e) => {
+            engine.bgColor = e.target.value;
+            historyManager.captureState(); // Capture state after color change
         });
 
         // Mode toggle
@@ -3256,7 +3659,7 @@
         document.getElementById('patternParams').innerHTML = patternParamTemplates.grid;
         attachPatternListeners('grid');
 
-        // Text Visualizer Preset Integration
+        // xytype Preset Integration
         // Extract all current parameters
         function extractTextParams() {
             // Get active mode (words/characters)
@@ -3267,10 +3670,23 @@
                 }
             });
 
+            // Get active text style
+            let activeTextStyle = 'none';
+            document.querySelectorAll('.text-style-btn').forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    activeTextStyle = btn.getAttribute('data-style');
+                }
+            });
+
             return {
                 // Text and mode
                 textInput: document.getElementById('textInput').value,
                 mode: activeMode,
+
+                // New parameters: text style and colors
+                textStyle: activeTextStyle,
+                textColor: document.getElementById('textColor').value,
+                bgColor: document.getElementById('bgColor').value,
 
                 // Animation settings
                 isPlaying: engine.isPlaying,
@@ -3352,6 +3768,24 @@
                     btn.classList.toggle('active', btn.getAttribute('data-mode') === params.mode);
                 });
                 engine.mode = params.mode;
+            }
+
+            // New parameters: text style and colors
+            if (params.textStyle !== undefined) {
+                document.querySelectorAll('.text-style-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-style') === params.textStyle);
+                });
+                engine.textStyle = params.textStyle;
+            }
+
+            if (params.textColor !== undefined) {
+                document.getElementById('textColor').value = params.textColor;
+                engine.textColor = params.textColor;
+            }
+
+            if (params.bgColor !== undefined) {
+                document.getElementById('bgColor').value = params.bgColor;
+                engine.bgColor = params.bgColor;
             }
 
             // Animation settings
@@ -3621,7 +4055,7 @@
         import { PresetManager } from '../../shared/preset-manager.js';
         import { PresetUIComponent } from '../../shared/preset-ui-component.js';
 
-        // Initialize preset manager for Text Visualizer
+        // Initialize preset manager for xytype
         const presetManager = new PresetManager('text-visualizer');
         const presetUI = new PresetUIComponent(presetManager, window.extractTextParams);
 

@@ -591,7 +591,7 @@
 
                             <!-- SAMPLES -->
                             <div>
-                                <div class="section-title">Samples (1-5 keys)</div>
+                                <div class="section-title">Samples (1-9, 0 keys)</div>
                                 <div class="sample-grid" id="sampleGrid"></div>
                             </div>
 
@@ -619,14 +619,14 @@
                             <div>
                                 <div class="section-title">Brush</div>
 
-                                <div class="control-item">
-                                    <label>Width ([ ]) <span class="range-value" id="sampleWidthValue">100px</span></label>
-                                    <input type="range" id="sampleWidth" min="20" max="400" value="100">
+                                <div class="control-item" style="font-size: 9px; opacity: 0.7;">
+                                    <span>W: <span id="sampleWidthValue">100px</span> | H: <span id="sampleHeightValue">100px</span></span>
+                                    <span style="display: block; margin-top: 2px;">Use [ ] - = keys to adjust ratio</span>
                                 </div>
 
                                 <div class="control-item">
-                                    <label>Height (- =) <span class="range-value" id="sampleHeightValue">100px</span></label>
-                                    <input type="range" id="sampleHeight" min="20" max="400" value="100">
+                                    <label>Scale <span class="range-value" id="brushSizeValue">×1.0</span></label>
+                                    <input type="range" id="brushSize" min="10" max="300" value="100" step="1">
                                 </div>
 
                                 <div class="control-item">
@@ -635,8 +635,8 @@
                                 </div>
 
                                 <div class="control-item">
-                                    <label>Rotation <span class="range-value" id="rotationValue">0°</span></label>
-                                    <input type="range" id="rotation" min="0" max="360" value="0" step="90">
+                                    <label>Rotation (R: +90°, \: +10°) <span class="range-value" id="rotationValue">0°</span></label>
+                                    <input type="range" id="rotation" min="0" max="360" value="0" step="1">
                                 </div>
                             </div>
 
@@ -679,9 +679,26 @@
                             <div>
                                 <div class="section-title">Canvas</div>
 
-                                <div class="checkbox-wrapper">
+                                <div class="control-item">
+                                    <label>Width (px)</label>
+                                    <input type="number" id="canvasWidth" min="100" max="4000" value="1200">
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Height (px)</label>
+                                    <input type="number" id="canvasHeight" min="100" max="4000" value="800">
+                                </div>
+
+                                <button class="control-btn" id="applyCanvasSizeBtn">Apply Canvas Size</button>
+
+                                <div class="checkbox-wrapper" style="margin-top: 12px;">
                                     <input type="checkbox" id="sourceVisible" checked>
-                                    <label for="sourceVisible">Show Source (I)</label>
+                                    <label for="sourceVisible">Show Source (I/Shift)</label>
+                                </div>
+
+                                <div class="control-item">
+                                    <label>Source Opacity <span class="range-value" id="sourceOpacityValue">100%</span></label>
+                                    <input type="range" id="sourceOpacity" min="0" max="100" value="100">
                                 </div>
 
                                 <button class="control-btn red" id="clearCanvasBtn">Clear Canvas (C)</button>
@@ -732,23 +749,27 @@
     <div class="shortcuts-panel">
         <div class="shortcuts-title">Shortcuts</div>
         <div class="shortcut-row">
+            <span class="shortcut-key">⌘Z / ⌘⇧Z</span>
+            <span class="shortcut-desc">Undo / Redo</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">Shift</span>
+            <span class="shortcut-desc">View source</span>
+        </div>
+        <div class="shortcut-row">
             <span class="shortcut-key">Alt+Click</span>
             <span class="shortcut-desc">Sample</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">⇧⌥Click</span>
+            <span class="shortcut-desc">Sample + view</span>
         </div>
         <div class="shortcut-row">
             <span class="shortcut-key">Drag</span>
             <span class="shortcut-desc">Paint</span>
         </div>
         <div class="shortcut-row">
-            <span class="shortcut-key">[ ]</span>
-            <span class="shortcut-desc">Width</span>
-        </div>
-        <div class="shortcut-row">
-            <span class="shortcut-key">- =</span>
-            <span class="shortcut-desc">Height</span>
-        </div>
-        <div class="shortcut-row">
-            <span class="shortcut-key">1-5</span>
+            <span class="shortcut-key">1-9, 0</span>
             <span class="shortcut-desc">Switch sample</span>
         </div>
         <div class="shortcut-row">
@@ -756,28 +777,28 @@
             <span class="shortcut-desc">Next sample</span>
         </div>
         <div class="shortcut-row">
-            <span class="shortcut-key">A</span>
-            <span class="shortcut-desc">Auto-cycle</span>
+            <span class="shortcut-key">[ ]</span>
+            <span class="shortcut-desc">Width ±10</span>
         </div>
         <div class="shortcut-row">
-            <span class="shortcut-key">X</span>
-            <span class="shortcut-desc">Random</span>
-        </div>
-        <div class="shortcut-row">
-            <span class="shortcut-key">B</span>
-            <span class="shortcut-desc">Blend all</span>
+            <span class="shortcut-key">- =</span>
+            <span class="shortcut-desc">Height ±10</span>
         </div>
         <div class="shortcut-row">
             <span class="shortcut-key">R</span>
             <span class="shortcut-desc">Rotate 90°</span>
         </div>
         <div class="shortcut-row">
-            <span class="shortcut-key">G</span>
-            <span class="shortcut-desc">Toggle grid</span>
+            <span class="shortcut-key">\</span>
+            <span class="shortcut-desc">Rotate 10°</span>
         </div>
         <div class="shortcut-row">
-            <span class="shortcut-key">H</span>
-            <span class="shortcut-desc">Toggle snap</span>
+            <span class="shortcut-key">A / X / B</span>
+            <span class="shortcut-desc">Cycle/Rnd/Blend</span>
+        </div>
+        <div class="shortcut-row">
+            <span class="shortcut-key">G / H</span>
+            <span class="shortcut-desc">Grid / Snap</span>
         </div>
         <div class="shortcut-row">
             <span class="shortcut-key">I</span>
@@ -785,15 +806,11 @@
         </div>
         <div class="shortcut-row">
             <span class="shortcut-key">↑↓←→</span>
-            <span class="shortcut-desc">Adjust spacing</span>
+            <span class="shortcut-desc">Spacing ±5</span>
         </div>
         <div class="shortcut-row">
-            <span class="shortcut-key">C</span>
-            <span class="shortcut-desc">Clear</span>
-        </div>
-        <div class="shortcut-row">
-            <span class="shortcut-key">S</span>
-            <span class="shortcut-desc">Save/export</span>
+            <span class="shortcut-key">C / S</span>
+            <span class="shortcut-desc">Clear / Save</span>
         </div>
     </div>
 
@@ -811,9 +828,16 @@
             // Source Image
             sourceImage: null,
             sourceVisible: true,
+            sourceOpacity: 1.0,
+            originalImageWidth: 1200,
+            originalImageHeight: 800,
 
-            // Samples (5 slots)
-            samples: Array(5).fill(null).map(() => ({
+            // Canvas size
+            canvasWidth: 1200,
+            canvasHeight: 800,
+
+            // Samples (10 slots - expanded from 5)
+            samples: Array(10).fill(null).map(() => ({
                 canvas: null,
                 x: 0,
                 y: 0,
@@ -830,6 +854,9 @@
             autoCycleIndex: 0,
 
             // Brush
+            brushSize: 1.0, // Multiplier (0.1 to 3.0)
+            baseSampleWidth: 100,
+            baseSampleHeight: 100,
             sampleWidth: 100,
             sampleHeight: 100,
             opacity: 1.0,
@@ -853,7 +880,16 @@
             // Cursor preview
             mouseX: 0,
             mouseY: 0,
-            showCursor: false
+            showCursor: false,
+
+            // Keyboard state
+            shiftPressed: false,
+            sourceVisibleBeforeShift: true,
+
+            // Undo/Redo
+            history: [],
+            historyIndex: -1,
+            maxHistoryStates: 50
         };
 
         // ============================================
@@ -869,11 +905,92 @@
             state.paintLayer.height = state.canvas.height;
             state.paintLayerCtx = state.paintLayer.getContext('2d');
 
+            // Save initial state to history
+            saveHistoryState();
+
             initializeSampleSlots();
             setupEventListeners();
+            updateBrushDimensions();
             render();
 
             console.log('🎨 sickollage initialized - Ready to create magic!');
+        }
+
+        // ============================================
+        // UNDO/REDO SYSTEM
+        // ============================================
+        function saveHistoryState() {
+            // Remove any states after current index (user made new changes after undo)
+            state.history = state.history.slice(0, state.historyIndex + 1);
+
+            // Create snapshot of current paint layer
+            const snapshot = document.createElement('canvas');
+            snapshot.width = state.paintLayer.width;
+            snapshot.height = state.paintLayer.height;
+            const snapCtx = snapshot.getContext('2d');
+            snapCtx.drawImage(state.paintLayer, 0, 0);
+
+            state.history.push(snapshot);
+
+            // Limit history size
+            if (state.history.length > state.maxHistoryStates) {
+                state.history.shift();
+            } else {
+                state.historyIndex++;
+            }
+
+            console.log(`💾 History saved (${state.historyIndex + 1}/${state.history.length} states)`);
+        }
+
+        function undo() {
+            if (state.historyIndex > 0) {
+                state.historyIndex--;
+                restoreHistoryState();
+                console.log(`↶ Undo (${state.historyIndex + 1}/${state.history.length})`);
+            } else {
+                console.log('⚠️ Nothing to undo');
+            }
+        }
+
+        function redo() {
+            if (state.historyIndex < state.history.length - 1) {
+                state.historyIndex++;
+                restoreHistoryState();
+                console.log(`↷ Redo (${state.historyIndex + 1}/${state.history.length})`);
+            } else {
+                console.log('⚠️ Nothing to redo');
+            }
+        }
+
+        function restoreHistoryState() {
+            if (state.historyIndex >= 0 && state.historyIndex < state.history.length) {
+                const snapshot = state.history[state.historyIndex];
+                state.paintLayerCtx.clearRect(0, 0, state.paintLayer.width, state.paintLayer.height);
+                state.paintLayerCtx.drawImage(snapshot, 0, 0);
+                render();
+            }
+        }
+
+        function clearHistory() {
+            state.history = [];
+            state.historyIndex = -1;
+            saveHistoryState();
+            console.log('🗑️ History cleared');
+        }
+
+        // ============================================
+        // BRUSH DIMENSION CALCULATION
+        // ============================================
+        function updateBrushDimensions() {
+            // Apply size multiplier to base dimensions
+            state.sampleWidth = Math.round(state.baseSampleWidth * state.brushSize);
+            state.sampleHeight = Math.round(state.baseSampleHeight * state.brushSize);
+
+            // Update displays if they exist
+            const widthDisplay = document.getElementById('sampleWidthValue');
+            const heightDisplay = document.getElementById('sampleHeightValue');
+            if (widthDisplay) widthDisplay.textContent = state.sampleWidth + 'px';
+            if (heightDisplay) heightDisplay.textContent = state.sampleHeight + 'px';
         }
 
         // ============================================
@@ -883,14 +1000,16 @@
             const grid = document.getElementById('sampleGrid');
             grid.innerHTML = '';
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 10; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'sample-slot empty';
                 if (i === state.currentSampleIndex) slot.classList.add('active');
                 if (i === state.nextSampleSlot) slot.classList.add('next');
 
                 slot.dataset.index = i;
-                slot.innerHTML = `<span class="sample-number">${i + 1}</span>`;
+                // Display 1-9, 0 for slot 10
+                const displayNum = i === 9 ? 0 : i + 1;
+                slot.innerHTML = `<span class="sample-number">${displayNum}</span>`;
 
                 slot.addEventListener('click', () => {
                     if (state.samples[i].canvas) {
@@ -912,11 +1031,14 @@
                 slot.classList.toggle('active', i === state.currentSampleIndex);
                 slot.classList.toggle('next', i === state.nextSampleSlot);
 
+                // Display 1-9, 0 for slot 10
+                const displayNum = i === 9 ? 0 : i + 1;
+
                 // Update content
                 if (sample.canvas) {
                     slot.classList.remove('empty');
                     slot.innerHTML = `
-                        <span class="sample-number">${i + 1}</span>
+                        <span class="sample-number">${displayNum}</span>
                         <canvas></canvas>
                     `;
                     const canvas = slot.querySelector('canvas');
@@ -926,7 +1048,7 @@
                     ctx.drawImage(sample.canvas, 0, 0);
                 } else {
                     slot.classList.add('empty');
-                    slot.innerHTML = `<span class="sample-number">${i + 1}</span>`;
+                    slot.innerHTML = `<span class="sample-number">${displayNum}</span>`;
                 }
             });
         }
@@ -968,7 +1090,8 @@
             state.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
             // Keyboard
-            document.addEventListener('keydown', handleKeyPress);
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
 
             // Controls
             document.getElementById('autoCycleMode').addEventListener('change', (e) => {
@@ -1001,14 +1124,11 @@
                 }
             });
 
-            document.getElementById('sampleWidth').addEventListener('input', (e) => {
-                state.sampleWidth = parseInt(e.target.value);
-                document.getElementById('sampleWidthValue').textContent = state.sampleWidth + 'px';
-            });
-
-            document.getElementById('sampleHeight').addEventListener('input', (e) => {
-                state.sampleHeight = parseInt(e.target.value);
-                document.getElementById('sampleHeightValue').textContent = state.sampleHeight + 'px';
+            document.getElementById('brushSize').addEventListener('input', (e) => {
+                // Convert slider value (10-300) to multiplier (0.1-3.0)
+                state.brushSize = parseInt(e.target.value) / 100;
+                document.getElementById('brushSizeValue').textContent = '×' + state.brushSize.toFixed(1);
+                updateBrushDimensions();
             });
 
             document.getElementById('opacity').addEventListener('input', (e) => {
@@ -1046,13 +1166,66 @@
                 render();
             });
 
+            document.getElementById('canvasWidth').addEventListener('change', (e) => {
+                state.canvasWidth = parseInt(e.target.value);
+            });
+
+            document.getElementById('canvasHeight').addEventListener('change', (e) => {
+                state.canvasHeight = parseInt(e.target.value);
+            });
+
+            document.getElementById('applyCanvasSizeBtn').addEventListener('click', applyCanvasSize);
+
             document.getElementById('sourceVisible').addEventListener('change', (e) => {
                 state.sourceVisible = e.target.checked;
                 render();
             });
 
+            document.getElementById('sourceOpacity').addEventListener('input', (e) => {
+                state.sourceOpacity = parseInt(e.target.value) / 100;
+                document.getElementById('sourceOpacityValue').textContent = e.target.value + '%';
+                render();
+            });
+
             document.getElementById('clearCanvasBtn').addEventListener('click', clearCanvas);
             document.getElementById('exportBtn').addEventListener('click', exportCanvas);
+        }
+
+        // ============================================
+        // CANVAS SIZE
+        // ============================================
+        function applyCanvasSize() {
+            const newWidth = state.canvasWidth;
+            const newHeight = state.canvasHeight;
+
+            if (newWidth < 100 || newWidth > 4000 || newHeight < 100 || newHeight > 4000) {
+                alert('Canvas dimensions must be between 100 and 4000 pixels');
+                return;
+            }
+
+            // Create temporary canvas to preserve paint layer
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = state.paintLayer.width;
+            tempCanvas.height = state.paintLayer.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(state.paintLayer, 0, 0);
+
+            // Resize main canvas
+            state.canvas.width = newWidth;
+            state.canvas.height = newHeight;
+
+            // Resize paint layer
+            state.paintLayer.width = newWidth;
+            state.paintLayer.height = newHeight;
+
+            // Draw preserved content at original position (not stretched)
+            state.paintLayerCtx.drawImage(tempCanvas, 0, 0);
+
+            // Clear and save new state
+            clearHistory();
+            render();
+
+            console.log(`✅ Canvas resized to ${newWidth}×${newHeight}px (image not stretched)`);
         }
 
         // ============================================
@@ -1080,10 +1253,15 @@
                         height = height * ratio;
                     }
 
+                    // Update canvas dimensions
                     state.canvas.width = width;
                     state.canvas.height = height;
                     state.paintLayer.width = width;
                     state.paintLayer.height = height;
+
+                    // Store original image dimensions for non-stretched display
+                    state.originalImageWidth = width;
+                    state.originalImageHeight = height;
 
                     // Adjust grid size based on image dimensions
                     const avgDimension = (width + height) / 2;
@@ -1091,8 +1269,16 @@
                     document.getElementById('gridSize').value = state.gridSize;
                     document.getElementById('gridSizeValue').textContent = state.gridSize + 'px';
 
-                    // Reset samples
-                    state.samples = Array(5).fill(null).map(() => ({
+                    // Update canvas size inputs
+                    state.canvasWidth = width;
+                    state.canvasHeight = height;
+                    const widthInput = document.getElementById('canvasWidth');
+                    const heightInput = document.getElementById('canvasHeight');
+                    if (widthInput) widthInput.value = width;
+                    if (heightInput) heightInput.value = height;
+
+                    // Reset samples (now 10 slots)
+                    state.samples = Array(10).fill(null).map(() => ({
                         canvas: null,
                         x: 0,
                         y: 0,
@@ -1101,6 +1287,9 @@
                     }));
                     state.nextSampleSlot = 0;
                     state.currentSampleIndex = 0;
+
+                    // Reset history
+                    clearHistory();
 
                     updateSampleSlotsUI();
                     render();
@@ -1192,7 +1381,12 @@
                 state.canvas.classList.remove('sampling');
                 render();
             }
-            state.isPainting = false;
+
+            if (state.isPainting) {
+                // Save history state after painting
+                saveHistoryState();
+                state.isPainting = false;
+            }
         }
 
         function handleMouseLeave() {
@@ -1258,8 +1452,8 @@
 
             state.currentSampleIndex = state.nextSampleSlot;
 
-            // Auto-advance to next slot
-            state.nextSampleSlot = (state.nextSampleSlot + 1) % 5;
+            // Auto-advance to next slot (now 10 slots)
+            state.nextSampleSlot = (state.nextSampleSlot + 1) % 10;
 
             updateSampleSlotsUI();
             console.log(`✅ Sample ${state.currentSampleIndex + 1} captured: ${width}×${height}px`);
@@ -1373,11 +1567,40 @@
         // ============================================
         // KEYBOARD SHORTCUTS
         // ============================================
-        function handleKeyPress(e) {
-            // Number keys (1-5)
-            const key = parseInt(e.key);
-            if (key >= 1 && key <= 5) {
-                const index = key - 1;
+        function handleKeyDown(e) {
+            // Handle Shift key for temporary source view
+            if (e.key === 'Shift' && !state.shiftPressed) {
+                state.shiftPressed = true;
+                state.sourceVisibleBeforeShift = state.sourceVisible;
+                state.sourceVisible = true;
+                render();
+                return;
+            }
+
+            // Undo/Redo with cmd+z / cmd+shift+z
+            if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    redo();
+                } else {
+                    undo();
+                }
+                return;
+            }
+
+            // Number keys (1-9 and 0 for slot 10)
+            if (e.key >= '1' && e.key <= '9') {
+                const index = parseInt(e.key) - 1;
+                if (state.samples[index].canvas) {
+                    state.currentSampleIndex = index;
+                    updateSampleSlotsUI();
+                }
+                return;
+            }
+
+            // Key 0 for slot 10 (index 9)
+            if (e.key === '0') {
+                const index = 9;
                 if (state.samples[index].canvas) {
                     state.currentSampleIndex = index;
                     updateSampleSlotsUI();
@@ -1420,6 +1643,13 @@
 
                 case 'r':
                     state.rotation = (state.rotation + 90) % 360;
+                    document.getElementById('rotation').value = state.rotation;
+                    document.getElementById('rotationValue').textContent = state.rotation + '°';
+                    break;
+
+                case '\\':
+                    // Backslash adds 10 degrees
+                    state.rotation = (state.rotation + 10) % 360;
                     document.getElementById('rotation').value = state.rotation;
                     document.getElementById('rotationValue').textContent = state.rotation + '°';
                     break;
@@ -1478,32 +1708,37 @@
                     break;
 
                 case '[':
-                    // Decrease width
-                    state.sampleWidth = Math.max(20, state.sampleWidth - 10);
-                    document.getElementById('sampleWidth').value = state.sampleWidth;
-                    document.getElementById('sampleWidthValue').textContent = state.sampleWidth + 'px';
+                    // Decrease base width (defines aspect ratio)
+                    state.baseSampleWidth = Math.max(20, state.baseSampleWidth - 10);
+                    updateBrushDimensions();
                     break;
 
                 case ']':
-                    // Increase width
-                    state.sampleWidth = Math.min(400, state.sampleWidth + 10);
-                    document.getElementById('sampleWidth').value = state.sampleWidth;
-                    document.getElementById('sampleWidthValue').textContent = state.sampleWidth + 'px';
+                    // Increase base width (defines aspect ratio)
+                    state.baseSampleWidth = Math.min(400, state.baseSampleWidth + 10);
+                    updateBrushDimensions();
                     break;
 
                 case '-':
-                    // Decrease height
-                    state.sampleHeight = Math.max(20, state.sampleHeight - 10);
-                    document.getElementById('sampleHeight').value = state.sampleHeight;
-                    document.getElementById('sampleHeightValue').textContent = state.sampleHeight + 'px';
+                    // Decrease base height (defines aspect ratio)
+                    state.baseSampleHeight = Math.max(20, state.baseSampleHeight - 10);
+                    updateBrushDimensions();
                     break;
 
                 case '=':
-                    // Increase height
-                    state.sampleHeight = Math.min(400, state.sampleHeight + 10);
-                    document.getElementById('sampleHeight').value = state.sampleHeight;
-                    document.getElementById('sampleHeightValue').textContent = state.sampleHeight + 'px';
+                    // Increase base height (defines aspect ratio)
+                    state.baseSampleHeight = Math.min(400, state.baseSampleHeight + 10);
+                    updateBrushDimensions();
                     break;
+            }
+        }
+
+        function handleKeyUp(e) {
+            // Handle Shift key release
+            if (e.key === 'Shift' && state.shiftPressed) {
+                state.shiftPressed = false;
+                state.sourceVisible = state.sourceVisibleBeforeShift;
+                render();
             }
         }
 
@@ -1517,10 +1752,15 @@
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
 
-            // Draw source image (if visible)
+            // Draw source image (if visible) with opacity - keep original size, don't stretch
             if (state.sourceVisible && state.sourceImage) {
-                ctx.globalAlpha = 1.0;
-                ctx.drawImage(state.sourceImage, 0, 0, state.canvas.width, state.canvas.height);
+                ctx.globalAlpha = state.sourceOpacity;
+                ctx.drawImage(
+                    state.sourceImage,
+                    0, 0,
+                    state.originalImageWidth,
+                    state.originalImageHeight
+                );
                 ctx.globalAlpha = 1.0;
             }
 
@@ -1532,7 +1772,7 @@
                 drawGrid();
             }
 
-            // Draw cursor preview
+            // Draw cursor preview with rotation
             if (state.showCursor && !state.isSampling && !state.isPainting) {
                 ctx.save();
                 ctx.strokeStyle = '#000000';
@@ -1540,10 +1780,28 @@
                 ctx.setLineDash([4, 4]);
                 ctx.globalAlpha = 0.7;
 
-                const x = state.mouseX - state.sampleWidth / 2;
-                const y = state.mouseY - state.sampleHeight / 2;
+                const x = state.mouseX;
+                const y = state.mouseY;
 
-                ctx.strokeRect(x, y, state.sampleWidth, state.sampleHeight);
+                // Apply rotation around cursor center
+                if (state.rotation !== 0) {
+                    ctx.translate(x, y);
+                    ctx.rotate((state.rotation * Math.PI) / 180);
+                    ctx.strokeRect(
+                        -state.sampleWidth / 2,
+                        -state.sampleHeight / 2,
+                        state.sampleWidth,
+                        state.sampleHeight
+                    );
+                } else {
+                    ctx.strokeRect(
+                        x - state.sampleWidth / 2,
+                        y - state.sampleHeight / 2,
+                        state.sampleWidth,
+                        state.sampleHeight
+                    );
+                }
+
                 ctx.restore();
             }
         }
@@ -1582,6 +1840,7 @@
         function clearCanvas() {
             if (confirm('Clear all painted content? (Source image will remain)')) {
                 state.paintLayerCtx.clearRect(0, 0, state.paintLayer.width, state.paintLayer.height);
+                clearHistory();
                 render();
                 console.log('🧹 Canvas cleared');
             }
@@ -1627,9 +1886,16 @@
         // ============================================
         window.extractToolParams = function() {
             return {
+                // Canvas
+                canvasWidth: state.canvasWidth,
+                canvasHeight: state.canvasHeight,
+                sourceVisible: state.sourceVisible,
+                sourceOpacity: state.sourceOpacity,
+
                 // Brush parameters
-                sampleWidth: state.sampleWidth,
-                sampleHeight: state.sampleHeight,
+                brushSize: state.brushSize, // Now a multiplier (0.1-3.0)
+                baseSampleWidth: state.baseSampleWidth,
+                baseSampleHeight: state.baseSampleHeight,
                 opacity: state.opacity,
                 rotation: state.rotation,
 
@@ -1642,9 +1908,6 @@
                 gridSize: state.gridSize,
                 snapToGrid: state.snapToGrid,
 
-                // Canvas
-                sourceVisible: state.sourceVisible,
-
                 // Modes
                 autoCycleMode: state.autoCycleMode,
                 randomMode: state.randomMode,
@@ -1653,17 +1916,42 @@
         };
 
         window.applyToolPreset = function(params) {
-            // Brush parameters
-            if (params.sampleWidth !== undefined) {
-                state.sampleWidth = params.sampleWidth;
-                document.getElementById('sampleWidth').value = params.sampleWidth;
-                document.getElementById('sampleWidthValue').textContent = params.sampleWidth + 'px';
+            // Canvas parameters
+            if (params.canvasWidth !== undefined) {
+                state.canvasWidth = params.canvasWidth;
+                document.getElementById('canvasWidth').value = params.canvasWidth;
             }
 
-            if (params.sampleHeight !== undefined) {
-                state.sampleHeight = params.sampleHeight;
-                document.getElementById('sampleHeight').value = params.sampleHeight;
-                document.getElementById('sampleHeightValue').textContent = params.sampleHeight + 'px';
+            if (params.canvasHeight !== undefined) {
+                state.canvasHeight = params.canvasHeight;
+                document.getElementById('canvasHeight').value = params.canvasHeight;
+            }
+
+            if (params.sourceOpacity !== undefined) {
+                state.sourceOpacity = params.sourceOpacity;
+                document.getElementById('sourceOpacity').value = Math.round(params.sourceOpacity * 100);
+                document.getElementById('sourceOpacityValue').textContent = Math.round(params.sourceOpacity * 100) + '%';
+            }
+
+            // Brush parameters
+            if (params.brushSize !== undefined) {
+                state.brushSize = params.brushSize;
+                // Convert multiplier back to slider value (0.1-3.0 -> 10-300)
+                document.getElementById('brushSize').value = Math.round(params.brushSize * 100);
+                document.getElementById('brushSizeValue').textContent = '×' + params.brushSize.toFixed(1);
+            }
+
+            if (params.baseSampleWidth !== undefined) {
+                state.baseSampleWidth = params.baseSampleWidth;
+            }
+
+            if (params.baseSampleHeight !== undefined) {
+                state.baseSampleHeight = params.baseSampleHeight;
+            }
+
+            // Update brush dimensions based on base and multiplier
+            if (params.brushSize !== undefined || params.baseSampleWidth !== undefined || params.baseSampleHeight !== undefined) {
+                updateBrushDimensions();
             }
 
             if (params.opacity !== undefined) {
