@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pixel-flow - YS Studio Artifacts</title>
+    <link rel="stylesheet" href="../../shared/preset-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+    <style>
+        /* Font Imports */
+        @font-face {
+            font-family: 'Basis Grotesque';
+            src: url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.woff2') format('woff2'),
+                 url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.woff') format('woff'),
+                 url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-cyan: #00FFFF;
+
+            /* Fonts */
+            --font-suisse: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: Georgia, 'Times New Roman', serif;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
+        }
+
+        .studio-name {
+            font-weight: 300;
+        }
+
+        .project-type {
+            font-style: italic;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
+        }
+
+        /* Cross Elements */
+        .cross-small {
+            width: 12px;
+            height: 12px;
+            position: relative;
+            color: var(--ys-black);
+            display: inline-block;
+        }
+
+        .cross-small::before,
+        .cross-small::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-small::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-small::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cross-large {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            color: var(--ys-red);
+            display: inline-block;
+        }
+
+        .cross-large::before,
+        .cross-large::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-large::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-large::after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 80px 24px 24px;
+            min-height: 100vh;
+        }
+
+        /* Title Section */
+        .title-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .type-display-xl {
+            font-family: var(--font-sangbleu);
+            font-size: 120px;
+            line-height: 120px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        /* Cross Wrapper Component */
+        .ys-cross-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: var(--ys-white);
+            margin-bottom: 24px;
+        }
+
+        .cross-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 12px;
+            position: relative;
+        }
+
+        .wrapper-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .control-panel .wrapper-content {
+            padding: 12px;
+        }
+
+        /* Main Working Area - Side by Side */
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            align-items: start;
+        }
+
+        /* Left Panel - Controls */
+        .control-panel {
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom Scrollbar for Control Panel */
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: var(--ys-white);
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: var(--ys-black);
+            border-radius: 0;
+        }
+
+        /* Right Panel - Canvas */
+        .canvas-panel {
+            min-height: 400px;
+        }
+
+        /* Controls */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 4px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--ys-gray);
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-item label {
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .control-item input,
+        .control-item select {
+            padding: 6px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            font-family: var(--font-suisse);
+            font-size: 12px;
+        }
+
+        /* Custom Range Slider Styling */
+        .control-item input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 1px;
+            background: var(--ys-black);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Buttons */
+        .ys-button {
+            background: var(--ys-white);
+            color: var(--ys-black);
+            border: 1px solid var(--ys-black);
+            padding: 10px 16px;
+            font-family: var(--font-suisse);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .ys-button:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        .ys-button.active {
+            background: var(--ys-red);
+            color: var(--ys-white);
+            border-color: var(--ys-red);
+        }
+
+        .ys-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Checkbox */
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked {
+            background: var(--ys-black);
+        }
+
+        .checkbox-item input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: var(--ys-white);
+        }
+
+        .checkbox-item label {
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+            overflow: hidden;
+        }
+
+        #mainCanvas {
+            display: block;
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+
+        /* Flow Direction Overlay */
+        .flow-overlay {
+            position: absolute;
+            pointer-events: none;
+            display: none;
+        }
+
+        .flow-overlay.active {
+            display: block;
+            pointer-events: all;
+        }
+
+        .flow-button {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: var(--ys-cyan);
+            color: var(--ys-black);
+            border: 2px solid var(--ys-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            pointer-events: all;
+        }
+
+        .flow-button:hover {
+            background: var(--ys-white);
+            transform: scale(1.1);
+        }
+
+        .flow-button.center {
+            background: var(--ys-red);
+            color: var(--ys-white);
+        }
+
+        /* Resize Handles */
+        .resize-handle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: transparent;
+            border: 2px solid var(--ys-cyan);
+            pointer-events: all;
+            display: none;
+        }
+
+        .resize-handle.active {
+            display: block;
+        }
+
+        /* Flow List */
+        .flow-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .flow-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            border: 1px solid var(--ys-gray);
+            font-size: 10px;
+            background: var(--ys-white);
+        }
+
+        .flow-item-info {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .flow-direction-badge {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ys-black);
+            color: var(--ys-white);
+            font-size: 12px;
+        }
+
+        .flow-delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--ys-black);
+            padding: 0 4px;
+            transition: color 0.2s;
+        }
+
+        .flow-delete-btn:hover {
+            color: var(--ys-red);
+        }
+
+        /* Upload Placeholder */
+        .upload-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .upload-placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-placeholder-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .upload-placeholder-hint {
+            font-size: 10px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+
+            .type-display-xl {
+                font-size: 60px;
+                line-height: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-center {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="ys-header">
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">pixel-flow</div>
+        <nav class="header-right">
+            <a href="/about.html">About</a>
+            <a href="/" class="active">Tools</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="ys-container">
+        <!-- Title -->
+        <div class="title-section">
+            <h1 class="type-display-xl">pixel-flow</h1>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="main-workspace">
+            <!-- Left Panel - Controls -->
+            <div class="control-panel">
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <!-- IMAGE SECTION -->
+                            <div class="section-title">IMAGE</div>
+
+                            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                            <button class="ys-button" onclick="loadImage()">Load Image</button>
+                            <button class="ys-button" onclick="revertImage()" id="revertBtn" disabled>Revert</button>
+                            <button class="ys-button" onclick="saveImage()">Save PNG</button>
+
+                            <!-- GRID SECTION -->
+                            <div class="section-title" style="margin-top: 24px;">GRID</div>
+
+                            <div class="control-item">
+                                <label for="gridWidth">Cell Width: <span id="gridWidthValue">32</span>px</label>
+                                <input type="range" id="gridWidth" min="4" max="128" value="32" step="4">
+                            </div>
+
+                            <div class="control-item">
+                                <label for="gridHeight">Cell Height: <span id="gridHeightValue">32</span>px</label>
+                                <input type="range" id="gridHeight" min="4" max="128" value="32" step="4">
+                            </div>
+
+                            <div class="control-item">
+                                <label for="gridOffsetX">Offset X: <span id="gridOffsetXValue">0</span>px</label>
+                                <input type="range" id="gridOffsetX" min="-64" max="64" value="0" step="1">
+                            </div>
+
+                            <div class="control-item">
+                                <label for="gridOffsetY">Offset Y: <span id="gridOffsetYValue">0</span>px</label>
+                                <input type="range" id="gridOffsetY" min="-64" max="64" value="0" step="1">
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="showGrid">
+                                <label for="showGrid">Show Grid</label>
+                            </div>
+
+                            <!-- FLOWS SECTION -->
+                            <div class="section-title" style="margin-top: 24px;">FLOWS</div>
+
+                            <div class="button-group">
+                                <button class="ys-button" id="pauseBtn" onclick="togglePause()">Pause</button>
+                                <button class="ys-button" onclick="enterFlowMode()">Add Flow</button>
+                            </div>
+
+                            <div class="control-item">
+                                <label for="flowSpeed">Speed: <span id="flowSpeedValue">20</span>ms</label>
+                                <input type="range" id="flowSpeed" min="10" max="100" value="20" step="5">
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="showFlowOutlines">
+                                <label for="showFlowOutlines">Show Outlines</label>
+                            </div>
+
+                            <button class="ys-button" onclick="clearAllFlows()">Clear All</button>
+
+                            <div class="flow-list" id="flowList"></div>
+
+                            <!-- VIEW SECTION -->
+                            <div class="section-title" style="margin-top: 24px;">VIEW</div>
+
+                            <div class="control-item">
+                                <label>Zoom: <span id="zoomValue">100</span>%</label>
+                                <div class="button-group">
+                                    <button class="ys-button" onclick="zoomOut()">−</button>
+                                    <button class="ys-button" onclick="zoomIn()">+</button>
+                                </div>
+                            </div>
+
+                            <!-- EXPORT SECTION -->
+                            <div class="section-title" style="margin-top: 24px;">EXPORT</div>
+
+                            <div class="control-item">
+                                <label for="exportFrames">Frames: <span id="exportFramesValue">60</span></label>
+                                <input type="range" id="exportFrames" min="10" max="300" value="60" step="10">
+                            </div>
+
+                            <div class="control-item">
+                                <label for="exportFPS">FPS: <span id="exportFPSValue">30</span></label>
+                                <input type="range" id="exportFPS" min="10" max="60" value="30" step="5">
+                            </div>
+
+                            <button class="ys-button" onclick="exportAnimation()" id="exportAnimBtn">Export GIF</button>
+                            <div id="exportProgress" style="display: none; margin-top: 8px;">
+                                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">
+                                    <span id="exportStatus">Rendering...</span>
+                                </div>
+                                <div style="width: 100%; height: 2px; background: var(--ys-gray); position: relative;">
+                                    <div id="exportProgressBar" style="height: 100%; background: var(--ys-black); width: 0%; transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+
+                            <!-- MODE INDICATOR -->
+                            <div class="control-item" style="margin-top: 24px;">
+                                <label>Mode: <span id="modeIndicator">MOVE</span></label>
+                                <div style="font-size: 9px; color: #666; margin-top: 4px;" id="modeHelp">
+                                    Arrow keys to move cursor
+                                </div>
+                            </div>
+
+                            <!-- PRESETS SECTION -->
+                            <div class="section-title" style="margin-top: 24px;">PRESETS</div>
+                            <div id="presetContainer"></div>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Canvas -->
+            <div class="canvas-panel">
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="canvas-container" id="canvasContainer">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <div class="upload-placeholder-icon">↑</div>
+                                <div class="upload-placeholder-text">Load an image to start</div>
+                                <div class="upload-placeholder-hint">Click "Load Image" or press O</div>
+                            </div>
+                            <canvas id="mainCanvas"></canvas>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { PresetManager } from '../../shared/preset-manager.js';
+        import { PresetUIComponent } from '../../shared/preset-ui-component.js';
+
+        // State
+        const state = {
+            originalImage: null,
+            currentImage: null,
+            imageCanvas: null,
+            imageCtx: null,
+
+            zoom: 1,
+            zoomLevels: [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4],
+            currentZoomIndex: 3,
+
+            grid: {
+                cellWidth: 32,
+                cellHeight: 32,
+                offsetX: 0,
+                offsetY: 0,
+                cols: 0,
+                rows: 0
+            },
+
+            cursor: {
+                x: 2,
+                y: 8,
+                width: 14,
+                height: 12
+            },
+
+            flows: [],
+
+            mode: 'move', // 'move' | 'flow' | 'resize'
+            showGrid: false,
+            showFlowOutlines: false,
+            isFlowing: true,
+            flowSpeed: 20,
+            cursorColor: '#00ffff',
+
+            animationId: null,
+            lastFlowTime: 0
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('canvasContainer');
+        const placeholder = document.getElementById('uploadPlaceholder');
+
+        // Initialize
+        function init() {
+            setupEventListeners();
+            updateModeIndicator();
+
+            // Initialize preset system
+            window.presetManager = new PresetManager('pixel-flow');
+            const presetUI = new PresetUIComponent(window.presetManager, window.extractToolParams);
+
+            // Create preset UI after short delay
+            setTimeout(async () => {
+                presetUI.create('presetContainer');
+                await window.presetManager.initialize(window.applyToolPreset);
+            }, 100);
+        }
+
+        // Preset Functions (make them global for preset system)
+        window.extractToolParams = function() {
+            return {
+                flows: state.flows,
+                gridCellWidth: state.grid.cellWidth,
+                gridCellHeight: state.grid.cellHeight,
+                gridOffsetX: state.grid.offsetX,
+                gridOffsetY: state.grid.offsetY,
+                showGrid: state.showGrid,
+                showFlowOutlines: state.showFlowOutlines,
+                flowSpeed: state.flowSpeed
+            };
+        };
+
+        window.applyToolPreset = function(preset) {
+            if (!preset) return;
+
+            if (preset.flows) state.flows = preset.flows;
+            if (preset.gridCellWidth) {
+                state.grid.cellWidth = preset.gridCellWidth;
+                document.getElementById('gridWidth').value = preset.gridCellWidth;
+                document.getElementById('gridWidthValue').textContent = preset.gridCellWidth;
+            }
+            if (preset.gridCellHeight) {
+                state.grid.cellHeight = preset.gridCellHeight;
+                document.getElementById('gridHeight').value = preset.gridCellHeight;
+                document.getElementById('gridHeightValue').textContent = preset.gridCellHeight;
+            }
+            if (preset.gridOffsetX !== undefined) {
+                state.grid.offsetX = preset.gridOffsetX;
+                document.getElementById('gridOffsetX').value = preset.gridOffsetX;
+                document.getElementById('gridOffsetXValue').textContent = preset.gridOffsetX;
+            }
+            if (preset.gridOffsetY !== undefined) {
+                state.grid.offsetY = preset.gridOffsetY;
+                document.getElementById('gridOffsetY').value = preset.gridOffsetY;
+                document.getElementById('gridOffsetYValue').textContent = preset.gridOffsetY;
+            }
+            if (preset.showGrid !== undefined) {
+                state.showGrid = preset.showGrid;
+                document.getElementById('showGrid').checked = preset.showGrid;
+            }
+            if (preset.showFlowOutlines !== undefined) {
+                state.showFlowOutlines = preset.showFlowOutlines;
+                document.getElementById('showFlowOutlines').checked = preset.showFlowOutlines;
+            }
+            if (preset.flowSpeed) {
+                state.flowSpeed = preset.flowSpeed;
+                document.getElementById('flowSpeed').value = preset.flowSpeed;
+                document.getElementById('flowSpeedValue').textContent = preset.flowSpeed;
+            }
+
+            updateGrid();
+            updateFlowList();
+            render();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Grid controls
+            document.getElementById('gridWidth').addEventListener('input', (e) => {
+                state.grid.cellWidth = parseInt(e.target.value);
+                document.getElementById('gridWidthValue').textContent = e.target.value;
+                updateGrid();
+                render();
+            });
+
+            document.getElementById('gridHeight').addEventListener('input', (e) => {
+                state.grid.cellHeight = parseInt(e.target.value);
+                document.getElementById('gridHeightValue').textContent = e.target.value;
+                updateGrid();
+                render();
+            });
+
+            document.getElementById('gridOffsetX').addEventListener('input', (e) => {
+                state.grid.offsetX = parseInt(e.target.value);
+                document.getElementById('gridOffsetXValue').textContent = e.target.value;
+                updateGrid();
+                render();
+            });
+
+            document.getElementById('gridOffsetY').addEventListener('input', (e) => {
+                state.grid.offsetY = parseInt(e.target.value);
+                document.getElementById('gridOffsetYValue').textContent = e.target.value;
+                updateGrid();
+                render();
+            });
+
+            document.getElementById('showGrid').addEventListener('change', (e) => {
+                state.showGrid = e.target.checked;
+                render();
+            });
+
+            // Flow controls
+            document.getElementById('flowSpeed').addEventListener('input', (e) => {
+                state.flowSpeed = parseInt(e.target.value);
+                document.getElementById('flowSpeedValue').textContent = e.target.value;
+            });
+
+            document.getElementById('showFlowOutlines').addEventListener('change', (e) => {
+                state.showFlowOutlines = e.target.checked;
+                render();
+            });
+
+            // Export controls
+            document.getElementById('exportFrames').addEventListener('input', (e) => {
+                document.getElementById('exportFramesValue').textContent = e.target.value;
+            });
+
+            document.getElementById('exportFPS').addEventListener('input', (e) => {
+                document.getElementById('exportFPSValue').textContent = e.target.value;
+            });
+
+            // Keyboard
+            window.addEventListener('keydown', handleKeyboard);
+
+            // Canvas clicks
+            canvas.addEventListener('click', handleCanvasClick);
+
+            // Paste
+            window.addEventListener('paste', handlePaste);
+        }
+
+        // Keyboard Shortcuts
+        function handleKeyboard(e) {
+            // Ignore if typing in input
+            if (e.target.tagName === 'INPUT') return;
+
+            const key = e.key.toLowerCase();
+
+            // Image controls
+            if (key === 'o') {
+                e.preventDefault();
+                loadImage();
+            } else if (key === 'i') {
+                e.preventDefault();
+                revertImage();
+            } else if (key === 'p') {
+                e.preventDefault();
+                saveImage();
+            } else if (key === ' ') {
+                e.preventDefault();
+                togglePause();
+            } else if (key === 'c') {
+                e.preventDefault();
+                clearAllFlows();
+            } else if (key === 'g') {
+                e.preventDefault();
+                state.showGrid = !state.showGrid;
+                document.getElementById('showGrid').checked = state.showGrid;
+                render();
+            }
+
+            // Mode controls
+            if (key === 'enter') {
+                e.preventDefault();
+                if (state.mode === 'move') {
+                    enterFlowMode();
+                }
+            } else if (key === 'escape' || key === 'x') {
+                e.preventDefault();
+                if (state.mode === 'flow') {
+                    state.mode = 'move';
+                    updateModeIndicator();
+                    render();
+                }
+            } else if (key === 'r') {
+                e.preventDefault();
+                if (state.mode === 'move') {
+                    state.mode = 'resize';
+                    updateModeIndicator();
+                    render();
+                }
+            }
+
+            // Zoom
+            if (key === '+' || key === '=') {
+                e.preventDefault();
+                zoomIn();
+            } else if (key === '-' || key === '_') {
+                e.preventDefault();
+                zoomOut();
+            } else if (key === '0') {
+                e.preventDefault();
+                state.currentZoomIndex = 3;
+                state.zoom = state.zoomLevels[3];
+                updateZoom();
+            }
+
+            // Flow mode - direction selection
+            if (state.mode === 'flow') {
+                if (key === 'arrowup') {
+                    e.preventDefault();
+                    addFlow('n');
+                } else if (key === 'arrowdown') {
+                    e.preventDefault();
+                    addFlow('s');
+                } else if (key === 'arrowleft') {
+                    e.preventDefault();
+                    addFlow('w');
+                } else if (key === 'arrowright') {
+                    e.preventDefault();
+                    addFlow('e');
+                }
+                return;
+            }
+
+            // Resize mode
+            if (state.mode === 'resize') {
+                if (key === 'arrowleft') {
+                    e.preventDefault();
+                    state.cursor.width = Math.max(1, state.cursor.width - 1);
+                    render();
+                } else if (key === 'arrowright') {
+                    e.preventDefault();
+                    state.cursor.width = Math.min(state.grid.cols, state.cursor.width + 1);
+                    render();
+                } else if (key === 'arrowup') {
+                    e.preventDefault();
+                    state.cursor.height = Math.max(1, state.cursor.height - 1);
+                    render();
+                } else if (key === 'arrowdown') {
+                    e.preventDefault();
+                    state.cursor.height = Math.min(state.grid.rows, state.cursor.height + 1);
+                    render();
+                } else if (key === 'enter') {
+                    e.preventDefault();
+                    state.mode = 'move';
+                    updateModeIndicator();
+                    render();
+                }
+                return;
+            }
+
+            // Move mode - cursor movement
+            if (state.mode === 'move') {
+                const shiftAmount = e.shiftKey ?
+                    (key === 'arrowleft' || key === 'arrowright' ? state.cursor.width : state.cursor.height) : 1;
+
+                if (key === 'arrowleft') {
+                    e.preventDefault();
+                    state.cursor.x = Math.max(0, state.cursor.x - shiftAmount);
+                    render();
+                } else if (key === 'arrowright') {
+                    e.preventDefault();
+                    state.cursor.x = Math.min(state.grid.cols - state.cursor.width, state.cursor.x + shiftAmount);
+                    render();
+                } else if (key === 'arrowup') {
+                    e.preventDefault();
+                    state.cursor.y = Math.max(0, state.cursor.y - shiftAmount);
+                    render();
+                } else if (key === 'arrowdown') {
+                    e.preventDefault();
+                    state.cursor.y = Math.min(state.grid.rows - state.cursor.height, state.cursor.y + shiftAmount);
+                    render();
+                }
+            }
+        }
+
+        function handleCanvasClick(e) {
+            if (!state.imageCanvas) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / state.zoom;
+            const y = (e.clientY - rect.top) / state.zoom;
+
+            // Convert to grid coordinates
+            const gridX = Math.floor((x - state.grid.offsetX) / state.grid.cellWidth);
+            const gridY = Math.floor((y - state.grid.offsetY) / state.grid.cellHeight);
+
+            if (state.mode === 'move') {
+                state.cursor.x = Math.max(0, Math.min(state.grid.cols - state.cursor.width, gridX));
+                state.cursor.y = Math.max(0, Math.min(state.grid.rows - state.cursor.height, gridY));
+                render();
+            }
+        }
+
+        // Image Loading
+        window.loadImage = function() {
+            document.getElementById('imageInput').click();
+        };
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        setImage(img);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function handlePaste(e) {
+            const items = e.clipboardData.items;
+            for (let item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = new Image();
+                        img.onload = function() {
+                            setImage(img);
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        }
+
+        function setImage(img) {
+            state.originalImage = img;
+
+            // Create image canvas
+            state.imageCanvas = document.createElement('canvas');
+            state.imageCanvas.width = img.width;
+            state.imageCanvas.height = img.height;
+            state.imageCtx = state.imageCanvas.getContext('2d');
+            state.imageCtx.drawImage(img, 0, 0);
+
+            // Update grid
+            updateGrid();
+
+            // Fit to screen
+            fitToScreen();
+
+            // Hide placeholder
+            placeholder.style.display = 'none';
+
+            // Enable revert button
+            document.getElementById('revertBtn').disabled = false;
+
+            // Start animation
+            startAnimation();
+
+            render();
+        }
+
+        window.revertImage = function() {
+            if (!state.originalImage) return;
+            state.imageCtx.drawImage(state.originalImage, 0, 0);
+            render();
+        };
+
+        window.saveImage = function() {
+            if (!state.imageCanvas) return;
+
+            const link = document.createElement('a');
+            link.download = `pixel-flow-${Date.now()}.png`;
+            link.href = state.imageCanvas.toDataURL();
+            link.click();
+        };
+
+        // Export Animation
+        window.exportAnimation = async function() {
+            if (!state.imageCanvas || state.flows.length === 0) {
+                alert('Please load an image and add at least one flow before exporting.');
+                return;
+            }
+
+            const frames = parseInt(document.getElementById('exportFrames').value);
+            const fps = parseInt(document.getElementById('exportFPS').value);
+            const delay = 1000 / fps;
+
+            // Show progress
+            const progressEl = document.getElementById('exportProgress');
+            const progressBar = document.getElementById('exportProgressBar');
+            const statusEl = document.getElementById('exportStatus');
+            const exportBtn = document.getElementById('exportAnimBtn');
+
+            progressEl.style.display = 'block';
+            exportBtn.disabled = true;
+            statusEl.textContent = 'Preparing...';
+
+            // Pause current animation
+            const wasFlowing = state.isFlowing;
+            state.isFlowing = false;
+
+            // Create a copy of the original image for rendering
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = state.originalImage.width;
+            exportCanvas.height = state.originalImage.height;
+            const exportCtx = exportCanvas.getContext('2d');
+            exportCtx.drawImage(state.originalImage, 0, 0);
+
+            // Initialize GIF encoder
+            const gif = new GIF({
+                workers: 2,
+                quality: 10,
+                width: exportCanvas.width,
+                height: exportCanvas.height,
+                workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
+            });
+
+            // Render frames
+            statusEl.textContent = `Rendering frames...`;
+
+            for (let frame = 0; frame < frames; frame++) {
+                // Apply flows to the export canvas
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+
+                for (let flow of state.flows) {
+                    const { x, y, width, height, direction } = flow;
+
+                    // Skip if out of bounds
+                    if (x < 0 || y < 0 || x + width > exportCanvas.width || y + height > exportCanvas.height) continue;
+
+                    tempCanvas.width = width;
+                    tempCanvas.height = height;
+
+                    // Copy region
+                    tempCtx.drawImage(exportCanvas, x, y, width, height, 0, 0, width, height);
+
+                    // Clear region
+                    exportCtx.clearRect(x, y, width, height);
+
+                    // Shift and wrap
+                    if (direction === 'e') {
+                        exportCtx.drawImage(tempCanvas, 0, 0, width - 1, height, x + 1, y, width - 1, height);
+                        exportCtx.drawImage(tempCanvas, width - 1, 0, 1, height, x, y, 1, height);
+                    } else if (direction === 'w') {
+                        exportCtx.drawImage(tempCanvas, 1, 0, width - 1, height, x, y, width - 1, height);
+                        exportCtx.drawImage(tempCanvas, 0, 0, 1, height, x + width - 1, y, 1, height);
+                    } else if (direction === 's') {
+                        exportCtx.drawImage(tempCanvas, 0, 0, width, height - 1, x, y + 1, width, height - 1);
+                        exportCtx.drawImage(tempCanvas, 0, height - 1, width, 1, x, y, width, 1);
+                    } else if (direction === 'n') {
+                        exportCtx.drawImage(tempCanvas, 0, 1, width, height - 1, x, y, width, height - 1);
+                        exportCtx.drawImage(tempCanvas, 0, 0, width, 1, x, y + height - 1, width, 1);
+                    }
+                }
+
+                // Add frame to GIF
+                gif.addFrame(exportCanvas, {copy: true, delay: delay});
+
+                // Update progress
+                const progress = ((frame + 1) / frames) * 50; // First 50% is rendering
+                progressBar.style.width = progress + '%';
+                statusEl.textContent = `Rendering ${frame + 1}/${frames}`;
+
+                // Allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+
+            // Encode GIF
+            statusEl.textContent = 'Encoding GIF...';
+
+            gif.on('progress', (p) => {
+                const progress = 50 + (p * 50); // Last 50% is encoding
+                progressBar.style.width = progress + '%';
+            });
+
+            gif.on('finished', (blob) => {
+                // Download
+                const link = document.createElement('a');
+                link.download = `pixel-flow-animation-${Date.now()}.gif`;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+
+                // Reset UI
+                progressEl.style.display = 'none';
+                progressBar.style.width = '0%';
+                exportBtn.disabled = false;
+                statusEl.textContent = 'Rendering...';
+
+                // Restore animation
+                state.isFlowing = wasFlowing;
+                if (wasFlowing) startAnimation();
+
+                // Revert to original
+                revertImage();
+            });
+
+            gif.render();
+        };
+
+        // Grid
+        function updateGrid() {
+            if (!state.imageCanvas) return;
+
+            const { cellWidth, cellHeight, offsetX, offsetY } = state.grid;
+            const w = state.imageCanvas.width;
+            const h = state.imageCanvas.height;
+
+            state.grid.cols = Math.ceil((w - offsetX) / cellWidth);
+            state.grid.rows = Math.ceil((h - offsetY) / cellHeight);
+
+            // Limit cursor
+            state.cursor.x = Math.min(state.cursor.x, state.grid.cols - 1);
+            state.cursor.y = Math.min(state.cursor.y, state.grid.rows - 1);
+            state.cursor.width = Math.min(state.cursor.width, state.grid.cols);
+            state.cursor.height = Math.min(state.cursor.height, state.grid.rows);
+        }
+
+        // Zoom
+        function fitToScreen() {
+            if (!state.imageCanvas) return;
+
+            const maxWidth = container.clientWidth - 32;
+            const maxHeight = container.clientHeight - 32;
+
+            const scaleX = maxWidth / state.imageCanvas.width;
+            const scaleY = maxHeight / state.imageCanvas.height;
+            const scale = Math.min(scaleX, scaleY, 1);
+
+            // Find closest zoom level
+            let closestIndex = 0;
+            let minDiff = Math.abs(state.zoomLevels[0] - scale);
+            for (let i = 1; i < state.zoomLevels.length; i++) {
+                const diff = Math.abs(state.zoomLevels[i] - scale);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = i;
+                }
+            }
+
+            state.currentZoomIndex = closestIndex;
+            state.zoom = state.zoomLevels[closestIndex];
+            updateZoom();
+        }
+
+        window.zoomIn = function() {
+            if (state.currentZoomIndex < state.zoomLevels.length - 1) {
+                state.currentZoomIndex++;
+                state.zoom = state.zoomLevels[state.currentZoomIndex];
+                updateZoom();
+            }
+        };
+
+        window.zoomOut = function() {
+            if (state.currentZoomIndex > 0) {
+                state.currentZoomIndex--;
+                state.zoom = state.zoomLevels[state.currentZoomIndex];
+                updateZoom();
+            }
+        };
+
+        function updateZoom() {
+            document.getElementById('zoomValue').textContent = Math.round(state.zoom * 100);
+            render();
+        }
+
+        // Flow Mode
+        window.enterFlowMode = function() {
+            if (!state.imageCanvas) return;
+            state.mode = 'flow';
+            updateModeIndicator();
+            render();
+        };
+
+        function addFlow(direction) {
+            const { x, y, width, height } = state.cursor;
+            const { cellWidth, cellHeight, offsetX, offsetY } = state.grid;
+
+            // Convert to pixel coordinates
+            const pixelX = x * cellWidth + offsetX;
+            const pixelY = y * cellHeight + offsetY;
+            const pixelWidth = width * cellWidth;
+            const pixelHeight = height * cellHeight;
+
+            state.flows.push({
+                x: pixelX,
+                y: pixelY,
+                width: pixelWidth,
+                height: pixelHeight,
+                direction
+            });
+
+            state.mode = 'move';
+            updateModeIndicator();
+            updateFlowList();
+            render();
+        }
+
+        window.clearAllFlows = function() {
+            state.flows = [];
+            updateFlowList();
+            render();
+        };
+
+        function deleteFlow(index) {
+            state.flows.splice(index, 1);
+            updateFlowList();
+            render();
+        }
+
+        function updateFlowList() {
+            const list = document.getElementById('flowList');
+            if (state.flows.length === 0) {
+                list.innerHTML = '<div style="font-size: 10px; color: #999; text-align: center; padding: 12px;">No flows yet</div>';
+                return;
+            }
+
+            const directionSymbols = { n: '↑', s: '↓', e: '→', w: '←' };
+
+            list.innerHTML = state.flows.map((flow, i) => `
+                <div class="flow-item">
+                    <div class="flow-item-info">
+                        <div class="flow-direction-badge">${directionSymbols[flow.direction]}</div>
+                        <span>${flow.width}×${flow.height}px</span>
+                    </div>
+                    <button class="flow-delete-btn" onclick="deleteFlow(${i})">×</button>
+                </div>
+            `).join('');
+        }
+
+        window.deleteFlow = deleteFlow;
+
+        window.togglePause = function() {
+            state.isFlowing = !state.isFlowing;
+            const btn = document.getElementById('pauseBtn');
+            btn.textContent = state.isFlowing ? 'Pause' : 'Play';
+            btn.classList.toggle('active', !state.isFlowing);
+
+            if (state.isFlowing) {
+                startAnimation();
+            }
+        };
+
+        // Mode Indicator
+        function updateModeIndicator() {
+            const indicator = document.getElementById('modeIndicator');
+            const help = document.getElementById('modeHelp');
+
+            indicator.textContent = state.mode.toUpperCase();
+
+            if (state.mode === 'move') {
+                help.textContent = 'Arrow keys to move cursor';
+            } else if (state.mode === 'flow') {
+                help.textContent = 'Arrow keys to choose direction';
+            } else if (state.mode === 'resize') {
+                help.textContent = 'Arrow keys to resize, Enter to finish';
+            }
+        }
+
+        // Animation
+        function startAnimation() {
+            if (state.animationId) {
+                cancelAnimationFrame(state.animationId);
+            }
+            state.lastFlowTime = performance.now();
+            animate(state.lastFlowTime);
+        }
+
+        function animate(timestamp) {
+            if (state.isFlowing && timestamp - state.lastFlowTime >= state.flowSpeed) {
+                applyFlows();
+                state.lastFlowTime = timestamp;
+            }
+
+            render();
+            state.animationId = requestAnimationFrame(animate);
+        }
+
+        function applyFlows() {
+            if (!state.imageCanvas || state.flows.length === 0) return;
+
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+
+            for (let flow of state.flows) {
+                const { x, y, width, height, direction } = flow;
+
+                // Skip if out of bounds
+                if (x < 0 || y < 0 || x + width > state.imageCanvas.width || y + height > state.imageCanvas.height) continue;
+
+                tempCanvas.width = width;
+                tempCanvas.height = height;
+
+                // Copy region
+                tempCtx.drawImage(state.imageCanvas, x, y, width, height, 0, 0, width, height);
+
+                // Clear region
+                state.imageCtx.clearRect(x, y, width, height);
+
+                // Shift and wrap
+                if (direction === 'e') {
+                    state.imageCtx.drawImage(tempCanvas, 0, 0, width - 1, height, x + 1, y, width - 1, height);
+                    state.imageCtx.drawImage(tempCanvas, width - 1, 0, 1, height, x, y, 1, height);
+                } else if (direction === 'w') {
+                    state.imageCtx.drawImage(tempCanvas, 1, 0, width - 1, height, x, y, width - 1, height);
+                    state.imageCtx.drawImage(tempCanvas, 0, 0, 1, height, x + width - 1, y, 1, height);
+                } else if (direction === 's') {
+                    state.imageCtx.drawImage(tempCanvas, 0, 0, width, height - 1, x, y + 1, width, height - 1);
+                    state.imageCtx.drawImage(tempCanvas, 0, height - 1, width, 1, x, y, width, 1);
+                } else if (direction === 'n') {
+                    state.imageCtx.drawImage(tempCanvas, 0, 1, width, height - 1, x, y, width, height - 1);
+                    state.imageCtx.drawImage(tempCanvas, 0, 0, width, 1, x, y + height - 1, width, 1);
+                }
+            }
+        }
+
+        // Render
+        function render() {
+            if (!state.imageCanvas) return;
+
+            // Resize canvas
+            canvas.width = state.imageCanvas.width * state.zoom;
+            canvas.height = state.imageCanvas.height * state.zoom;
+
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw image
+            ctx.drawImage(state.imageCanvas, 0, 0, canvas.width, canvas.height);
+
+            // Draw grid
+            if (state.showGrid) {
+                drawGrid();
+            }
+
+            // Draw flow outlines
+            if (state.showFlowOutlines) {
+                drawFlowOutlines();
+            }
+
+            // Draw cursor
+            drawCursor();
+        }
+
+        function drawGrid() {
+            const { cellWidth, cellHeight, offsetX, offsetY, cols, rows } = state.grid;
+
+            ctx.strokeStyle = '#D9D9D9';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.5;
+
+            // Vertical lines
+            for (let i = 0; i <= cols; i++) {
+                const x = (i * cellWidth + offsetX) * state.zoom;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let i = 0; i <= rows; i++) {
+                const y = (i * cellHeight + offsetY) * state.zoom;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            ctx.globalAlpha = 1;
+        }
+
+        function drawFlowOutlines() {
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 2;
+
+            for (let flow of state.flows) {
+                ctx.strokeRect(
+                    flow.x * state.zoom,
+                    flow.y * state.zoom,
+                    flow.width * state.zoom,
+                    flow.height * state.zoom
+                );
+            }
+        }
+
+        function drawCursor() {
+            const { x, y, width, height } = state.cursor;
+            const { cellWidth, cellHeight, offsetX, offsetY } = state.grid;
+
+            const pixelX = (x * cellWidth + offsetX) * state.zoom;
+            const pixelY = (y * cellHeight + offsetY) * state.zoom;
+            const pixelWidth = width * cellWidth * state.zoom;
+            const pixelHeight = height * cellHeight * state.zoom;
+
+            ctx.strokeStyle = state.cursorColor;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pixelX, pixelY, pixelWidth, pixelHeight);
+
+            // Flow mode indicator
+            if (state.mode === 'flow') {
+                const centerX = pixelX + pixelWidth / 2;
+                const centerY = pixelY + pixelHeight / 2;
+                const size = 20;
+
+                ctx.fillStyle = state.cursorColor;
+                ctx.font = '20px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Draw arrows
+                ctx.fillText('↑', centerX, centerY - size);
+                ctx.fillText('↓', centerX, centerY + size);
+                ctx.fillText('←', centerX - size, centerY);
+                ctx.fillText('→', centerX + size, centerY);
+                ctx.fillText('×', centerX, centerY);
+            }
+
+            // Resize mode indicator
+            if (state.mode === 'resize') {
+                const handleSize = 8;
+                ctx.fillStyle = state.cursorColor;
+
+                // Corner handles
+                ctx.fillRect(pixelX - handleSize/2, pixelY - handleSize/2, handleSize, handleSize);
+                ctx.fillRect(pixelX + pixelWidth - handleSize/2, pixelY - handleSize/2, handleSize, handleSize);
+                ctx.fillRect(pixelX - handleSize/2, pixelY + pixelHeight - handleSize/2, handleSize, handleSize);
+                ctx.fillRect(pixelX + pixelWidth - handleSize/2, pixelY + pixelHeight - handleSize/2, handleSize, handleSize);
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
