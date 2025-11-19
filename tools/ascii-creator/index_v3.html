@@ -2179,8 +2179,12 @@
                 }
 
                 // Calculate canvas dimensions based on ASCII grid and font settings
-                const canvasWidth = Math.ceil(dimensions.asciiWidth * dimensions.charWidth);
-                const canvasHeight = Math.ceil(dimensions.asciiHeight * dimensions.charHeight);
+                // H.264 requires even dimensions (divisible by 2)
+                const makeEven = (num) => Math.ceil(num / 2) * 2;
+                const canvasWidth = makeEven(dimensions.asciiWidth * dimensions.charWidth);
+                const canvasHeight = makeEven(dimensions.asciiHeight * dimensions.charHeight);
+
+                console.log(`Canvas dimensions: ${canvasWidth}×${canvasHeight} (both even: ${canvasWidth % 2 === 0 && canvasHeight % 2 === 0})`);
 
                 // Create offscreen canvas for rendering
                 const canvas = document.createElement('canvas');
