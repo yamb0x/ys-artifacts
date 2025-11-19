@@ -255,8 +255,8 @@ YS Artifacts includes a sophisticated preset system that enables:
 - ⚡ **Real-time loading** - Instant parameter application
 
 ### Current Integration Status
-- ✅ **ASCII Creator**: 14 parameters fully integrated
-- ✅ **Text Visualizer**: 28+ parameters fully integrated
+- ✅ **img-to-ASCII**: 14 parameters fully integrated
+- ✅ **xytype**: 28+ parameters fully integrated
 - 🎨 **UI Design**: Minimal, perfectly aligned with YS system
 - 📊 **Performance**: 5-minute cache, lazy loading
 
@@ -348,6 +348,7 @@ docs/
 - [ ] Multiple export options
 - [ ] Error handling implemented
 - [ ] Cross-browser compatible
+- [ ] Thumbnail created (800×560px PNG in `/thumbnails/`)
 - [ ] README documented
 
 
@@ -365,7 +366,10 @@ ys-artifacts/
 │   │   ├── README.md       # Tool documentation
 │   │   └── assets/         # Optional assets
 │   └── another-tool/
-├── shared/                  # Shared utilities (if needed)
+├── thumbnails/              # Tool preview images for index.html
+│   ├── tool-name.png       # 800×560px PNG thumbnails
+│   └── README.md           # Thumbnail guidelines
+├── shared/                  # Shared utilities (preset system, etc.)
 └── docs/                    # Documentation
 
 ```
@@ -403,7 +407,7 @@ ys-artifacts/
 
 #### Navigation Rules:
 1. **Logo Link**: "YAMBO STUDIO — Artifacts" must always link to homepage (`/`)
-2. **Center Text**: Shows current page context (e.g., "Artifacts", "About", "ASCII Interpreter")
+2. **Center Text**: Shows current page context (e.g., "Artifacts", "About", "img-to-ASCII")
 3. **Right Navigation**:
    - "About" links to `/about.html`
    - "Tools" links to homepage `/`
@@ -411,6 +415,39 @@ ys-artifacts/
 4. **Consistent Styling**: Use exact CSS from main index.html header styles
 5. **Fixed Position**: Header must be fixed at top with `z-index: 1000`
 6. **Responsive**: Hide center text on tablet, hide right nav on mobile
+
+### Tool Thumbnails
+
+**MANDATORY**: Every tool MUST have a thumbnail image in the `/thumbnails/` folder for display on the main index page.
+
+#### Thumbnail Requirements
+- **Location**: `/thumbnails/[tool-name].png`
+- **Naming**: Use kebab-case matching the tool folder name (e.g., `ascii-creator.png`, `text-visualizer.png`)
+- **Dimensions**: 800×560px (10:7 aspect ratio, displays at 280px height)
+- **Format**: PNG (supports transparency)
+- **File Size**: < 500KB (optimize with TinyPNG or similar)
+- **Content**: Representative screenshot or preview of the tool in action
+
+#### Creating Thumbnails
+1. **From Tool**: Open the tool, create interesting example, screenshot preview area, resize to 800×560px
+2. **Custom Design**: Use Figma/Photoshop following YS design system (black, white, accent colors)
+3. **Save**: Export as PNG to `/thumbnails/[tool-name].png`
+
+#### Updating Thumbnails
+1. Replace the PNG file in `/thumbnails/` folder
+2. Commit and push to GitHub
+3. Changes appear immediately on live site (no code changes needed)
+
+#### Index.html Integration
+```html
+<div class="tool-preview">
+    <img src="thumbnails/tool-name.png" alt="Tool Name preview">
+</div>
+```
+
+**Note**: Thumbnails show in color by default.
+
+**Reference**: See `/thumbnails/README.md` for complete documentation.
 
 ### HTML Tool Requirements
 ```html
@@ -475,7 +512,7 @@ npx serve
 ## 📚 Additional Resources
 
 ### Current Tools
-- **ASCII Art Creator** (`/tools/ascii-creator/`): Advanced image-to-ASCII conversion
+- **img-to-ASCII** (`/tools/ascii-creator/`): Advanced image-to-ASCII conversion
   - Multiple character sets and algorithms
   - Color support and alpha channel handling
   - Export in various formats

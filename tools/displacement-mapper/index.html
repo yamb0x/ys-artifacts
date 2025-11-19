@@ -858,7 +858,6 @@
             setupEventListeners();
             setupCollapsibleSections();
             initializeCanvas();
-            initializePresetSystem();
         }
 
         // Canvas initialization
@@ -1745,157 +1744,169 @@
             a.click();
         }
 
-        // Preset System Integration
-        function initializePresetSystem() {
-            const presetManager = new PresetManager('displacement-mapper');
-            const presetUI = new PresetUIComponent(presetManager, 'presetContainer');
-
-            // Define extract function
-            window.extractToolParams = function() {
-                return {
-                    patternType: document.getElementById('patternType').value,
-                    patternScale: parseInt(document.getElementById('patternScale').value),
-                    patternFreq: parseFloat(document.getElementById('patternFreq').value),
-                    patternAmp: parseFloat(document.getElementById('patternAmp').value),
-                    patternRot: parseInt(document.getElementById('patternRot').value),
-                    patternFalloff: parseFloat(document.getElementById('patternFalloff').value),
-                    xStrength: parseInt(document.getElementById('xStrength').value),
-                    yStrength: parseInt(document.getElementById('yStrength').value),
-                    threshold: parseInt(document.getElementById('threshold').value),
-                    edgeMode: document.getElementById('edgeMode').value,
-                    blur: parseInt(document.getElementById('blur').value),
-                    gamma: parseFloat(document.getElementById('gamma').value),
-                    contrast: parseInt(document.getElementById('contrast').value),
-                    blackPoint: parseInt(document.getElementById('blackPoint').value),
-                    whitePoint: parseInt(document.getElementById('whitePoint').value),
-                    saturation: parseInt(document.getElementById('saturation').value),
-                    hue: parseInt(document.getElementById('hue').value),
-                    blendMode: document.getElementById('blendMode').value,
-                    opacity: parseInt(document.getElementById('opacity').value),
-                    enableChromatic: document.getElementById('enableChromatic').checked,
-                    redX: parseInt(document.getElementById('redX').value),
-                    redY: parseInt(document.getElementById('redY').value),
-                    greenX: parseInt(document.getElementById('greenX').value),
-                    greenY: parseInt(document.getElementById('greenY').value),
-                    blueX: parseInt(document.getElementById('blueX').value),
-                    blueY: parseInt(document.getElementById('blueY').value),
-                    useSharedMap: document.getElementById('useSharedMap').checked
-                };
+        // Define extract function FIRST (before creating PresetUIComponent)
+        window.extractToolParams = function() {
+            return {
+                patternType: document.getElementById('patternType').value,
+                patternScale: parseInt(document.getElementById('patternScale').value),
+                patternFreq: parseFloat(document.getElementById('patternFreq').value),
+                patternAmp: parseFloat(document.getElementById('patternAmp').value),
+                patternRot: parseInt(document.getElementById('patternRot').value),
+                patternFalloff: parseFloat(document.getElementById('patternFalloff').value),
+                xStrength: parseInt(document.getElementById('xStrength').value),
+                yStrength: parseInt(document.getElementById('yStrength').value),
+                threshold: parseInt(document.getElementById('threshold').value),
+                edgeMode: document.getElementById('edgeMode').value,
+                blur: parseInt(document.getElementById('blur').value),
+                gamma: parseFloat(document.getElementById('gamma').value),
+                contrast: parseInt(document.getElementById('contrast').value),
+                blackPoint: parseInt(document.getElementById('blackPoint').value),
+                whitePoint: parseInt(document.getElementById('whitePoint').value),
+                saturation: parseInt(document.getElementById('saturation').value),
+                hue: parseInt(document.getElementById('hue').value),
+                blendMode: document.getElementById('blendMode').value,
+                opacity: parseInt(document.getElementById('opacity').value),
+                enableChromatic: document.getElementById('enableChromatic').checked,
+                redX: parseInt(document.getElementById('redX').value),
+                redY: parseInt(document.getElementById('redY').value),
+                greenX: parseInt(document.getElementById('greenX').value),
+                greenY: parseInt(document.getElementById('greenY').value),
+                blueX: parseInt(document.getElementById('blueX').value),
+                blueY: parseInt(document.getElementById('blueY').value),
+                useSharedMap: document.getElementById('useSharedMap').checked
             };
+        };
 
-            // Define apply function
-            window.applyToolPreset = function(params) {
-                if (params.patternType !== undefined) {
-                    document.getElementById('patternType').value = params.patternType;
-                }
-                if (params.patternScale !== undefined) {
-                    document.getElementById('patternScale').value = params.patternScale;
-                    document.getElementById('patternScaleValue').textContent = params.patternScale;
-                }
-                if (params.patternFreq !== undefined) {
-                    document.getElementById('patternFreq').value = params.patternFreq;
-                    document.getElementById('patternFreqValue').textContent = params.patternFreq.toFixed(1);
-                }
-                if (params.patternAmp !== undefined) {
-                    document.getElementById('patternAmp').value = params.patternAmp;
-                    document.getElementById('patternAmpValue').textContent = params.patternAmp.toFixed(2);
-                }
-                if (params.patternRot !== undefined) {
-                    document.getElementById('patternRot').value = params.patternRot;
-                    document.getElementById('patternRotValue').textContent = params.patternRot + '°';
-                }
-                if (params.patternFalloff !== undefined) {
-                    document.getElementById('patternFalloff').value = params.patternFalloff;
-                    document.getElementById('patternFalloffValue').textContent = params.patternFalloff.toFixed(2);
-                }
-                if (params.xStrength !== undefined) {
-                    document.getElementById('xStrength').value = params.xStrength;
-                    document.getElementById('xStrengthValue').textContent = params.xStrength;
-                }
-                if (params.yStrength !== undefined) {
-                    document.getElementById('yStrength').value = params.yStrength;
-                    document.getElementById('yStrengthValue').textContent = params.yStrength;
-                }
-                if (params.threshold !== undefined) {
-                    document.getElementById('threshold').value = params.threshold;
-                    document.getElementById('thresholdValue').textContent = params.threshold;
-                }
-                if (params.edgeMode !== undefined) {
-                    document.getElementById('edgeMode').value = params.edgeMode;
-                }
-                if (params.blur !== undefined) {
-                    document.getElementById('blur').value = params.blur;
-                    document.getElementById('blurValue').textContent = params.blur;
-                }
-                if (params.gamma !== undefined) {
-                    document.getElementById('gamma').value = params.gamma;
-                    document.getElementById('gammaValue').textContent = params.gamma.toFixed(1);
-                }
-                if (params.contrast !== undefined) {
-                    document.getElementById('contrast').value = params.contrast;
-                    document.getElementById('contrastValue').textContent = params.contrast;
-                }
-                if (params.blackPoint !== undefined) {
-                    document.getElementById('blackPoint').value = params.blackPoint;
-                    document.getElementById('blackPointValue').textContent = params.blackPoint;
-                }
-                if (params.whitePoint !== undefined) {
-                    document.getElementById('whitePoint').value = params.whitePoint;
-                    document.getElementById('whitePointValue').textContent = params.whitePoint;
-                }
-                if (params.saturation !== undefined) {
-                    document.getElementById('saturation').value = params.saturation;
-                    document.getElementById('saturationValue').textContent = params.saturation;
-                }
-                if (params.hue !== undefined) {
-                    document.getElementById('hue').value = params.hue;
-                    document.getElementById('hueValue').textContent = params.hue + '°';
-                }
-                if (params.blendMode !== undefined) {
-                    document.getElementById('blendMode').value = params.blendMode;
-                }
-                if (params.opacity !== undefined) {
-                    document.getElementById('opacity').value = params.opacity;
-                    document.getElementById('opacityValue').textContent = params.opacity + '%';
-                }
-                if (params.enableChromatic !== undefined) {
-                    document.getElementById('enableChromatic').checked = params.enableChromatic;
-                }
-                if (params.redX !== undefined) {
-                    document.getElementById('redX').value = params.redX;
-                    document.getElementById('redXValue').textContent = params.redX;
-                }
-                if (params.redY !== undefined) {
-                    document.getElementById('redY').value = params.redY;
-                    document.getElementById('redYValue').textContent = params.redY;
-                }
-                if (params.greenX !== undefined) {
-                    document.getElementById('greenX').value = params.greenX;
-                    document.getElementById('greenXValue').textContent = params.greenX;
-                }
-                if (params.greenY !== undefined) {
-                    document.getElementById('greenY').value = params.greenY;
-                    document.getElementById('greenYValue').textContent = params.greenY;
-                }
-                if (params.blueX !== undefined) {
-                    document.getElementById('blueX').value = params.blueX;
-                    document.getElementById('blueXValue').textContent = params.blueX;
-                }
-                if (params.blueY !== undefined) {
-                    document.getElementById('blueY').value = params.blueY;
-                    document.getElementById('blueYValue').textContent = params.blueY;
-                }
-                if (params.useSharedMap !== undefined) {
-                    document.getElementById('useSharedMap').checked = params.useSharedMap;
-                }
+        // Define apply function FIRST (before creating PresetUIComponent)
+        window.applyToolPreset = function(params) {
+            if (params.patternType !== undefined) {
+                document.getElementById('patternType').value = params.patternType;
+            }
+            if (params.patternScale !== undefined) {
+                document.getElementById('patternScale').value = params.patternScale;
+                document.getElementById('patternScaleValue').textContent = params.patternScale;
+            }
+            if (params.patternFreq !== undefined) {
+                document.getElementById('patternFreq').value = params.patternFreq;
+                document.getElementById('patternFreqValue').textContent = params.patternFreq.toFixed(1);
+            }
+            if (params.patternAmp !== undefined) {
+                document.getElementById('patternAmp').value = params.patternAmp;
+                document.getElementById('patternAmpValue').textContent = params.patternAmp.toFixed(2);
+            }
+            if (params.patternRot !== undefined) {
+                document.getElementById('patternRot').value = params.patternRot;
+                document.getElementById('patternRotValue').textContent = params.patternRot + '°';
+            }
+            if (params.patternFalloff !== undefined) {
+                document.getElementById('patternFalloff').value = params.patternFalloff;
+                document.getElementById('patternFalloffValue').textContent = params.patternFalloff.toFixed(2);
+            }
+            if (params.xStrength !== undefined) {
+                document.getElementById('xStrength').value = params.xStrength;
+                document.getElementById('xStrengthValue').textContent = params.xStrength;
+            }
+            if (params.yStrength !== undefined) {
+                document.getElementById('yStrength').value = params.yStrength;
+                document.getElementById('yStrengthValue').textContent = params.yStrength;
+            }
+            if (params.threshold !== undefined) {
+                document.getElementById('threshold').value = params.threshold;
+                document.getElementById('thresholdValue').textContent = params.threshold;
+            }
+            if (params.edgeMode !== undefined) {
+                document.getElementById('edgeMode').value = params.edgeMode;
+            }
+            if (params.blur !== undefined) {
+                document.getElementById('blur').value = params.blur;
+                document.getElementById('blurValue').textContent = params.blur;
+            }
+            if (params.gamma !== undefined) {
+                document.getElementById('gamma').value = params.gamma;
+                document.getElementById('gammaValue').textContent = params.gamma.toFixed(1);
+            }
+            if (params.contrast !== undefined) {
+                document.getElementById('contrast').value = params.contrast;
+                document.getElementById('contrastValue').textContent = params.contrast;
+            }
+            if (params.blackPoint !== undefined) {
+                document.getElementById('blackPoint').value = params.blackPoint;
+                document.getElementById('blackPointValue').textContent = params.blackPoint;
+            }
+            if (params.whitePoint !== undefined) {
+                document.getElementById('whitePoint').value = params.whitePoint;
+                document.getElementById('whitePointValue').textContent = params.whitePoint;
+            }
+            if (params.saturation !== undefined) {
+                document.getElementById('saturation').value = params.saturation;
+                document.getElementById('saturationValue').textContent = params.saturation;
+            }
+            if (params.hue !== undefined) {
+                document.getElementById('hue').value = params.hue;
+                document.getElementById('hueValue').textContent = params.hue + '°';
+            }
+            if (params.blendMode !== undefined) {
+                document.getElementById('blendMode').value = params.blendMode;
+            }
+            if (params.opacity !== undefined) {
+                document.getElementById('opacity').value = params.opacity;
+                document.getElementById('opacityValue').textContent = params.opacity + '%';
+            }
+            if (params.enableChromatic !== undefined) {
+                document.getElementById('enableChromatic').checked = params.enableChromatic;
+            }
+            if (params.redX !== undefined) {
+                document.getElementById('redX').value = params.redX;
+                document.getElementById('redXValue').textContent = params.redX;
+            }
+            if (params.redY !== undefined) {
+                document.getElementById('redY').value = params.redY;
+                document.getElementById('redYValue').textContent = params.redY;
+            }
+            if (params.greenX !== undefined) {
+                document.getElementById('greenX').value = params.greenX;
+                document.getElementById('greenXValue').textContent = params.greenX;
+            }
+            if (params.greenY !== undefined) {
+                document.getElementById('greenY').value = params.greenY;
+                document.getElementById('greenYValue').textContent = params.greenY;
+            }
+            if (params.blueX !== undefined) {
+                document.getElementById('blueX').value = params.blueX;
+                document.getElementById('blueXValue').textContent = params.blueX;
+            }
+            if (params.blueY !== undefined) {
+                document.getElementById('blueY').value = params.blueY;
+                document.getElementById('blueYValue').textContent = params.blueY;
+            }
+            if (params.useSharedMap !== undefined) {
+                document.getElementById('useSharedMap').checked = params.useSharedMap;
+            }
 
-                // Re-render with new params
-                if (sourceImage) {
-                    regeneratePattern();
-                    render();
-                }
-            };
+            // Re-render with new params
+            if (sourceImage) {
+                regeneratePattern();
+                render();
+            }
+        };
+
+        // Initialize preset system
+        const presetManager = new PresetManager('displacement-mapper');
+        const presetUI = new PresetUIComponent(presetManager, window.extractToolParams);
+
+        // Wait for DOM to be ready, then create UI and initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', async () => {
+                presetUI.create('presetContainer');
+                await presetManager.initialize(window.applyToolPreset);
+            });
+        } else {
+            presetUI.create('presetContainer');
+            presetManager.initialize(window.applyToolPreset);
         }
+
+        // Make preset manager available globally for debugging
+        window.dispPresetManager = presetManager;
     </script>
 </body>
 </html>

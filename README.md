@@ -8,7 +8,7 @@ YS Studio Artifacts is a growing collection of standalone HTML tools designed fo
 
 ## 🛠️ Available Tools
 
-### 1. [ASCII Art Creator](tools/ascii-creator/index_v3.html)
+### 1. [img-to-ASCII](tools/ascii-creator/index_v3.html)
 Transform images into stunning ASCII art with advanced features:
 - 6 different character sets (standard, simple, blocks, extended, binary, custom)
 - Multiple brightness algorithms (average, luminosity, lightness, value, luma)
@@ -18,7 +18,7 @@ Transform images into stunning ASCII art with advanced features:
 
 **Status**: ✅ Live | **Presets**: ✅ Integrated
 
-### 2. [Text Visualizer](tools/text-visualizer/)
+### 2. [xytype](tools/text-visualizer/)
 Create animated typographic patterns with real-time effects:
 - 6 pattern types (grid, circle, wave, spiral, random, orbital)
 - Multiple animation effects (oscillate, rotate, breathe, wave)
@@ -28,7 +28,7 @@ Create animated typographic patterns with real-time effects:
 
 **Status**: ✅ Live | **Presets**: ✅ Integrated
 
-### 3. [Displacement Mapper](tools/displacement-mapper/)
+### 3. [diss mapper](tools/displacement-mapper/)
 Advanced pixel displacement tool for creating glitch and liquid effects:
 - 8+ procedural pattern generators (Perlin noise, sine waves, radial, turbulence, etc.)
 - Soft falloff controls for smooth organic shapes
