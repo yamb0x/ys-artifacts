@@ -475,53 +475,69 @@
 
 
         .keyframe-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 8px;
-            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 16px;
+            align-items: center;
         }
 
         .keyframe-card {
+            width: 12px;
+            height: 12px;
             border: 1px solid var(--ys-black);
-            cursor: pointer;
-            transition: all 0.2s;
             background: var(--ys-white);
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            flex-shrink: 0;
         }
 
         .keyframe-card:hover {
-            transform: scale(1.02);
+            background: var(--ys-black);
+            transform: scale(1.5);
         }
 
         .keyframe-card.selected {
-            border-width: 2px;
+            background: var(--ys-red);
             border-color: var(--ys-red);
         }
 
+        .keyframe-card::after {
+            content: attr(data-timestamp);
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ys-black);
+            color: var(--ys-white);
+            padding: 4px 8px;
+            font-size: 9px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s;
+            z-index: 10;
+        }
+
+        .keyframe-card:hover::after {
+            opacity: 1;
+        }
+
         .keyframe-thumbnail {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-            display: block;
-            border-bottom: 1px solid var(--ys-black);
-            image-rendering: crisp-edges;
+            display: none;
         }
 
         .keyframe-info {
-            padding: 6px;
+            display: none;
         }
 
         .keyframe-timestamp {
-            font-size: 10px;
-            font-weight: 500;
-            margin-bottom: 2px;
+            display: none;
         }
 
         .keyframe-frame-num {
-            font-size: 8px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin-bottom: 4px;
+            display: none;
         }
 
         .keyframe-export-btn {
@@ -900,9 +916,17 @@
                                 <label>Keyframe Count</label>
                                 <select id="keyframeCount">
                                     <option value="5">5 frames (fast)</option>
-                                    <option value="10" selected>10 frames (balanced)</option>
+                                    <option value="10">10 frames (balanced)</option>
                                     <option value="15">15 frames (detailed)</option>
                                     <option value="20">20 frames (very detailed)</option>
+                                    <option value="30">30 frames</option>
+                                    <option value="40">40 frames</option>
+                                    <option value="50">50 frames</option>
+                                    <option value="60">60 frames (1 per sec for 60s video)</option>
+                                    <option value="75">75 frames</option>
+                                    <option value="100">100 frames</option>
+                                    <option value="150">150 frames</option>
+                                    <option value="200" selected>200 frames (maximum)</option>
                                 </select>
                             </div>
 
@@ -910,12 +934,12 @@
                             <div class="control-item">
                                 <label>Extraction Range</label>
                                 <div style="display: flex; gap: 4px; margin-bottom: 8px;">
-                                    <button class="range-preset-btn active" data-range="full"
-                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-black); color: var(--ys-white); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
+                                    <button class="range-preset-btn" data-range="full"
+                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-white); color: var(--ys-black); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
                                         Full
                                     </button>
-                                    <button class="range-preset-btn" data-range="start"
-                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-white); color: var(--ys-black); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
+                                    <button class="range-preset-btn active" data-range="start"
+                                            style="flex: 1; padding: 6px; border: 1px solid var(--ys-black); background: var(--ys-black); color: var(--ys-white); font-size: 9px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">
                                         Start
                                     </button>
                                     <button class="range-preset-btn" data-range="middle"
@@ -932,10 +956,10 @@
                             <!-- Custom Time Range -->
                             <div class="control-item" id="customRangeControls" style="display: none;">
                                 <label>Start Time <span class="range-value" id="startTimeValue">0.0s</span></label>
-                                <input type="range" id="startTime" min="0" max="30" step="0.5" value="0">
+                                <input type="range" id="startTime" min="0" max="300" step="0.5" value="0">
 
                                 <label style="margin-top: 8px;">Duration <span class="range-value" id="durationValue">Full</span></label>
-                                <input type="range" id="duration" min="1" max="30" step="0.5" value="30">
+                                <input type="range" id="duration" min="1" max="300" step="0.5" value="30">
                             </div>
 
                             <div style="font-size: 9px; opacity: 0.7; margin-top: 8px; line-height: 1.4;">
@@ -1519,12 +1543,8 @@
                     currentVideo.src = URL.createObjectURL(file);
                 });
 
-                // Check duration (max 30 seconds)
-                if (currentVideo.duration > 30) {
-                    alert('Video is too long. Maximum duration is 30 seconds.');
-                    resetUpload();
-                    return;
-                }
+                // No duration limit - users can upload longer videos
+                // Frame extraction will be limited by the selected range preset (default: start = 5 seconds)
 
                 // Extract metadata
                 const metadata = {
@@ -1837,19 +1857,13 @@
             // Clear existing cards
             grid.innerHTML = '';
 
-            // Create cards for each keyframe
+            // Create simple indicator cubes for each keyframe
             videoKeyframes.forEach((frame, index) => {
                 const card = document.createElement('div');
                 card.className = 'keyframe-card';
                 card.dataset.index = index;
-
-                card.innerHTML = `
-                    <img src="${frame.thumbnail}" alt="Frame ${index + 1}" class="keyframe-thumbnail">
-                    <div class="keyframe-info">
-                        <div class="keyframe-timestamp">${frame.timestamp.toFixed(2)}s</div>
-                        <div class="keyframe-frame-num">Frame ${frame.frameNumber}</div>
-                    </div>
-                `;
+                card.dataset.timestamp = `${frame.timestamp.toFixed(2)}s | Frame ${frame.frameNumber}`;
+                card.title = `${frame.timestamp.toFixed(2)}s`;
 
                 card.addEventListener('click', () => {
                     // Stop playback when manually selecting a frame
