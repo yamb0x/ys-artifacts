@@ -2211,18 +2211,22 @@
                 const getAVCCodec = (width, height) => {
                     const pixels = width * height;
 
-                    // AVC High Profile with appropriate level for resolution
-                    // Level 3.1: 1280×720 (921,600 pixels) - avc1.64001f
-                    // Level 4.0: 2048×1024 (2,097,152 pixels) - avc1.640028
-                    // Level 4.2: 2048×1088 (4,194,304 pixels) - avc1.64002a
-                    // Level 5.0: 2560×1920 (8,912,896 pixels) - avc1.640032
-                    // Level 5.1: 4096×2304 (9,437,184 pixels) - avc1.640033
+                    // AVC High Profile (0x64) with correct MaxFS (max frame size) per level
+                    // Based on H.264 spec: MaxFS is measured in macroblocks (16x16), so pixels = MaxFS * 256
+                    // Level 3.1 (0x1F): MaxFS=3600   → 921,600 pixels   - avc1.64001f
+                    // Level 4.0 (0x28): MaxFS=8192   → 2,097,152 pixels - avc1.640028
+                    // Level 4.1 (0x29): MaxFS=8704   → 2,228,224 pixels - avc1.640029
+                    // Level 4.2 (0x2A): MaxFS=8704   → 2,228,224 pixels - avc1.64002a (same as 4.1!)
+                    // Level 5.0 (0x32): MaxFS=22080  → 5,652,480 pixels - avc1.640032
+                    // Level 5.1 (0x33): MaxFS=36864  → 9,437,184 pixels - avc1.640033
+                    // Level 5.2 (0x34): MaxFS=36864  → 9,437,184 pixels - avc1.640034 (same as 5.1!)
 
-                    if (pixels <= 921600) return 'avc1.64001f';        // 720p
-                    if (pixels <= 2097152) return 'avc1.640028';      // 1080p
-                    if (pixels <= 4194304) return 'avc1.64002a';      // 2K
-                    if (pixels <= 8912896) return 'avc1.640032';      // 4K
-                    return 'avc1.640033';                              // 4K+
+                    if (pixels <= 921600) return 'avc1.64001f';        // 720p - Level 3.1
+                    if (pixels <= 2097152) return 'avc1.640028';      // 1080p - Level 4.0
+                    if (pixels <= 2228224) return 'avc1.640029';      // Level 4.1
+                    if (pixels <= 5652480) return 'avc1.640032';      // 4K - Level 5.0
+                    if (pixels <= 9437184) return 'avc1.640033';      // 4K+ - Level 5.1
+                    return 'avc1.640034';                              // 8K - Level 5.2
                 };
 
                 const codecString = getAVCCodec(canvasWidth, canvasHeight);
