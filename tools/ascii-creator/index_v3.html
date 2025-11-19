@@ -2203,6 +2203,27 @@
                     fastStart: 'in-memory'
                 });
 
+                // Calculate appropriate AVC level based on resolution
+                const getAVCCodec = (width, height) => {
+                    const pixels = width * height;
+
+                    // AVC High Profile with appropriate level for resolution
+                    // Level 3.1: 1280×720 (921,600 pixels) - avc1.64001f
+                    // Level 4.0: 2048×1024 (2,097,152 pixels) - avc1.640028
+                    // Level 4.2: 2048×1088 (4,194,304 pixels) - avc1.64002a
+                    // Level 5.0: 2560×1920 (8,912,896 pixels) - avc1.640032
+                    // Level 5.1: 4096×2304 (9,437,184 pixels) - avc1.640033
+
+                    if (pixels <= 921600) return 'avc1.64001f';        // 720p
+                    if (pixels <= 2097152) return 'avc1.640028';      // 1080p
+                    if (pixels <= 4194304) return 'avc1.64002a';      // 2K
+                    if (pixels <= 8912896) return 'avc1.640032';      // 4K
+                    return 'avc1.640033';                              // 4K+
+                };
+
+                const codecString = getAVCCodec(canvasWidth, canvasHeight);
+                console.log(`Using codec ${codecString} for ${canvasWidth}×${canvasHeight} (${canvasWidth * canvasHeight} pixels)`);
+
                 // Setup VideoEncoder
                 const encoder = new VideoEncoder({
                     output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
@@ -2213,7 +2234,7 @@
                 });
 
                 encoder.configure({
-                    codec: 'avc1.42001f',
+                    codec: codecString,
                     width: canvasWidth,
                     height: canvasHeight,
                     bitrate: 8_000_000,
