@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>direction-type - YS Studio Artifacts</title>
+    <link rel="stylesheet" href="../../shared/preset-ui.css">
+    <style>
+        /* Font Imports */
+        @font-face {
+            font-family: 'Courier Prime';
+            src: url('../../fonts/Courier_Prime/CourierPrime-Regular.ttf') format('truetype');
+            font-weight: 400;
+        }
+
+        @font-face {
+            font-family: 'Courier Prime';
+            src: url('../../fonts/Courier_Prime/CourierPrime-Bold.ttf') format('truetype');
+            font-weight: 700;
+        }
+
+        @font-face {
+            font-family: 'Basis Grotesque';
+            src: url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.woff2') format('woff2'),
+                 url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.woff') format('woff'),
+                 url('../../fonts/Basis Grotesque/basis-grotesque-regular-pro.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Kalice';
+            src: url('../../fonts/Kalice/Kalice-Regular-alternative.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Kalice';
+            src: url('../../fonts/Kalice/Kalice-Italic-alternative.otf') format('opentype');
+            font-weight: 400;
+            font-style: italic;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'SangBleu Republic';
+            src: url('../../fonts/SangBleuRepublic-/WOFF2/SangBleuRepublic-Book-WebTrial.woff2') format('woff2');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'SangBleu Republic';
+            src: url('../../fonts/SangBleuRepublic-/WOFF2/SangBleuRepublic-Regular-WebTrial.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'SangBleu Republic';
+            src: url('../../fonts/SangBleuRepublic-/WOFF2/SangBleuRepublic-Medium-WebTrial.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'SangBleu Republic';
+            src: url('../../fonts/SangBleuRepublic-/WOFF2/SangBleuRepublic-Bold-WebTrial.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Suisse Intl';
+            src: url('../../fonts/SuisseIntl/SuisseIntl-Light.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Suisse Intl';
+            src: url('../../fonts/SuisseIntl/SuisseIntl-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Suisse Intl';
+            src: url('../../fonts/SuisseIntl/SuisseIntl-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Suisse Intl';
+            src: url('../../fonts/SuisseIntl/SuisseIntl-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Suisse Intl';
+            src: url('../../fonts/SuisseIntl/SuisseIntl-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Suisse Intl';
+            src: url('../../fonts/SuisseIntl/SuisseIntl-Black.ttf') format('truetype');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* YS Studio Design System Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colors */
+            --ys-white: #FFFFFF;
+            --ys-black: #000000;
+            --ys-red: #FF0000;
+            --ys-gray: #D9D9D9;
+            --ys-green: #00FF00;
+            --ys-magenta: #FF00FF;
+            --ys-yellow: #FFFF00;
+
+            /* Fonts */
+            --font-suisse: 'Suisse Intl', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-sangbleu: 'SangBleu Republic', Georgia, 'Times New Roman', serif;
+            --font-mono: 'Courier Prime', 'Courier New', monospace;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+        }
+
+        body {
+            font-family: var(--font-suisse);
+            color: var(--ys-black);
+            background: var(--ys-white);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Component */
+        .ys-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 57px;
+            padding: 24px;
+            background: var(--ys-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            border-bottom: 1px solid var(--ys-black);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 2px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left:hover {
+            opacity: 0.7;
+        }
+
+        .studio-name {
+            font-weight: 300;
+        }
+
+        .project-type {
+            font-style: italic;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 40px;
+            font-size: 12px;
+            line-height: 24px;
+            letter-spacing: 0.24px;
+            font-weight: 300;
+        }
+
+        .header-right a {
+            color: var(--ys-black);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-right a:hover {
+            opacity: 0.6;
+        }
+
+        .header-right a.active {
+            font-weight: 500;
+        }
+
+        /* Cross Elements */
+        .cross-small {
+            width: 12px;
+            height: 12px;
+            position: relative;
+            color: var(--ys-black);
+            display: inline-block;
+        }
+
+        .cross-small::before,
+        .cross-small::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+        }
+
+        .cross-small::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cross-small::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Main Container */
+        .ys-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 80px 24px 24px;
+            min-height: 100vh;
+        }
+
+        /* Title Section */
+        .title-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .type-display-xl {
+            font-family: var(--font-sangbleu);
+            font-size: 120px;
+            line-height: 120px;
+            letter-spacing: -4.8px;
+            font-style: italic;
+            text-transform: lowercase;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        /* Cross Wrapper Component */
+        .ys-cross-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: var(--ys-white);
+            margin-bottom: 24px;
+        }
+
+        .cross-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 12px;
+            position: relative;
+        }
+
+        .wrapper-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .control-panel .wrapper-content {
+            padding: 12px;
+        }
+
+        /* Main Working Area - Side by Side */
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            align-items: start;
+        }
+
+        /* Left Panel - Controls */
+        .control-panel {
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom Scrollbar for Control Panel */
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: var(--ys-white);
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: var(--ys-black);
+            border-radius: 0;
+        }
+
+        /* Controls */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-item label {
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .control-item input,
+        .control-item select {
+            padding: 6px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+            font-family: var(--font-suisse);
+            font-size: 12px;
+        }
+
+        .control-item input[type="color"] {
+            height: 32px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .control-item input[type="checkbox"] {
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+        }
+
+        /* Custom Range Slider Styling */
+        .control-item input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 1px;
+            background: var(--ys-black);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ys-black);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Buttons */
+        .ys-button {
+            padding: 10px 16px;
+            background: var(--ys-white);
+            border: 1px solid var(--ys-black);
+            font-family: var(--font-suisse);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .ys-button:hover {
+            background: var(--ys-black);
+            color: var(--ys-white);
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            position: relative;
+            min-height: 720px;
+            border: 1px solid var(--ys-black);
+            background: var(--ys-white);
+        }
+
+        #mainCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            cursor: crosshair;
+        }
+
+        .canvas-help {
+            padding: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid var(--ys-gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                position: static;
+                max-height: none;
+            }
+
+            .type-display-xl {
+                font-size: 60px;
+                line-height: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-center {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="ys-header">
+        <a href="/" class="header-left">
+            <span class="studio-name">YAMBO STUDIO</span>
+            <span>—</span>
+            <span class="project-type">Artifacts</span>
+        </a>
+        <div class="header-center">direction-type</div>
+        <nav class="header-right">
+            <a href="/about.html">About</a>
+            <a href="/">Tools</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="ys-container">
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="type-display-xl">direction type</h1>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="main-workspace">
+            <!-- Left Panel - Controls -->
+            <div class="control-panel">
+                <!-- Font Settings -->
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <div class="section-title">FONT</div>
+
+                            <div class="control-item">
+                                <label for="fontSize">Font Size</label>
+                                <input type="range" id="fontSize" min="12" max="120" value="32" step="1">
+                            </div>
+
+                            <div class="control-item">
+                                <label for="fontFamily">Font Family</label>
+                                <select id="fontFamily">
+                                    <option value="Basis Grotesque" selected>Basis Grotesque</option>
+                                    <option value="Suisse Intl">Suisse Intl</option>
+                                    <option value="SangBleu Republic">SangBleu Republic</option>
+                                    <option value="Courier Prime">Courier Prime</option>
+                                    <option value="Kalice">Kalice</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Verdana">Verdana</option>
+                                </select>
+                            </div>
+
+                            <div class="control-item">
+                                <label for="fontWeight">Font Weight</label>
+                                <select id="fontWeight">
+                                    <option value="300">Light (300)</option>
+                                    <option value="400" selected>Regular (400)</option>
+                                    <option value="500">Medium (500)</option>
+                                    <option value="600">SemiBold (600)</option>
+                                    <option value="700">Bold (700)</option>
+                                    <option value="900">Black (900)</option>
+                                </select>
+                            </div>
+
+                            <div class="control-item">
+                                <label for="letterSpacing">Letter Spacing</label>
+                                <input type="range" id="letterSpacing" min="0" max="50" value="0" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
+                <!-- Vector Field Settings -->
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <div class="section-title">VECTOR FIELD</div>
+
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="showDirectionLine" checked>
+                                    Show Direction Line
+                                </label>
+                            </div>
+
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="showTextCursor" checked>
+                                    Show Text Cursor
+                                </label>
+                            </div>
+
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="showMouseTarget" checked>
+                                    Show Mouse Target
+                                </label>
+                            </div>
+
+                            <div class="control-item">
+                                <label for="lineOpacity">Direction Line Opacity</label>
+                                <input type="range" id="lineOpacity" min="0" max="100" value="50" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
+                <!-- Color Settings -->
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <div class="section-title">COLORS</div>
+
+                            <div class="control-item">
+                                <label for="bgColor">Background</label>
+                                <input type="color" id="bgColor" value="#ffffff">
+                            </div>
+
+                            <div class="control-item">
+                                <label for="textColor">Text Color</label>
+                                <input type="color" id="textColor" value="#000000">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
+                <!-- Export Settings -->
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <div class="section-title">EXPORT</div>
+
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="save2x" checked>
+                                    Save at 2× Resolution
+                                </label>
+                            </div>
+
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="transparentBg">
+                                    Transparent Background
+                                </label>
+                            </div>
+
+                            <button class="ys-button" onclick="exportPNG()">Export PNG</button>
+                            <button class="ys-button" onclick="exportJPG()">Export JPG</button>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="ys-cross-wrapper">
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                    <div class="wrapper-content">
+                        <div class="controls-section">
+                            <div class="section-title">ACTIONS</div>
+
+                            <button class="ys-button" id="controlModeBtn" onclick="toggleControlMode()">Free-Spirit Mode</button>
+                            <button class="ys-button" onclick="clearCanvas()">Clear Canvas</button>
+                            <button class="ys-button" onclick="resetPosition()">Reset Position</button>
+                            <button class="ys-button" onclick="toggleNavigationMode()">Navigation Mode (ESC)</button>
+                        </div>
+                    </div>
+                    <div class="cross-row">
+                        <span class="cross-small"></span>
+                        <span class="cross-small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Canvas -->
+            <div class="canvas-area">
+                <canvas id="mainCanvas" width="1280" height="720"></canvas>
+                <div class="canvas-help">
+                    Type to place letters | Move mouse to set direction | Enter = position cursor (+), Enter again = start new line | ESC for navigation mode
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            mode: 'typing', // 'typing', 'positioning', or 'navigation'
+            controlMode: 'cursor', // 'cursor' or 'free-spirit'
+            lines: [],
+            currentLine: {
+                text: '',
+                characters: [],
+                cursorX: 640, // Start in center
+                cursorY: 360,
+                targetX: 640,
+                targetY: 360
+            },
+            mouseX: 640,
+            mouseY: 360,
+            selectedLineIndex: -1,
+            dragOffset: { x: 0, y: 0 },
+            // Free-spirit mode
+            noiseOffset: 0,
+            freeSpiritTarget: { x: 640, y: 360 }
+        };
+
+        // ============================================
+        // CANVAS SETUP
+        // ============================================
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // ============================================
+        // PERLIN NOISE (Simplified for free-spirit mode)
+        // ============================================
+        function simpleNoise(x) {
+            const X = Math.floor(x) & 255;
+            x -= Math.floor(x);
+            const u = x * x * (3 - 2 * x);
+            const a = Math.sin(X * 12.9898 + 78.233) * 43758.5453;
+            const b = Math.sin((X + 1) * 12.9898 + 78.233) * 43758.5453;
+            return (a - Math.floor(a)) * (1 - u) + (b - Math.floor(b)) * u;
+        }
+
+        // ============================================
+        // RENDERING
+        // ============================================
+        function render() {
+            // Update free-spirit target if in that mode
+            if (state.controlMode === 'free-spirit' && state.mode === 'typing') {
+                state.noiseOffset += 0.005; // Slow movement
+                const noiseX = simpleNoise(state.noiseOffset) * 2 - 1;
+                const noiseY = simpleNoise(state.noiseOffset + 100) * 2 - 1;
+
+                // Move target slowly around canvas
+                state.freeSpiritTarget.x += noiseX * 3;
+                state.freeSpiritTarget.y += noiseY * 3;
+
+                // Keep within bounds with padding
+                state.freeSpiritTarget.x = Math.max(50, Math.min(canvas.width - 50, state.freeSpiritTarget.x));
+                state.freeSpiritTarget.y = Math.max(50, Math.min(canvas.height - 50, state.freeSpiritTarget.y));
+            }
+
+            // Get settings
+            const bgColor = document.getElementById('bgColor').value;
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const fontFamily = document.getElementById('fontFamily').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = parseInt(document.getElementById('letterSpacing').value);
+            const textColor = document.getElementById('textColor').value;
+            const showDirectionLine = document.getElementById('showDirectionLine').checked;
+            const showTextCursor = document.getElementById('showTextCursor').checked;
+            const showMouseTarget = document.getElementById('showMouseTarget').checked;
+            const lineOpacity = parseInt(document.getElementById('lineOpacity').value) / 100;
+
+            // Clear canvas
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Set font with weight
+            ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+            ctx.fillStyle = textColor;
+            ctx.textBaseline = 'middle';
+
+            // Render all completed lines
+            state.lines.forEach((line, index) => {
+                if (index === state.selectedLineIndex && state.mode === 'navigation') {
+                    ctx.strokeStyle = '#ff0000';
+                    ctx.lineWidth = 2;
+                    // Draw selection box around line
+                    const bounds = getLineBounds(line);
+                    ctx.strokeRect(bounds.x - 10, bounds.y - 10, bounds.width + 20, bounds.height + 20);
+                }
+
+                line.characters.forEach(char => {
+                    ctx.save();
+                    ctx.translate(char.x, char.y);
+                    ctx.rotate(char.angle);
+                    ctx.fillText(char.char, 0, 0);
+                    ctx.restore();
+                });
+            });
+
+            // Render current line being typed
+            if (state.mode === 'typing') {
+                state.currentLine.characters.forEach(char => {
+                    ctx.save();
+                    ctx.translate(char.x, char.y);
+                    ctx.rotate(char.angle);
+                    ctx.fillText(char.char, 0, 0);
+                    ctx.restore();
+                });
+
+                // Determine target position based on control mode
+                let targetX, targetY;
+                if (state.controlMode === 'free-spirit') {
+                    targetX = state.freeSpiritTarget.x;
+                    targetY = state.freeSpiritTarget.y;
+                } else {
+                    targetX = state.mouseX;
+                    targetY = state.mouseY;
+                }
+
+                // Calculate angle from text cursor to target
+                const dx = targetX - state.currentLine.cursorX;
+                const dy = targetY - state.currentLine.cursorY;
+                const angle = Math.atan2(dy, dx);
+
+                // Draw indicators using { ----- } in black, smaller size
+                const indicatorSize = Math.max(12, fontSize * 0.4); // Smaller: 40% of text size, min 12px
+                ctx.font = `${fontWeight} ${indicatorSize}px ${fontFamily}`;
+                ctx.fillStyle = '#000000'; // Black color
+
+                // Draw target symbol }
+                if (showMouseTarget) {
+                    ctx.save();
+                    ctx.translate(targetX, targetY);
+                    ctx.rotate(angle);
+                    ctx.fillText('}', 0, 0);
+                    ctx.restore();
+                }
+
+                // Draw direction line (dashed) in black
+                if (showDirectionLine) {
+                    ctx.save();
+                    ctx.globalAlpha = lineOpacity;
+                    ctx.strokeStyle = '#000000'; // Black color
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(state.currentLine.cursorX, state.currentLine.cursorY);
+                    ctx.lineTo(targetX, targetY);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
+                // Draw text cursor symbol {
+                if (showTextCursor) {
+                    ctx.save();
+                    ctx.translate(state.currentLine.cursorX, state.currentLine.cursorY);
+                    ctx.rotate(angle);
+                    ctx.fillText('{', 0, 0);
+                    ctx.restore();
+                }
+            }
+
+            // Render positioning mode (cursor placement)
+            if (state.mode === 'positioning') {
+                // Draw positioning cursor as +
+                const indicatorSize = Math.max(16, fontSize * 0.5);
+                ctx.font = `${fontWeight} ${indicatorSize}px ${fontFamily}`;
+                ctx.fillStyle = '#000000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('+', state.currentLine.cursorX, state.currentLine.cursorY);
+                ctx.textAlign = 'left'; // Reset
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        // ============================================
+        // TEXT PLACEMENT
+        // ============================================
+        function placeCharacter(char) {
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const fontFamily = document.getElementById('fontFamily').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = parseInt(document.getElementById('letterSpacing').value);
+
+            ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+            const metrics = ctx.measureText(char);
+            const charWidth = metrics.width + letterSpacing;
+
+            // Determine target based on control mode
+            let targetX, targetY;
+            if (state.controlMode === 'free-spirit') {
+                targetX = state.freeSpiritTarget.x;
+                targetY = state.freeSpiritTarget.y;
+            } else {
+                targetX = state.mouseX;
+                targetY = state.mouseY;
+            }
+
+            // Calculate angle
+            const dx = targetX - state.currentLine.cursorX;
+            const dy = targetY - state.currentLine.cursorY;
+            const angle = Math.atan2(dy, dx);
+
+            // Store character with position and rotation
+            state.currentLine.characters.push({
+                char: char,
+                x: state.currentLine.cursorX,
+                y: state.currentLine.cursorY,
+                angle: angle
+            });
+
+            // Advance cursor along vector
+            state.currentLine.cursorX += charWidth * Math.cos(angle);
+            state.currentLine.cursorY += charWidth * Math.sin(angle);
+        }
+
+        function enterPositioningMode() {
+            // Save current line if it has characters
+            if (state.currentLine.characters.length > 0) {
+                state.lines.push({
+                    characters: [...state.currentLine.characters]
+                });
+            }
+
+            // Switch to positioning mode
+            state.mode = 'positioning';
+            canvas.style.cursor = 'crosshair';
+        }
+
+        function startNewLineFromPosition() {
+            // Exit positioning mode and start fresh line at positioned cursor
+            state.mode = 'typing';
+            state.currentLine = {
+                text: '',
+                characters: [],
+                cursorX: state.currentLine.cursorX, // Keep positioned location
+                cursorY: state.currentLine.cursorY,
+                targetX: state.mouseX,
+                targetY: state.mouseY
+            };
+            canvas.style.cursor = 'crosshair';
+        }
+
+        function backspace() {
+            if (state.currentLine.characters.length > 0) {
+                const removed = state.currentLine.characters.pop();
+                // Move cursor back
+                const dx = removed.x - state.currentLine.cursorX;
+                const dy = removed.y - state.currentLine.cursorY;
+                state.currentLine.cursorX = removed.x;
+                state.currentLine.cursorY = removed.y;
+            }
+        }
+
+        // ============================================
+        // EVENT HANDLERS
+        // ============================================
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            state.mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            state.mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            // In positioning mode, move the cursor to mouse position
+            if (state.mode === 'positioning') {
+                state.currentLine.cursorX = state.mouseX;
+                state.currentLine.cursorY = state.mouseY;
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (state.mode === 'typing') {
+                // Handle typing mode
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    enterPositioningMode();
+                } else if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    backspace();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    toggleNavigationMode();
+                } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    placeCharacter(e.key);
+                }
+            } else if (state.mode === 'positioning') {
+                // Handle positioning mode - can only move cursor and press Enter
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    startNewLineFromPosition();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    // Cancel positioning, go back to typing at current position
+                    state.mode = 'typing';
+                }
+                // Typing is disabled in positioning mode
+            } else if (state.mode === 'navigation') {
+                // Handle navigation mode
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    toggleNavigationMode();
+                } else if (e.key === 'Delete' && state.selectedLineIndex !== -1) {
+                    e.preventDefault();
+                    state.lines.splice(state.selectedLineIndex, 1);
+                    state.selectedLineIndex = -1;
+                }
+            }
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (state.mode === 'navigation') {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                // Check if click is near any line
+                state.selectedLineIndex = -1;
+                state.lines.forEach((line, index) => {
+                    const bounds = getLineBounds(line);
+                    if (x >= bounds.x - 10 && x <= bounds.x + bounds.width + 10 &&
+                        y >= bounds.y - 10 && y <= bounds.y + bounds.height + 10) {
+                        state.selectedLineIndex = index;
+                    }
+                });
+            }
+        });
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function getLineBounds(line) {
+            if (line.characters.length === 0) return { x: 0, y: 0, width: 0, height: 0 };
+
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            line.characters.forEach(char => {
+                minX = Math.min(minX, char.x);
+                minY = Math.min(minY, char.y);
+                maxX = Math.max(maxX, char.x);
+                maxY = Math.max(maxY, char.y);
+            });
+
+            return {
+                x: minX,
+                y: minY,
+                width: maxX - minX,
+                height: maxY - minY
+            };
+        }
+
+        // ============================================
+        // UI ACTIONS
+        // ============================================
+        window.clearCanvas = function() {
+            state.lines = [];
+            state.currentLine = {
+                text: '',
+                characters: [],
+                cursorX: 640,
+                cursorY: 360,
+                targetX: 640,
+                targetY: 360
+            };
+            state.selectedLineIndex = -1;
+        };
+
+        window.resetPosition = function() {
+            state.currentLine.cursorX = canvas.width / 2;
+            state.currentLine.cursorY = canvas.height / 2;
+        };
+
+        window.toggleNavigationMode = function() {
+            if (state.mode === 'typing' || state.mode === 'positioning') {
+                // Save current line before switching
+                if (state.currentLine.characters.length > 0) {
+                    state.lines.push({
+                        characters: [...state.currentLine.characters]
+                    });
+                    state.currentLine = {
+                        text: '',
+                        characters: [],
+                        cursorX: state.currentLine.cursorX,
+                        cursorY: state.currentLine.cursorY,
+                        targetX: state.mouseX,
+                        targetY: state.mouseY
+                    };
+                }
+                state.mode = 'navigation';
+                canvas.style.cursor = 'default';
+            } else {
+                state.mode = 'typing';
+                canvas.style.cursor = 'crosshair';
+                state.selectedLineIndex = -1;
+            }
+        };
+
+        window.toggleControlMode = function() {
+            if (state.controlMode === 'cursor') {
+                state.controlMode = 'free-spirit';
+                // Initialize free-spirit target at current cursor
+                state.freeSpiritTarget = {
+                    x: state.currentLine.cursorX,
+                    y: state.currentLine.cursorY
+                };
+                canvas.style.cursor = 'none';
+                document.getElementById('controlModeBtn').textContent = 'Cursor Mode';
+            } else {
+                state.controlMode = 'cursor';
+                canvas.style.cursor = 'crosshair';
+                document.getElementById('controlModeBtn').textContent = 'Free-Spirit Mode';
+            }
+        };
+
+        window.exportPNG = function() {
+            const save2x = document.getElementById('save2x').checked;
+            const transparentBg = document.getElementById('transparentBg').checked;
+
+            // Create temporary canvas
+            const scale = save2x ? 2 : 1;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width * scale;
+            tempCanvas.height = canvas.height * scale;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.scale(scale, scale);
+
+            // Fill background
+            if (!transparentBg) {
+                const bgColor = document.getElementById('bgColor').value;
+                tempCtx.fillStyle = bgColor;
+                tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // Render all text
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const fontFamily = document.getElementById('fontFamily').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const textColor = document.getElementById('textColor').value;
+
+            tempCtx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+            tempCtx.fillStyle = textColor;
+            tempCtx.textBaseline = 'middle';
+
+            state.lines.forEach(line => {
+                line.characters.forEach(char => {
+                    tempCtx.save();
+                    tempCtx.translate(char.x, char.y);
+                    tempCtx.rotate(char.angle);
+                    tempCtx.fillText(char.char, 0, 0);
+                    tempCtx.restore();
+                });
+            });
+
+            // Download
+            tempCanvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `direction-type-${Date.now()}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        };
+
+        window.exportJPG = function() {
+            const save2x = document.getElementById('save2x').checked;
+
+            // Create temporary canvas
+            const scale = save2x ? 2 : 1;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width * scale;
+            tempCanvas.height = canvas.height * scale;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.scale(scale, scale);
+
+            // Fill background (JPG doesn't support transparency)
+            const bgColor = document.getElementById('bgColor').value;
+            tempCtx.fillStyle = bgColor;
+            tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Render all text
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const fontFamily = document.getElementById('fontFamily').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const textColor = document.getElementById('textColor').value;
+
+            tempCtx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+            tempCtx.fillStyle = textColor;
+            tempCtx.textBaseline = 'middle';
+
+            state.lines.forEach(line => {
+                line.characters.forEach(char => {
+                    tempCtx.save();
+                    tempCtx.translate(char.x, char.y);
+                    tempCtx.rotate(char.angle);
+                    tempCtx.fillText(char.char, 0, 0);
+                    tempCtx.restore();
+                });
+            });
+
+            // Download
+            tempCanvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `direction-type-${Date.now()}.jpg`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/jpeg', 0.95);
+        };
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        function init() {
+            // Start render loop
+            render();
+        }
+
+        init();
+    </script>
+</body>
+</html>
