@@ -1173,7 +1173,7 @@
                         <div class="fps-control">
                             <label class="fps-label" id="fpsLabel">10 FPS</label>
                             <input type="range" class="fps-slider" id="fpsSlider"
-                                   min="1" max="30" value="10" step="1"
+                                   min="1" max="60" value="10" step="1"
                                    oninput="updatePlaybackFPS(parseInt(this.value))">
                         </div>
                     </div>
@@ -1207,6 +1207,7 @@
                             <button class="export-btn" onclick="exportHTML()">Export HTML</button>
                             <button class="export-btn" onclick="exportPNG()">Export PNG</button>
                             <button class="export-btn" id="exportAllZipBtn" onclick="exportAllKeyframes()" style="display: none;">Export All (ZIP)</button>
+                            <button class="export-btn" id="exportMP4Btn" onclick="promptAndExportMP4()" style="display: none;">Export MP4</button>
                             <button class="export-btn" onclick="copyToClipboard()">Copy</button>
                             <button class="export-btn" onclick="resetAll()">Reset</button>
                         </div>
@@ -1432,6 +1433,7 @@
             document.getElementById('fontSizeLabel').textContent = 'Font Size';
             document.getElementById('fontSizeHint').style.display = 'none';
             document.getElementById('exportAllZipBtn').style.display = 'none';
+            document.getElementById('exportMP4Btn').style.display = 'none';
             document.getElementById('replaceBtn').textContent = 'Replace Image';
         }
 
@@ -1441,6 +1443,7 @@
             document.getElementById('fontSizeLabel').textContent = 'ASCII Density (Font Size)';
             document.getElementById('fontSizeHint').style.display = 'block';
             document.getElementById('exportAllZipBtn').style.display = 'inline-block';
+            document.getElementById('exportMP4Btn').style.display = 'inline-block';
             document.getElementById('replaceBtn').textContent = 'Replace Video';
         }
 
@@ -2125,6 +2128,184 @@
             } finally {
                 exportBtn.disabled = false;
                 exportBtn.textContent = 'Export All (ZIP)';
+            }
+        }
+
+        // Prompt user for FPS and export MP4
+        function promptAndExportMP4() {
+            const fpsInput = prompt('Enter FPS for MP4 export (recommended: 24-60):', '30');
+            if (fpsInput === null) return; // User cancelled
+
+            const fps = parseInt(fpsInput);
+            if (isNaN(fps) || fps < 1 || fps > 120) {
+                alert('Invalid FPS. Please enter a number between 1 and 120.');
+                return;
+            }
+
+            exportKeyframesAsMP4(fps);
+        }
+
+        // MP4 Export using WebCodecs API (10x faster than real-time!)
+        async function exportKeyframesAsMP4(fps = 30) {
+            if (!videoKeyframes || videoKeyframes.length === 0) {
+                alert('No keyframes to export');
+                return;
+            }
+
+            // Check WebCodecs support
+            if (!window.VideoEncoder) {
+                alert('WebCodecs API not supported. Please use Chrome 94+, Edge 94+, or Opera 80+');
+                return;
+            }
+
+            try {
+                showVideoProcessing(`Initializing MP4 encoder...`);
+
+                // Get first frame to determine dimensions
+                const firstFrame = videoKeyframes[0];
+                const dimensions = calculateASCIIDimensions(firstFrame.videoWidth, firstFrame.videoHeight);
+
+                if (!dimensions) {
+                    alert('Cannot export with current font settings. Please adjust font size, letter spacing, or line height.');
+                    hideVideoProcessing();
+                    return;
+                }
+
+                // Calculate canvas dimensions based on ASCII grid and font settings
+                const canvasWidth = Math.ceil(dimensions.asciiWidth * dimensions.charWidth);
+                const canvasHeight = Math.ceil(dimensions.asciiHeight * dimensions.charHeight);
+
+                // Create offscreen canvas for rendering
+                const canvas = document.createElement('canvas');
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+                const ctx = canvas.getContext('2d');
+
+                // Initialize MP4 Muxer
+                const muxer = new Mp4Muxer.Muxer({
+                    target: new Mp4Muxer.ArrayBufferTarget(),
+                    video: {
+                        codec: 'avc',
+                        width: canvasWidth,
+                        height: canvasHeight
+                    },
+                    fastStart: 'in-memory'
+                });
+
+                // Setup VideoEncoder
+                const encoder = new VideoEncoder({
+                    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+                    error: e => {
+                        console.error('VideoEncoder error:', e);
+                        alert('Encoding error: ' + e.message);
+                    }
+                });
+
+                encoder.configure({
+                    codec: 'avc1.42001f',
+                    width: canvasWidth,
+                    height: canvasHeight,
+                    bitrate: 8_000_000,
+                    bitrateMode: 'constant'
+                });
+
+                // Encode each keyframe
+                for (let i = 0; i < videoKeyframes.length; i++) {
+                    const frame = videoKeyframes[i];
+
+                    // Render ASCII to canvas
+                    renderASCIIToCanvas(ctx, frame, dimensions);
+
+                    // Create VideoFrame from canvas
+                    const videoFrame = new VideoFrame(canvas, {
+                        timestamp: (i * 1_000_000) / fps
+                    });
+
+                    // Encode frame
+                    encoder.encode(videoFrame);
+                    videoFrame.close();
+
+                    // Update progress
+                    const progress = Math.round((i / videoKeyframes.length) * 90);
+                    showVideoProcessing(`Encoding MP4... ${progress}%`);
+                }
+
+                // Finalize encoding
+                showVideoProcessing('Finalizing MP4...');
+                await encoder.flush();
+                muxer.finalize();
+
+                // Download
+                const buffer = muxer.target.buffer;
+                const blob = new Blob([buffer], { type: 'video/mp4' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `ascii-video-${videoKeyframes.length}frames-${fps}fps-${Date.now()}.mp4`;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                hideVideoProcessing();
+                alert(`MP4 exported successfully!\n${videoKeyframes.length} frames at ${fps} FPS\nResolution: ${canvasWidth}×${canvasHeight}px`);
+
+            } catch (error) {
+                console.error('MP4 export failed:', error);
+                alert('MP4 export failed: ' + error.message);
+                hideVideoProcessing();
+            }
+        }
+
+        // Helper function to render ASCII to canvas
+        function renderASCIIToCanvas(ctx, frame, dimensions) {
+            const colorMode = document.getElementById('colorMode').value;
+            const fontSize = parseFloat(document.getElementById('fontSize').value);
+            const fontWeight = document.getElementById('fontWeight').value;
+            const letterSpacing = parseFloat(document.getElementById('letterSpacing').value || 0);
+            const lineHeight = parseFloat(document.getElementById('lineHeight').value || 1);
+
+            // Get background color
+            let bgColor = document.getElementById('bgColor').value;
+            if (colorMode === 'matrix') {
+                bgColor = '#0a0a0a';
+            } else if (colorMode === 'retro') {
+                bgColor = '#1A1A2E';
+            } else if (colorMode === 'cyberpunk') {
+                bgColor = '#0D0221';
+            }
+
+            // Clear canvas and set background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+            // Set font properties
+            ctx.font = `${fontWeight === 'bold' ? 'bold' : 'normal'} ${fontSize}px 'Courier New', monospace`;
+            ctx.textBaseline = 'top';
+
+            const lines = frame.asciiData.split('\n');
+            const actualLineHeight = fontSize * lineHeight;
+            const charWidth = fontSize * 0.6 + letterSpacing;
+
+            // Render based on color mode
+            if (colorMode === 'mono') {
+                ctx.fillStyle = document.getElementById('textColor').value;
+                lines.forEach((line, y) => {
+                    let x = 0;
+                    for (let i = 0; i < line.length; i++) {
+                        ctx.fillText(line[i], x, y * actualLineHeight);
+                        x += charWidth;
+                    }
+                });
+            } else if (frame.colorData && frame.colorData.length > 0) {
+                // Render with colors
+                lines.forEach((line, y) => {
+                    let x = 0;
+                    for (let i = 0; i < line.length; i++) {
+                        const color = (frame.colorData[y] && frame.colorData[y][i]) || '#FFFFFF';
+                        ctx.fillStyle = color;
+                        ctx.fillText(line[i], x, y * actualLineHeight);
+                        x += charWidth;
+                    }
+                });
             }
         }
 
@@ -2942,6 +3123,9 @@ span {
 
     <!-- GIF.js Library -->
     <script src="../../shared/gif.js"></script>
+
+    <!-- MP4 Muxer Library for WebCodecs-based MP4 export -->
+    <script src="https://unpkg.com/mp4-muxer@5.1.2/build/mp4-muxer.umd.js"></script>
 
     <!-- Preset System Scripts -->
     <script type="module">
