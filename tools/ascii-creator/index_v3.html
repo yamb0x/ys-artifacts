@@ -2158,6 +2158,13 @@
                 return;
             }
 
+            // Check mp4-muxer library
+            if (typeof Mp4Muxer === 'undefined' && typeof Muxer === 'undefined') {
+                alert('MP4 Muxer library not loaded. Please refresh the page and try again.');
+                console.error('Mp4Muxer is not defined. Available globals:', Object.keys(window).filter(k => k.includes('Mux') || k.includes('mux')));
+                return;
+            }
+
             try {
                 showVideoProcessing(`Initializing MP4 encoder...`);
 
@@ -2181,9 +2188,13 @@
                 canvas.height = canvasHeight;
                 const ctx = canvas.getContext('2d');
 
+                // Get Muxer and ArrayBufferTarget (support both global patterns)
+                const MuxerClass = typeof Mp4Muxer !== 'undefined' ? Mp4Muxer.Muxer : Muxer;
+                const ArrayBufferTargetClass = typeof Mp4Muxer !== 'undefined' ? Mp4Muxer.ArrayBufferTarget : ArrayBufferTarget;
+
                 // Initialize MP4 Muxer
-                const muxer = new Mp4Muxer.Muxer({
-                    target: new Mp4Muxer.ArrayBufferTarget(),
+                const muxer = new MuxerClass({
+                    target: new ArrayBufferTargetClass(),
                     video: {
                         codec: 'avc',
                         width: canvasWidth,
@@ -3125,7 +3136,7 @@ span {
     <script src="../../shared/gif.js"></script>
 
     <!-- MP4 Muxer Library for WebCodecs-based MP4 export -->
-    <script src="https://unpkg.com/mp4-muxer@5.1.2/build/mp4-muxer.umd.js"></script>
+    <script src="https://unpkg.com/mp4-muxer@5.2.1/build/mp4-muxer.js"></script>
 
     <!-- Preset System Scripts -->
     <script type="module">
